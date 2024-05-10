@@ -16,13 +16,14 @@ export const InputComponent = () => {
       </p>
 
       <Input
-        label="Name"
         type="text"
         placeholder="Enter your name"
+        // Custom attributes
+        label="Name"
         className="my-custom-input"
         onChangeValue={setValue}
         onChangeDebounce={setValueDebounced}
-        delay={1000}
+        debounceDelay={1000}
       />
       <br />
       <div>value: {value}</div>
