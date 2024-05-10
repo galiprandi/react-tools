@@ -29,6 +29,6 @@ jobs:
 
       - name: Publish 🚀
         shell: bash
-        run: pnpm publish packages/components --access public --no-git-checks
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
