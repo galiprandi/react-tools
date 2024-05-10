@@ -46,7 +46,7 @@ function Example() {
         className="my-custom-input"
         onChangeValue={setValue}
         onChangeDebounce={setValueDebounced}
-        delay={1000}
+        debounceDelay={1000}
       />
       <br />
       <div>value: {value}</div>
@@ -64,7 +64,7 @@ function Example() {
 
 - `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
 
-- `delay`: The delay in milliseconds for the debounce. Default 1000.
+- `debounceDelay`: The delay in milliseconds for the debounce. Default 1000.
 
 - `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 

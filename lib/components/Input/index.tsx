@@ -33,7 +33,8 @@ export function Input(props: InputProps) {
   );
 }
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: ReactNode;
   onChangeValue?: (
     value: React.InputHTMLAttributes<HTMLInputElement>["value"]
