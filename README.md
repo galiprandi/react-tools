@@ -4,7 +4,7 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ## Contents
 
-### Main Utilities:
+### Utilities:
 
 - `<Input />`: A reusable input component that provides a consistent user experience.
 
@@ -26,18 +26,6 @@ yarn add @galiprandi/react-tools
 ## `<Input />` component
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
-
-### Custom Props:
-
-- `label`: A label for the input element. If provided, we add a label element with the provided text.
-
-- `onChangeValue`: A callback function that is called when the input value changes.
-
-- `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
-
-- `delay`: The delay in milliseconds for the debounce. Default 1000.
-
-- `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 
 ### Usage:
 
@@ -67,6 +55,18 @@ function Example() {
   );
 }
 ```
+
+### Custom Props:
+
+- `label`: A label for the input element. If provided, we add a label element with the provided text.
+
+- `onChangeValue`: A callback function that is called when the input value changes.
+
+- `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
+
+- `delay`: The delay in milliseconds for the debounce. Default 1000.
+
+- `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 
 ## Contribution
 
