@@ -1,6 +1,6 @@
 {
-  "name": "@receter/my-component-library",
-  "author": "Andreas Riedmüller",
+  "name": "@galiprandi/react-tools",
+  "author": "Germán Aliprandi",
   "private": false,
   "version": "0.0.1",
   "type": "module",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/receter/my-component-library"
+    "url": "https://github.com/galiprandi/react-tools"
   },
   "sideEffects": [
     "**/*.css"
