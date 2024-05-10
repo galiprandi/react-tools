@@ -1,4 +1,3 @@
-
 # react-tools
 
 Welcome to `react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
@@ -7,7 +6,6 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ### Main Utilities:
 
-- `useDebounce`: A custom hook that adds debounce functionality to events and functions to improve your application's performance.
 - `<Input />`: A reusable input component that provides a consistent user experience.
 
 ## Installation
@@ -15,52 +13,57 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 To install `react-tools`, use the following command with `pnpm`:
 
 ```bash
+# PNPM
 pnpm i @galiprandi/react-tools
+
+# NPM
+npm i @galiprandi/react-tools
+
+# YARN
+yarn add @galiprandi/react-tools
 ```
 
-## Basic Usage
+## `<Input />` component
 
-### Example with `useDebounce`
+A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
-```js
-import { useDebounce } from '@galiprandi/react-tools';
-import { useState } from 'react';
+### Custom Props:
 
-function DebouncedSearch() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedTerm = useDebounce(searchTerm, 500);
+- `label`: A label for the input element. If provided, we add a label element with the provided text.
 
-  // Perform a search with the debouncedTerm
-  // ...
+- `onChangeValue`: A callback function that is called when the input value changes.
 
-  return (
-    <input
-      type="text"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-  );
-}
-```
+- `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
 
-### Example with `<Input />`
+- `delay`: The delay in milliseconds for the debounce. Default 1000.
 
-```js
-import { Input } from '@galiprandi/react-tools';
+- `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 
-function Form() {
-  const handleInputChange = (value) => {
-    // Logic for handling data
-  };
+### Usage:
+
+```ts
+import { Input } from "@galiprandi/react-tools";
+
+function Example() {
+  const [value, setValue] = useState<ComponentProps<typeof Input>["value"]>();
+  const [valueDebounced, setValueDebounced] =
+    useState<ComponentProps<typeof Input>["value"]>();
 
   return (
-    <form>
+    <section>
       <Input
         label="Name"
-        value=""
-        onChange={handleInputChange}
+        type="text"
+        placeholder="Enter your name"
+        className="my-custom-input"
+        onChangeValue={setValue}
+        onChangeDebounce={setValueDebounced}
+        delay={1000}
       />
-    </form>
+      <br />
+      <div>value: {value}</div>
+      <div>valueDebounced: {valueDebounced}</div>
+    </section>
   );
 }
 ```
