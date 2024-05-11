@@ -6,7 +6,9 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ### Utilities:
 
-- `<Input />`: A reusable input component that provides a consistent user experience.
+-   `useDebounce()`: - A hook that takes two arguments, value and delay, and return a debounced value.
+
+-   `<Input />`: A reusable input component that provides a consistent user experience.
 
 ## Installation
 
@@ -29,19 +31,19 @@ A simple wrapper around the native `input` element. It accepts all the same prop
 
 ### Adicional Props:
 
-- `label`: A label for the input element. If provided, we add a label element with the provided text.
+-   `label`: A label for the input element. If provided, we add a label element with the provided text.
 
-- `onChangeValue`: A callback function that is called when the input value changes.
+-   `onChangeValue`: A callback function that is called when the input value changes.
 
-- `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
+-   `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
 
-- `debounceDelay`: The delay in milliseconds for the debounce. Default 1000.
+-   `debounceDelay`: The delay in milliseconds for the debounce. Default 1000.
 
-- `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
+-   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 
-- `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", and "onlyEmail".
+-   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", and "onlyEmail".
 
-- `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
+-   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
 
 ### Example:
 
