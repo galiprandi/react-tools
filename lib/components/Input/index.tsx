@@ -1,38 +1,48 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
-import { textTransforms } from "../../utilities/strings";
+import { valueTransforms } from "../../utilities/strings";
 
 export function Input(props: InputProps) {
-  const { transform, transformFn, ...restProps } = props;
-  const [value, setValue] = useState(props.defaultValue);
-  const [valueDebounce] = useDebounce(value, props.debounceDelay ?? 1000);
+  const {
+    label,
+    onChangeValue,
+    onChangeDebounce,
+    debounceDelay = 0,
+    transform,
+    transformFn,
+    ...restProps
+  } = props;
+  const [value, setValue] = useState(props.value ?? "");
+  const [valueDebounce] = useDebounce(value, debounceDelay);
 
   // Update the debounced value
   useEffect(() => {
-    props?.onChangeDebounce && props?.onChangeDebounce(valueDebounce);
-  }, [props, valueDebounce]);
+    if (onChangeDebounce) onChangeDebounce(valueDebounce);
+  }, [valueDebounce, onChangeDebounce]);
 
   // Update the value
   useEffect(() => {
-    props?.onChangeValue && props?.onChangeValue(value);
-  }, [props, value]);
+    if (onChangeValue) onChangeValue(value);
+  }, [value, onChangeValue]);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value;
-    if (transform) inputValue = textTransforms(inputValue, transform);
+  // Handle the input change
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = event.target.value;
+    if (transform) inputValue = valueTransforms(inputValue, transform);
     if (transformFn) inputValue = transformFn(inputValue);
+    if (props.onChange) props.onChange(event);
     setValue(inputValue);
-    props.onChange && props.onChange(e);
   };
 
-  return props.label ? (
-    <label className={props.className}>
-      {props.label}
-      <input {...restProps} value={value} onChange={handleOnChange} />
-    </label>
-  ) : (
-    <input {...restProps} value={value} onChange={handleOnChange} />
-  );
+  if (label)
+    return (
+      <label className={props.className}>
+        {label}
+        <input {...restProps} value={value} onChange={handleOnChange} />
+      </label>
+    );
+
+  return <input {...restProps} value={value} onChange={handleOnChange} />;
 }
 
 export interface InputProps
@@ -41,7 +51,7 @@ export interface InputProps
   onChangeValue?: (value: TData) => void;
   onChangeDebounce?: (value: TData) => void;
   debounceDelay?: number;
-  transform?: Parameters<typeof textTransforms>[1];
+  transform?: Parameters<typeof valueTransforms>[1];
   transformFn?: (value: string) => string;
 }
 

@@ -1,9 +1,22 @@
 #root {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-label > input {
+label > * {
   margin-left: 0.5rem;
+}
+input,
+select {
+  padding: 0.3rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+code {
+  color: rgb(50, 240, 123);
 }

@@ -1,5 +1,5 @@
 import "./App.css";
-import { InputComponent } from "./Utilities/InputComponent";
+import { InputExample } from "./Examples/InputExample";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         streamline your development process.
       </p>
 
-      <InputComponent />
+      <InputExample />
     </main>
   );
 }

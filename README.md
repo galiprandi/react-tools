@@ -27,36 +27,7 @@ yarn add @galiprandi/react-tools
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
-### Usage:
-
-```ts
-import { Input } from "@galiprandi/react-tools";
-
-function Example() {
-  const [value, setValue] = useState<ComponentProps<typeof Input>["value"]>();
-  const [valueDebounced, setValueDebounced] =
-    useState<ComponentProps<typeof Input>["value"]>();
-
-  return (
-    <section>
-      <Input
-        label="Name"
-        type="text"
-        placeholder="Enter your name"
-        className="my-custom-input"
-        onChangeValue={setValue}
-        onChangeDebounce={setValueDebounced}
-        debounceDelay={1000}
-      />
-      <br />
-      <div>value: {value}</div>
-      <div>valueDebounced: {valueDebounced}</div>
-    </section>
-  );
-}
-```
-
-### Aditional Props:
+### Adicional Props:
 
 - `label`: A label for the input element. If provided, we add a label element with the provided text.
 
@@ -68,9 +39,45 @@ function Example() {
 
 - `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 
-- `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", and "titleCase".
+- `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", and "onlyEmail".
 
 - `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
+
+### Example:
+
+```js
+import { useState } from "react";
+import { Input, InputProps } from "../../lib/components/Input";
+
+export const InputExample = () => {
+  const [value, setValue] = useState<InputProps["value"]>();
+  const [valueDebounced, setValueDebounced] = useState<InputProps["value"]>();
+
+  return (
+    <section>
+      <h2>Input</h2>
+
+      <Input
+        type="text"
+        placeholder="Name and Last Name"
+        // Custom attributes
+        label="Name"
+        className="my-custom-input"
+        value={value}
+        onChangeValue={setValue}
+        onChangeDebounce={setValueDebounced}
+        debounceDelay={1000}
+        transform="titleCase"
+      />
+      <p>
+        Transformed value: <code>{value}</code>
+        <br />
+        Debounced value (1s): <code>{valueDebounced}</code>
+      </p>
+    </section>
+  );
+};
+```
 
 ## Contribution
 
