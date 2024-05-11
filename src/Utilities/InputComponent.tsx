@@ -24,6 +24,7 @@ export const InputComponent = () => {
         onChangeValue={setValue}
         onChangeDebounce={setValueDebounced}
         debounceDelay={1000}
+        transform="titleCase"
       />
       <br />
       <div>value: {value}</div>
