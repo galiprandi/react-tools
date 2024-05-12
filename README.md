@@ -4,9 +4,12 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ## Contents
 
-### Utilities:
+### Components:
 
 -   `<Input />`: A reusable input component that provides a consistent user experience.
+
+### Others:
+
 -   `useDebounce()`: - A hook that takes two arguments, value and delay, and return a debounced value.-
 
 ## Installation
@@ -74,6 +77,40 @@ export const InputExample = () => {
         Transformed value: <code>{value}</code>
         <br />
         Debounced value (1s): <code>{valueDebounced}</code>
+      </p>
+    </section>
+  );
+};
+```
+
+## `useDebounce()` hook
+
+A simple hook that takes two arguments, value and delay, and returns a debounced value. Its used internally by some components, but you can use it in your custom hooks or components.
+
+### Example:
+
+```js
+import { useState } from "react";
+import { useDebounce } from "../../lib/hooks/useDebounce";
+
+export const DebounceExample = () => {
+  const [value, setValue] = useState<string>();
+  const debouncedValue = useDebounce(value, 1000);
+
+  return (
+    <section>
+      <h2>Debounce</h2>
+
+      <input
+        type="text"
+        placeholder="Type something..."
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <p>
+        Value: <code>{value}</code>
+        <br />
+        Debounced value (1s): <code>{debouncedValue}</code>
       </p>
     </section>
   );
