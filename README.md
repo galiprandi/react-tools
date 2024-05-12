@@ -6,9 +6,8 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ### Utilities:
 
--   `useDebounce()`: - A hook that takes two arguments, value and delay, and return a debounced value.
-
 -   `<Input />`: A reusable input component that provides a consistent user experience.
+-   `useDebounce()`: - A hook that takes two arguments, value and delay, and return a debounced value.-
 
 ## Installation
 
