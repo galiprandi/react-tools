@@ -9,6 +9,7 @@ export const valueTransforms = (
     | "onlyNumbers"
     | "onlyLetters"
     | "onlyEmail"
+    | "onlyAlphanumeric"
 ): string => {
   switch (transform) {
     case "toUpperCase":
@@ -27,6 +28,8 @@ export const valueTransforms = (
       return value.replace(/[^a-zA-Z]/g, "");
     case "onlyEmail":
       return value.replace(/[^a-zA-Z0-9@._-]/g, "");
+    case "onlyAlphanumeric":
+      return value.replace(/[^a-zA-Z0-9]/g, "");
     default:
       return value;
   }
