@@ -32,7 +32,7 @@ export const InputExample = () => {
                         value={transform}
                         onChange={(e) =>
                             setTransform(
-                                e.target.value as InputProps['transform']
+                                e.target.value as InputProps['transform'],
                             )
                         }
                     >
@@ -45,6 +45,9 @@ export const InputExample = () => {
                         <option value="onlyNumbers">Only Numbers</option>
                         <option value="onlyLetters">Only Letters</option>
                         <option value="onlyEmail">Only Email</option>
+                        <option value="onlyAlphanumeric">
+                            Only Alphanumeric
+                        </option>
                     </select>
                 </label>
             </p>
