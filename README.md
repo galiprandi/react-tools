@@ -34,24 +34,18 @@ A simple wrapper around the native `input` element. It accepts all the same prop
 ### Adicional Props:
 
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
-
--   `onChangeValue`: A callback function that is called when the input value changes.
-
+-   `onChangeValue`: A callback function that is called when the input value changes
 -   `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
-
 -   `debounceDelay`: The delay in milliseconds for the debounce. Default 1000.
-
 -   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
-
 -   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", "onlyEmail" and "onlyAlphanumeric"
-
 -   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
 
 ### Example:
 
 ```js
 import { useState } from "react";
-import { Input, InputProps } from "../../lib/components/Input";
+import { Input, type InputProps } from '@galiprandi/react-tools';
 
 export const InputExample = () => {
   const [value, setValue] = useState<InputProps["value"]>();
@@ -81,6 +75,50 @@ export const InputExample = () => {
     </section>
   );
 };
+```
+
+## `<DateTime>` component
+
+A simple wrapper around the native `input` element with `type="datetime-local"`. It accepts all the same props as the native input element and adds a few additional props for convenience.
+
+### Adicional Props:
+
+-   `label`: A label for the input element. If provided, we add a label element with the provided text.
+-   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
+-   `onChangeValue`: A callback function that is called when the input value changes.
+-   `onChangeISOVale`: A callback function that is called when the input value changes and returns the date in ISO 8601 format.
+-   `isoValue`: The date in ISO 8601 format.
+-   Any other prop that the our `Input` component accepts (like `onChangeDebounce`, `transform` and `transformFn`).
+
+### Example:
+
+```js
+import { useState } from 'react'
+import { DateTime, type DateTimeProps } from '@galiprandi/react-tools'
+
+export const DateTimeExample = () => {
+    const now = new Date().toISOString()
+    const [isoValue, setIsoValue] = useState<DateTimeProps['isoValue']>(now)
+
+    return (
+        <section>
+            <hr />
+            <h2>DateTime</h2>
+            <DateTime
+                // Custom attributes
+                isoValue={isoValue}
+                label="Date"
+                onChangeISOVale={setIsoValue}
+            />
+            <p>
+                Input: <code>{now}</code>
+                <br />
+                onChangeISOVale: <code>{isoValue}</code>
+            </p>
+        </section>
+    )
+}
+
 ```
 
 ## `useDebounce()` hook
