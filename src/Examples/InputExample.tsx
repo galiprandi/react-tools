@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Input, InputProps } from '../../lib/components/Input'
+import { Input, type InputProps } from '../../lib/components/Input'
 
 export const InputExample = () => {
     const [value, setValue] = useState<InputProps['value']>()
@@ -9,15 +9,16 @@ export const InputExample = () => {
 
     return (
         <section>
+            <hr />
             <h2>Input</h2>
 
             <Input
                 type="text"
                 placeholder="Name and Last Name"
+                value={value}
                 // Custom attributes
                 label="Name"
                 className="my-custom-input"
-                value={value}
                 onChangeValue={setValue}
                 onChangeDebounce={setValueDebounced}
                 debounceDelay={1000}
