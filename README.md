@@ -87,7 +87,7 @@ A simple wrapper around the native `input` element with `type="datetime-local"`.
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
 -   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 -   `onChangeValue`: A callback function that is called when the input value changes.
--   `onChangeISOVale`: A callback function that is called when the input value changes and returns the date in ISO 8601 format.
+-   `onChangeISOValue`: A callback function that is called when the input value changes and returns the date in ISO 8601 format.
 -   `isoValue`: The date in ISO 8601 format.
 -   Any other prop that the our `Input` component accepts (like `onChangeDebounce`, `transform` and `transformFn`).
 

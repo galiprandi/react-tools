@@ -2,14 +2,14 @@ import { ComponentProps, useEffect, useState } from 'react'
 import { Input } from '../../main'
 
 export const DateTime = (props: DateTimeProps) => {
-    const { isoValue, onChangeISOVale, ...restProps } = props
+    const { isoValue, onChangeISOValue, ...restProps } = props
     const [isoDateTime, setIsoDateTime] =
         useState<DateTimeProps['isoValue']>(isoValue)
 
     useEffect(() => {
-        if (!isoDateTime || !onChangeISOVale) return
-        onChangeISOVale(new Date(isoDateTime).toISOString())
-    }, [isoDateTime, onChangeISOVale])
+        if (!isoDateTime || !onChangeISOValue) return
+        onChangeISOValue(new Date(isoDateTime).toISOString())
+    }, [isoDateTime, onChangeISOValue])
 
     return (
         <Input
@@ -28,7 +28,7 @@ export const DateTime = (props: DateTimeProps) => {
 export interface DateTimeProps
     extends Omit<ComponentProps<typeof Input>, 'type'> {
     isoValue?: string
-    onChangeISOVale?: (value: string) => void
+    onChangeISOValue?: (value: string) => void
 }
 
 // Input:  2024-05-14T13:00:00.000Z

@@ -13,12 +13,12 @@ export const DateTimeExample = () => {
                 // Custom attributes
                 isoValue={isoValue}
                 label="Date"
-                onChangeISOVale={setIsoValue}
+                onChangeISOValue={setIsoValue}
             />
             <p>
                 Input: <code>{now}</code>
                 <br />
-                onChangeISOVale: <code>{isoValue}</code>
+                onChangeISOValue: <code>{isoValue}</code>
             </p>
         </section>
     )
