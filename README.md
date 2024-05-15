@@ -11,7 +11,7 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 ### Others:
 
--   `useDebounce()`: - A hook that takes two arguments, value and delay, and return a debounced value.-
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value.-
 
 ## Installation
 
