@@ -122,6 +122,56 @@ export const DateTimeExample = () => {
 
 ```
 
+## `<Dialog />` component
+
+A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
+
+### Adicional Props:
+
+-   **isOpen:** Boolean, defines if the dialog is open or closed. (Optional)
+-   **behavior:** 'dialog' | 'modal', defines the behavior of the dialog. (Default: 'modal')
+-   **onOpen:** Callback function executed when the dialog is opened. (Optional)
+-   **onClose:** Callback function executed when the dialog is closed. (Optional)
+-   **children:** ReactNode, the content of the dialog. (Optional)
+-   **opener:**
+
+### Example:
+
+```js
+import { Dialog } from '../../lib/components/Dialog'
+
+export const DialogExample = () => {
+    return (
+        <section>
+            <hr />
+            <h2>Dialog</h2>
+
+            <Dialog
+                // Custom attributes
+                behavior="modal"
+                opener={<button>Toggle Dialog</button>}
+                onOpen={() => console.info('Dialog opened')}
+                onClose={() => console.info('Dialog closed')}
+            >
+                <h2>Hello there 👋</h2>
+                <p>This is a dialog example.</p>
+                <p>
+                    For information on how to use html dialogs, or styling them,
+                    <a
+                        href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {' '}
+                        check documentation on MDN website
+                    </a>
+                </p>
+            </Dialog>
+        </section>
+    )
+}
+```
+
 ## `useDebounce()` hook
 
 A simple hook that takes two arguments, value and delay, and returns a debounced value. Its used internally by some components, but you can use it in your custom hooks or components.

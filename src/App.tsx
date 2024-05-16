@@ -1,5 +1,6 @@
 import './App.css'
 import { DateTimeExample } from './Examples/DateTimeExample'
+import { DialogExample } from './Examples/DialogExample'
 import { InputExample } from './Examples/InputExample'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 
             <InputExample />
             <DateTimeExample />
+            <DialogExample />
         </main>
     )
 }
