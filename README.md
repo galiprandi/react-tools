@@ -38,7 +38,7 @@ A simple wrapper around the native `input` element. It accepts all the same prop
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
 -   `onChangeValue`: A callback function that is called when the input value changes
 -   `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
--   `debounceDelay`: The delay in milliseconds for the debounce. Default 1000.
+-   `debounceDelay`: The delay in milliseconds for the debounce.
 -   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 -   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", "onlyEmail" and "onlyAlphanumeric"
 -   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
