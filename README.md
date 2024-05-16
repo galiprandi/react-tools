@@ -8,6 +8,7 @@ Welcome to `react-tools`, a set of simple and intuitive utilities for developing
 
 -   `<Input />`: A reusable input component that provides a consistent user experience.
 -   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in ISO 8601 format.
+-   `<Dialog />`: A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
 
 ### Others:
 
