@@ -2,38 +2,42 @@
 
 Welcome to `react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
-## Contents
-
 ### Components:
 
 -   `<Input />`: A reusable input component that provides a consistent user experience.
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in ISO 8601 format.
--   `<Dialog />`: A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
+    [see more.](#input)
+
+-   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [see more.](#datetime)
+-   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [see more.](#dialog)
+-   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [see more.](#observer)
 
 ### Others:
 
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value.-
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [see more.](#usedebounce)
 
 ## Installation
 
-To install `react-tools`, use the following command with `pnpm`:
+To install `react-tools`, use one of the following commands:
 
 ```bash
-# PNPM
 pnpm i @galiprandi/react-tools
+```
 
-# NPM
+```bash
 npm i @galiprandi/react-tools
+```
 
-# YARN
+```bash
 yarn add @galiprandi/react-tools
 ```
 
-## `<Input />` component
+## Components & More
+
+### `<Input />`
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
-### Adicional Props:
+#### Adicional Props:
 
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
 -   `onChangeValue`: A callback function that is called when the input value changes
@@ -43,7 +47,7 @@ A simple wrapper around the native `input` element. It accepts all the same prop
 -   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", "onlyEmail" and "onlyAlphanumeric"
 -   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
 
-### Example:
+#### Example:
 
 ```js
 import { useState } from "react";
@@ -79,11 +83,11 @@ export const InputExample = () => {
 };
 ```
 
-## `<DateTime>` component
+### `<DateTime>`
 
 A simple wrapper around the native `input` element with `type="datetime-local"`. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
-### Adicional Props:
+#### Adicional Props:
 
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
 -   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
@@ -92,7 +96,7 @@ A simple wrapper around the native `input` element with `type="datetime-local"`.
 -   `isoValue`: The date in ISO 8601 format.
 -   Any other prop that the our `Input` component accepts (like `onChangeDebounce`, `transform` and `transformFn`).
 
-### Example:
+#### Example:
 
 ```js
 import { useState } from 'react'
@@ -123,23 +127,23 @@ export const DateTimeExample = () => {
 
 ```
 
-## `<Dialog />` component
+### `<Dialog />`
 
 A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
 
-### Adicional Props:
+#### Adicional Props:
 
 -   **isOpen:** Boolean, defines if the dialog is open or closed. (Optional)
 -   **behavior:** 'dialog' | 'modal', defines the behavior of the dialog. (Default: 'modal')
 -   **onOpen:** Callback function executed when the dialog is opened. (Optional)
 -   **onClose:** Callback function executed when the dialog is closed. (Optional)
 -   **children:** ReactNode, the content of the dialog. (Optional)
--   **opener:**
+-   **opener:** ReactNode, the element that opens the dialog. (Optional)
 
-### Example:
+#### Example:
 
 ```js
-import { Dialog } from '../../lib/components/Dialog'
+import { Dialog } from '@galiprandi/react-tools'
 
 export const DialogExample = () => {
     return (
@@ -173,38 +177,87 @@ export const DialogExample = () => {
 }
 ```
 
-## `useDebounce()` hook
+### `<Observer />`
+
+A component that allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more.
+
+#### Adicional Props:
+
+-   **children:** ReactNode, the content of the observer.
+-   **onAppear:** Callback function executed when the element enters the viewport. (Optional)
+-   **onDisappear** Callback function executed when the element exits the viewport. (Optional)
+-   **wrapper:** HTMLElement, the element that is used as wrapper of children. (Default: 'div')
+-   **root:** HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
+-   **rootMargin** Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
+-   **threshold** Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
+
+#### Example:
+
+```js
+import { Observer } from '@galiprandi/react-tools'
+
+export const ObserveExample = () => {
+    const images = Array.from({ length: 5 }, (_, i) => i + 1)
+
+    return (
+        <section>
+            <hr />
+            <h2>Observer</h2>
+
+            {images.map((i) => (
+                <Observer
+                    key={i}
+                    wrapper="article"
+                    onAppear={() => console.log(`Appeared ${i}`)}
+                    onDisappear={() => console.log(`Disappeared ${i}`)}
+                    threshold={0.5}
+                >
+                    <img
+                        src={`https://picsum.photos/500/500?random=${i}`}
+                        alt="Free image"
+                        width={500}
+                        height={500}
+                    />
+                </Observer>
+            ))}
+        </section>
+    )
+}
+```
+
+### `useDebounce()`
 
 A simple hook that takes two arguments, value and delay, and returns a debounced value. Its used internally by some components, but you can use it in your custom hooks or components.
 
-### Example:
+#### Example:
 
 ```js
-import { useState } from "react";
-import { useDebounce } from "../../lib/hooks/useDebounce";
+import { useDebounce } from '@galiprandi/react-tools'
+import { useState } from 'react'
 
 export const DebounceExample = () => {
-  const [value, setValue] = useState<string>();
-  const debouncedValue = useDebounce(value, 1000);
+    const [value, setValue] = useState<string>()
+    const debouncedValue = useDebounce(value, 1000)
 
-  return (
-    <section>
-      <h2>Debounce</h2>
+    return (
+        <section>
+            <hr />
+            <h2>useDebounce</h2>
 
-      <input
-        type="text"
-        placeholder="Type something..."
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <p>
-        Value: <code>{value}</code>
-        <br />
-        Debounced value (1s): <code>{debouncedValue}</code>
-      </p>
-    </section>
-  );
-};
+            <input
+                type="text"
+                placeholder="Type something..."
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+            />
+            <p>
+                Value: <code>{value}</code>
+                <br />
+                Debounced value (1s): <code>{debouncedValue}</code>
+            </p>
+        </section>
+    )
+}
 ```
 
 ## Contribution
@@ -214,7 +267,8 @@ Contributions are welcome! To contribute:
 1. Fork this repository.
 2. Create a branch with a meaningful description.
 3. Make the desired changes.
-4. Open a Pull Request to the main branch.
+4. Update the **documentation** if necessary.
+5. Open a Pull Request to the main branch.
 
 If you find an issue or have a suggestion to improve the project, feel free to open an issue.
 
