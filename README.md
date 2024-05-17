@@ -5,35 +5,35 @@ Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities fo
 ### Components:
 
 -   `<Input />`: A reusable input component that provides a consistent user experience.
-    [see more.](#input)
+    [see more.](#input-component)
 
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [see more.](#datetime)
--   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [see more.](#dialog)
--   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [see more.](#observer)
+-   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [see more.](#datetime-component)
+-   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [see more.](#dialog-component)
+-   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [see more.](#observer-component)
 
-### Others:
+### Hooks:
 
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [see more.](#usedebounce)
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [see more.](#usedebounce-hook)
 
 ## Installation
 
-To install `react-tools`, use one of the following commands:
-
-```bash
-pnpm i @galiprandi/react-tools
-```
+To install use one of the following commands:
 
 ```bash
 npm i @galiprandi/react-tools
 ```
 
 ```bash
+pnpm i @galiprandi/react-tools
+```
+
+```bash
 yarn add @galiprandi/react-tools
 ```
 
-## Components & More
+## Components
 
-### `<Input />`
+### Input component
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
@@ -83,7 +83,7 @@ export const InputExample = () => {
 };
 ```
 
-### `<DateTime>`
+### DateTime component
 
 A simple wrapper around the native `input` element with `type="datetime-local"`. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
@@ -127,7 +127,7 @@ export const DateTimeExample = () => {
 
 ```
 
-### `<Dialog />`
+### Dialog component
 
 A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
 
@@ -177,7 +177,7 @@ export const DialogExample = () => {
 }
 ```
 
-### `<Observer />`
+### Observer component
 
 A component that allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more.
 
@@ -225,7 +225,9 @@ export const ObserveExample = () => {
 }
 ```
 
-### `useDebounce()`
+## Hooks
+
+### useDebounce hook
 
 A simple hook that takes two arguments, value and delay, and returns a debounced value. Its used internally by some components, but you can use it in your custom hooks or components.
 
