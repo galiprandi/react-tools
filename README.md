@@ -5,15 +5,15 @@ Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities fo
 ### Components:
 
 -   `<Input />`: A reusable input component that provides a consistent user experience.
-    [see more.](#input-component)
+    [details.](#input-component)
 
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [see more.](#datetime-component)
--   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [see more.](#dialog-component)
--   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [see more.](#observer-component)
+-   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [details.](#datetime-component)
+-   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [details.](#dialog-component)
+-   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [details.](#observer-component)
 
 ### Hooks:
 
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [see more.](#usedebounce-hook)
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [details.](#usedebounce-hook)
 
 ## Installation
 
@@ -133,12 +133,12 @@ A component that wraps the `<dialog />` HTML tag and provides a simple way to cr
 
 #### Adicional Props:
 
--   **isOpen:** Boolean, defines if the dialog is open or closed. (Optional)
--   **behavior:** 'dialog' | 'modal', defines the behavior of the dialog. (Default: 'modal')
--   **onOpen:** Callback function executed when the dialog is opened. (Optional)
--   **onClose:** Callback function executed when the dialog is closed. (Optional)
--   **children:** ReactNode, the content of the dialog. (Optional)
--   **opener:** ReactNode, the element that opens the dialog. (Optional)
+-   `isOpen:` Boolean, defines if the dialog is open or closed. (Optional)
+-   `behavior:` 'dialog' | 'modal', defines the behavior of the dialog. (Default: 'modal')
+-   `onOpen:` Callback function executed when the dialog is opened. (Optional)
+-   `onClose:` Callback function executed when the dialog is closed. (Optional)
+-   `children:` ReactNode, the content of the dialog. (Optional)
+-   `opener:` ReactNode, the element that opens the dialog. (Optional)
 
 #### Example:
 
@@ -183,13 +183,13 @@ A component that allows you to track when an element enters or exits the viewpor
 
 #### Adicional Props:
 
--   **children:** ReactNode, the content of the observer.
--   **onAppear:** Callback function executed when the element enters the viewport. (Optional)
--   **onDisappear** Callback function executed when the element exits the viewport. (Optional)
--   **wrapper:** HTMLElement, the element that is used as wrapper of children. (Default: 'div')
--   **root:** HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
--   **rootMargin** Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
--   **threshold** Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
+-   `children:` ReactNode, the content of the observer.
+-   `onAppear:` Callback function executed when the element enters the viewport. (Optional)
+-   `onDisappear` Callback function executed when the element exits the viewport. (Optional)
+-   `wrapper:` HTMLElement, the element that is used as wrapper of children. (Default: 'div')
+-   `root:` HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
+-   `rootMargin` Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
+-   `threshold` Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
 
 #### Example:
 

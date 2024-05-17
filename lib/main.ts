@@ -1,2 +1,5 @@
-export { Input } from './components/Input'
+export { Input, type InputProps } from './components/Input'
+export { Dialog, type DialogProps } from './components/Dialog'
+export { DateTime, type DateTimeProps } from './components/DateTime'
+export { Observer, type ObserverProps } from './components/Observer'
 export { useDebounce } from './hooks/useDebounce'
