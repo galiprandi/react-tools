@@ -8,7 +8,7 @@ export const DialogExample = () => {
 
             <Dialog
                 // Custom attributes
-                behavior="modal"
+                behavior="dialog"
                 opener={<button>Toggle Dialog</button>}
                 onOpen={() => console.info('Dialog opened')}
                 onClose={() => console.info('Dialog closed')}
@@ -27,6 +27,12 @@ export const DialogExample = () => {
                     </a>
                 </p>
             </Dialog>
+
+            <p>
+                Dialogs are a great way to show content that requires user
+                interaction. They are also a great way to show content that
+                should not be missed by the user.
+            </p>
         </section>
     )
 }

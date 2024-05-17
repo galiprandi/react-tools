@@ -13,10 +13,6 @@ export const Dialog = (props: DialogProps) => {
     const [open, setOpen] = useState(isOpen)
 
     useEffect(() => {
-        if (isOpen !== undefined) setOpen(isOpen)
-    }, [isOpen])
-
-    useEffect(() => {
         if (!dialog.current) return
         if (open) {
             behavior === 'dialog'
@@ -30,7 +26,7 @@ export const Dialog = (props: DialogProps) => {
     }, [open, behavior, onOpen, onClose])
 
     const handleToggle = () => setOpen((prev) => !prev)
-    console.log(opener?.type)
+
     return (
         <>
             {opener && cloneElement(opener, { onClick: handleToggle })}
