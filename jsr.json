@@ -1,5 +1,5 @@
 {
     "name": "@galiprandi/react-tools",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "exports": "./lib/main.ts"
 }
