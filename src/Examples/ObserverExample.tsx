@@ -18,6 +18,7 @@ export const ObserveExample = () => {
                 >
                     <img
                         src={`https://picsum.photos/500/500?random=${i}`}
+                        loading="lazy"
                         alt="Free image"
                         width={500}
                         height={500}

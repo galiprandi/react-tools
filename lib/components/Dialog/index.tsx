@@ -1,6 +1,6 @@
 import { ReactElement, cloneElement, useEffect, useRef, useState } from 'react'
 
-export const Dialog = (props: DialogProps) => {
+export const Dialog = (props: DialogProps): JSX.Element => {
     const {
         isOpen = false,
         behavior = 'modal',

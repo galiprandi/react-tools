@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { valueTransforms } from '../../utilities/strings'
 
-export function Input(props: InputProps) {
+export function Input(props: InputProps): JSX.Element {
     const {
         label,
         onChangeValue,

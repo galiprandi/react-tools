@@ -6,7 +6,7 @@ import {
     useRef,
 } from 'react'
 
-export const Observer = (props: ObserverProps) => {
+export const Observer = (props: ObserverProps): ObserverReturn => {
     const {
         wrapper = 'div',
         onAppear,
@@ -40,3 +40,11 @@ export interface ObserverProps
     onAppear?: (entry: IntersectionObserverEntry) => void
     onDisappear?: (entry: IntersectionObserverEntry) => void
 }
+
+type ObserverReturn = React.DetailedReactHTMLElement<
+    {
+        ref: React.RefObject<HTMLDivElement>
+        children: React.ReactNode
+    },
+    HTMLDivElement
+>
