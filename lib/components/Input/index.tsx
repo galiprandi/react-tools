@@ -2,6 +2,11 @@ import { ReactNode, useEffect, useState } from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { valueTransforms } from '../../utilities/strings'
 
+/**
+ * Input component - a wrapper of HTML input that can receive all their properties and methods.
+ * @param {InputProps} props - The props for the Input component.
+ * @returns {JSX.Element} - Returns a JSX element representing the input component.
+ */
 export function Input(props: InputProps): JSX.Element {
     const {
         label,
