@@ -1,3 +1,4 @@
+export { Form, type FormProps } from './components/Form'
 export { Input, type InputProps } from './components/Input'
 export { Dialog, type DialogProps } from './components/Dialog'
 export { DateTime, type DateTimeProps } from './components/DateTime'
