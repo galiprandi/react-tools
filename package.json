@@ -24,11 +24,11 @@
         "preview": "vite preview",
         "test": "echo \"No test found\" && exit 0",
         "prepublishOnly": "npm run build",
-        "preversion": "git checkout main && git pull && npm install && npm test && npm run build",
+        "preversion": "git checkout main && git pull",
         "release:major": "npm version major",
         "release:minor": "npm version minor",
         "release:patch": "npm version patch",
-        "postversion": "git push origin && git push origin --tags && npm publish --access public"
+        "postversion": "git push origin && git push origin --tags"
     },
     "peerDependencies": {
         "react": "^18.2.0",
