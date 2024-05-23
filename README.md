@@ -161,31 +161,30 @@ A simple wrapper around the native `input` element with `type="datetime-local"`.
 #### Example:
 
 ```js
-import { useState } from 'react'
-import { DateTime, type DateTimeProps } from '@galiprandi/react-tools'
+import { useState } from 'react';
+import { DateTime, type DateTimeProps } from '@galiprandi/react-tools';
 
 export const DateTimeExample = () => {
-    const now = new Date().toISOString()
-    const [isoValue, setIsoValue] = useState<DateTimeProps['isoValue']>(now)
+  const now = new Date().toISOString();
+  const [isoValue, setIsoValue] = useState<DateTimeProps['isoValue']>(now);
 
-    return (
-        <section>
-            <hr />
-            <h2>DateTime</h2>
-            <DateTime
-                // Custom attributes
-                isoValue={isoValue}
-                label="Date"
-                onChangeISOValue={setIsoValue}
-            />
-            <p>
-                Input: <code>{now}</code>
-                <br />
-                onChangeISOValue: <code>{isoValue}</code>
-            </p>
-        </section>
-    )
-}
+  return (
+    <section>
+      <hr />
+      <h2>DateTime</h2>
+      <DateTime
+        // Custom attributes
+        isoValue={isoValue}
+        label="Choice your birthday"
+        onChangeISOValue={setIsoValue}
+      />
+      <p>
+        onChangeISOValue: <code>{isoValue}</code>
+      </p>
+    </section>
+  );
+};
+
 
 ```
 
