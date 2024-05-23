@@ -1,18 +1,21 @@
-name: Create Github Tag from package.json version
-
+name: Release
 on:
     push:
-        tags:
-            - 'v*'
+        branches:
+            - main
 
 jobs:
-    tagged-release:
-        name: 'Tagged Release'
-        runs-on: 'ubuntu-latest'
-
+    build:
+        name: Release
+        runs-on: ubuntu-latest
         steps:
-            - name: 🚀 Update version
-              uses: 'marvinpinto/action-automatic-releases@latest'
+            - name: Checkout
+              uses: actions/checkout@v2
               with:
-                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
-                  prerelease: false
+                  fetch-depth: 0
+            - name: Release
+              uses: justincy/github-action-npm-release@v1.2.0
+              id: release
+            - name: Print release output
+              if: ${{ steps.release.outputs.released == 'true' }}
+              run: echo Release ID ${{ steps.release.outputs.release_id }}
