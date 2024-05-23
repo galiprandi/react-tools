@@ -2,18 +2,17 @@ name: Create Github Tag from package.json version
 
 on:
     push:
-        branches:
-            - main
+        tags:
+            - 'v*'
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: 🔗 Checkout
-              uses: actions/checkout@v2
+    tagged-release:
+        name: 'Tagged Release'
+        runs-on: 'ubuntu-latest'
 
-            - name: 🚀 Generated new tag
-              uses: Klemensas/action-autotag@stable
+        steps:
+            - name: 🚀 Update version
+              uses: 'marvinpinto/action-automatic-releases@latest'
               with:
-                  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-                  tag_prefix: 'v'
+                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
+                  prerelease: false
