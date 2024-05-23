@@ -2,6 +2,7 @@ import './App.css'
 import { DateTimeExample } from './Examples/DateTimeExample'
 import { DebounceExample } from './Examples/DebounceExample'
 import { DialogExample } from './Examples/DialogExample'
+import { FormExample } from './Examples/FormExample'
 import { InputExample } from './Examples/InputExample'
 import { ObserveExample } from './Examples/ObserverExample'
 
@@ -15,6 +16,7 @@ function App() {
                 tools that can streamline your development process.
             </p>
 
+            <FormExample />
             <InputExample />
             <DateTimeExample />
             <DialogExample />

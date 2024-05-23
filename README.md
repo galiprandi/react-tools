@@ -4,6 +4,8 @@ Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities fo
 
 ### Components:
 
+-   `<Form />`: A component that wraps the form HTML tag and provides a simple way to create forms in your React application.
+    [details.](#form-component)
 -   `<Input />`: A reusable input component that provides a consistent user experience.
     [details.](#input-component)
 
@@ -32,6 +34,60 @@ yarn add @galiprandi/react-tools
 ```
 
 ## Components
+
+### Form component
+
+A component that wraps the `<form />` HTML tag and provides a simple way to create forms in your React application.
+
+#### Adicional Props:
+
+-   `onSubmitValue:` Callback function that is called when the form is submitted and recibe a object with the form values.
+
+#### Example:
+
+```js
+import { Form, Input } from '@galiprandi/react-tools'
+import { useState } from 'react'
+
+export const FormExample = () => {
+    const [values, setValues] = useState<MyFormValues>()
+
+    return (
+        <section>
+            <hr />
+            <h2>Form</h2>
+            <Form<MyFormValues> onSubmitValues={setValues}>
+                <fieldset>
+                    <legend>Form Example</legend>
+                    <Input
+                        name="username"
+                        label="username"
+                        placeholder="Username"
+                    />
+                    <br />
+                    <Input
+                        name="password"
+                        label="password"
+                        placeholder="Password"
+                        type="password"
+                    />
+                    <br />
+                    <button type="submit">Login</button>
+                </fieldset>
+            </Form>
+            <p>
+                <br />
+                onChangeISOValue: <code>{JSON.stringify(values)}</code>
+            </p>
+        </section>
+    )
+}
+
+type MyFormValues = {
+    username: string
+    password: string
+}
+```
 
 ### Input component
 
