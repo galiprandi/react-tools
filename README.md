@@ -42,6 +42,7 @@ A component that wraps the `<form />` HTML tag and provides a simple way to crea
 #### Adicional Props:
 
 -   `onSubmitValues:` Callback function that is called when the form is submitted and recibe a object with the form values.
+-   `filterEmptyValues:` Boolean, defines if the empty values are filtered from the object passed to the `onSubmitValues` callback. (Default: false)
 
 #### Example:
 
@@ -56,7 +57,10 @@ export const FormExample = () => {
         <section>
             <hr />
             <h2>Form</h2>
-            <Form<MyFormValues> onSubmitValues={setValues}>
+            <Form<MyFormValues>
+                onSubmitValues={setValues}
+                filterEmptyValues={true}
+            >
                 <fieldset>
                     <legend>Form Example</legend>
                     <Input

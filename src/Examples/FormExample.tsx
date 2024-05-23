@@ -9,7 +9,10 @@ export const FormExample = () => {
         <section>
             <hr />
             <h2>Form</h2>
-            <Form<MyFormValues> onSubmitValues={setValues}>
+            <Form<MyFormValues>
+                onSubmitValues={setValues}
+                filterEmptyValues={true}
+            >
                 <fieldset>
                     <legend>Form Example</legend>
                     <Input
@@ -23,6 +26,13 @@ export const FormExample = () => {
                         label="password"
                         placeholder="Password"
                         type="password"
+                    />
+                    <br />
+                    <Input
+                        name="age"
+                        label="age"
+                        placeholder="Age"
+                        type="number"
                     />
                     <br />
                     <button type="submit">Login</button>

@@ -32,7 +32,7 @@
  * ```
  */
 export const Form = <T,>(props: FormProps<T>): JSX.Element => {
-    const { onSubmitValues, ...restProps } = props
+    const { onSubmitValues, filterEmptyValues, ...restProps } = props
 
     /**
      * Handles the form submission event.
@@ -46,6 +46,7 @@ export const Form = <T,>(props: FormProps<T>): JSX.Element => {
             const entries = formData.entries()
             let values = {} as T
             for (const [key, value] of entries) {
+                if (filterEmptyValues && !value) continue
                 values = { ...values, [key]: value }
             }
 
@@ -80,4 +81,10 @@ export interface FormProps<T>
      * ```
      */
     onSubmitValues?: (values: T) => void
+    /**
+     * A flag to determine if empty values should be included in the form values.
+     *
+     * @param {boolean} filterEmptyValues - A flag to determine if empty values should be included in the form values.
+     */
+    filterEmptyValues?: boolean
 }
