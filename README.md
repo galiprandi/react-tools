@@ -97,6 +97,8 @@ type MyFormValues = {
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
+> Try it on [StackBlitz.com](https://codesandbox.io/s/input-component-1zv3z)
+
 #### Adicional Props:
 
 -   `label`: A label for the input element. If provided, we add a label element with the provided text.
