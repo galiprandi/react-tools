@@ -2,22 +2,7 @@
 
 Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
-### Components:
-
--   `<Form />`: A component that wraps the form HTML tag and provides a simple way to create forms in your React application.
-    [details.](#form-component)
--   `<Input />`: A reusable input component that provides a consistent user experience.
-    [details.](#input-component)
-
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [details.](#datetime-component)
--   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [details.](#dialog-component)
--   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [details.](#observer-component)
-
-### Hooks:
-
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [details.](#usedebounce-hook)
-
-## Installation
+### Installation
 
 To install use one of the following commands:
 
@@ -32,6 +17,21 @@ pnpm i @galiprandi/react-tools
 ```bash
 yarn add @galiprandi/react-tools
 ```
+
+## Components:
+
+-   `<Form />`: A component that wraps the form HTML tag and provides a simple way to create forms in your React application.
+    [details.](#form-component)
+-   `<Input />`: A reusable input component that provides a consistent user experience.
+    [details.](#input-component)
+
+-   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [details.](#datetime-component)
+-   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [details.](#dialog-component)
+-   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [details.](#observer-component)
+
+## Hooks:
+
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [details.](#usedebounce-hook)
 
 ## Components
 
