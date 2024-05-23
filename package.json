@@ -21,14 +21,7 @@
         "build": "tsc --p ./tsconfig-build.json && vite build",
         "lint": "eslint . --fix",
         "preview": "vite preview",
-        "test": "echo \"No test found\" && exit 0",
-        "release:sync": "sh ./sync-version.sh",
-        "prepublishOnly": "npm run build",
-        "preversion": "git checkout main && git pull",
-        "release:major": "npm version major",
-        "release:minor": "npm version minor",
-        "release:patch": "npm version patch",
-        "postversion": "git push origin && git push origin --tags"
+        "release:sync": "sh ./sync-version.sh"
     },
     "peerDependencies": {
         "react": "^18.2.0",
