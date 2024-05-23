@@ -41,7 +41,7 @@ A component that wraps the `<form />` HTML tag and provides a simple way to crea
 
 #### Adicional Props:
 
--   `onSubmitValue:` Callback function that is called when the form is submitted and recibe a object with the form values.
+-   `onSubmitValues:` Callback function that is called when the form is submitted and recibe a object with the form values.
 
 #### Example:
 
