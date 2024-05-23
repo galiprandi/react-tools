@@ -1,0 +1,19 @@
+name: Create Github Tag from package.json version
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 🔗 Checkout
+              uses: actions/checkout@v4
+
+            - name: 🚀 Generated new tag
+              uses: Klemensas/action-autotag@stable
+              with:
+                  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                  tag_prefix: 'v'
