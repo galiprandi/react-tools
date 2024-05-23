@@ -97,7 +97,7 @@ type MyFormValues = {
 
 A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
 
-> Try it on [StackBlitz.com](https://codesandbox.io/s/input-component-1zv3z)
+> Try it on <a href="https://stackblitz.com/edit/vitejs-vite-7c9m54?file=src%2FApp.tsx" target="_blank" rel="noopener noreferrer">StackBlitz.com</a>
 
 #### Adicional Props:
 
