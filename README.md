@@ -3,19 +3,19 @@
         <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
     </p>
 
-<div style="
-    display: flex;
-    justify-content: space-evenly;
-    margin: 20px 0;
-">
+<br style="padding: 50px 0;"/>
 
-![NPM Downloads](https://img.shields.io/npm/d18m/%40galiprandi%2Freact-tools?style=for-the-badge&logo=npm&color=CB3837)
-
-![JSR Version](https://img.shields.io/jsr/v/%40galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E)
-
-![GitHub Repo stars](https://img.shields.io/github/stars/galiprandi/react-tools?style=for-the-badge&logo=github&color=181717)
-
-</div>
+<p align="center" style="display: flex; justify-content: space-evenly">
+    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
+        <img src="https://img.shields.io/npm/v/@galiprandi/react-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Version"/>
+    </a>
+    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
+        <img src="https://img.shields.io/npm/dt/@galiprandi/react-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Downloads"/>
+    </a>
+    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
+        <img src="https://img.shields.io/jsr/v/@galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="JSR Version"/>
+    </a>
+    </p>
 
 #### Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
