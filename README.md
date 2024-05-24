@@ -5,7 +5,7 @@
 
 <br style="padding: 50px 0;"/>
 
-<p align="center" style="display: flex; justify-content: space-evenly">
+<p align="center">
     <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
         <img src="https://img.shields.io/npm/v/@galiprandi/react-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Version"/>
     </a>
@@ -15,7 +15,9 @@
     <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
         <img src="https://img.shields.io/jsr/v/@galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="JSR Version"/>
     </a>
-    </p>
+</p>
+
+<br style="padding: 50px 0;"/>
 
 #### Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
