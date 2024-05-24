@@ -1,4 +1,4 @@
-<div style="text-align: center;padding: 50px 0 30px 0;">
+<div style="text-align: center; padding: 50px 0;">
     <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
 </div>
 
