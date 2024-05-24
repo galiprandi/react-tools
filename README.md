@@ -7,13 +7,13 @@
 
 <p align="center">
     <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
-        <img src="https://img.shields.io/npm/v/@galiprandi/react-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Version"/>
+        <img src="https://img.shields.io/npm/d18m/%40galiprandi%2Freact-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Downloads"/>
     </a>
-    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
-        <img src="https://img.shields.io/npm/dt/@galiprandi/react-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Downloads"/>
+    <a href="https://jsr.io/@galiprandi/react-tools">
+        <img src="https://img.shields.io/jsr/v/%40galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="NPM Downloads"/>
     </a>
-    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
-        <img src="https://img.shields.io/jsr/v/@galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="JSR Version"/>
+    <a href="https://github.com/galiprandi/react-tools">
+        <img src="https://img.shields.io/github/stars/galiprandi/react-tools?style=for-the-badge&logo=github&color=181717" alt="JSR Version"/>
     </a>
 </p>
 
