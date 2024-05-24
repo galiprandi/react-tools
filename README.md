@@ -1,7 +1,6 @@
-<p align="center">
-<img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" 
-   width="350"/>
-</p>
+<div style="text-align: center;padding: 50px 0 30px 0;">
+    <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
+</div>
 
 #### Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
@@ -44,7 +43,7 @@ yarn add @galiprandi/react-tools
 
 ### Form component
 
-A component that wraps the `<form />` HTML tag and provides a simple way to create forms in your React application.
+A component that wraps the `form` HTML tag and provides a simple way to create forms in your React application.
 
 #### Adicional Props:
 
@@ -195,7 +194,7 @@ export const DateTimeExample = () => {
 
 ### Dialog component
 
-A component that wraps the `<dialog />` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
+A component that wraps the `dialog` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
 
 #### Adicional Props:
 
