@@ -17,8 +17,6 @@
     </a>
 </p>
 
-<br style="padding: 50px 0;"/>
-
 #### Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process.
 
 ### Playground
