@@ -21,7 +21,7 @@
 
 ### Playground
 
-Try out the components in the playground: [@galiprandi/react-tools Playground](https://stackblitz.com/edit/vitejs-vite-7c9m54?file=src%2FApp.tsx)
+Try out the components in the playground: [@galiprandi/react-tools Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
 
 ### Installation
 
