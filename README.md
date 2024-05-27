@@ -381,7 +381,7 @@ Contributions are welcome! To contribute:
 4. Update the **documentation** if necessary.
 5. Open a Pull Request to the main branch.
 
-If you find an issue or have a suggestion to improve the project, feel free to open an issue.
+If you find an issue or have a suggestion to improve the project, feel free to [open an issue](https://github.com/galiprandi/react-tools/issues).
 
 ## License
 
