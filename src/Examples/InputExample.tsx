@@ -24,6 +24,14 @@ export const InputExample = () => {
                 debounceDelay={1000}
                 transform={transform}
             />
+            <br></br>
+
+            <Input
+                className="my-custom-input"
+                id='input_test'
+                datalist={['Option 1', 'Option 2', 'Option 3']}
+            />
+            
             <p>
                 <label>
                     Transformation:
