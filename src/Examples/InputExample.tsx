@@ -14,24 +14,18 @@ export const InputExample = () => {
 
             <Input
                 type="text"
-                placeholder="Name and Last Name"
+                placeholder="Enter your name and last name"
                 value={value}
                 // Custom attributes
-                label="Name"
+                label="Name and Last Name"
                 className="my-custom-input"
                 onChangeValue={setValue}
                 onChangeDebounce={setValueDebounced}
                 debounceDelay={1000}
                 transform={transform}
+                datalist={['John Doe', 'Jane Doe', 'John Smith']}
             />
-            <br></br>
 
-            <Input
-                className="my-custom-input"
-                id='input_test'
-                datalist={['Option 1', 'Option 2', 'Option 3']}
-            />
-            
             <p>
                 <label>
                     Transformation:
