@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useId, useState } from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { valueTransforms } from '../../utilities/strings'
 
@@ -20,24 +20,16 @@ import { valueTransforms } from '../../utilities/strings'
  * };
  *
  * <Input
- *     label="Username"
+ *     type="text"
+ *     placeholder="Enter your name and last name"
+ *     value={value}
+ *     label="Name and Last Name"
  *     onChangeValue={handleChangeValue}
  *     onChangeDebounce={handleChangeDebounce}
  *     debounceDelay={300}
  *     transform="uppercase"
  *     className="input-class"
- * />;
- * ```
- * 
- *  * Example usage with optional datalist prop:
- * 
- * - Note: id prop is required when using datalist prop
- * 
- * <Input
- *     className="input-class"
- *     label="Choose your option"
- *     id='test_input'
- *     datalist={['Option 1', 'Option 2', 'Option 3']}
+ *     datalist={['john.doe', 'jane.doe', 'john.smith']}
  * />;
  * ```
  */
@@ -50,15 +42,14 @@ export function Input(props: InputProps): JSX.Element {
         debounceDelay = 0,
         transform,
         transformFn,
+        id,
         ...restProps
     } = props
     const [value, setValue] = useState(props.value ?? '')
     const valueDebounce = useDebounce(value, debounceDelay)
 
-    //Check and throw error when 'id' prop is not present with 'datalist' prop
-    if (datalist && !props.id) {
-        throw new Error("The 'id' prop is required when 'datalist' prop is provided.")
-    }
+    // Generate a unique id for the datalist
+    const did = `${props.id ?? useId()}-datalist`
 
     // Update the debounced value
     useEffect(() => {
@@ -79,46 +70,43 @@ export function Input(props: InputProps): JSX.Element {
         setValue(inputValue)
     }
 
-    if (datalist) {
-        return (
-            label ? (
-                <label className={props.className}>
-                    {label}
-                    <input {...restProps} value={value} onChange={handleOnChange} list={props.id ? `${props.id}-datalist` : undefined} />
-                    {datalist && (
-                        <datalist id={`${props.id}-datalist`}>
-                            {datalist.map((option, index) => (
-                                <option key={index} value={option}></option>
-                            ))}
-                        </datalist>
-                    )}
-                </label>
-            ) : (
-                <>
-                    <input {...restProps} value={value} onChange={handleOnChange} list={props.id ? `${props.id}-datalist` : undefined} />
-                    {datalist && (
-                        <datalist id={`${props.id}-datalist`}>
-                            {datalist.map((option, index) => (
-                                <option key={index} value={option}></option>
-                            ))}
-                        </datalist>
-                    )}
-                </>
-            )
-        )
-    } 
-    
-    if (label) {
-        return (
-            <label className={props.className}>
-                {label}
-                <input {...restProps} value={value} onChange={handleOnChange} />
-            </label>
-        )
-    }
-     
-    return <input {...restProps} value={value} onChange={handleOnChange} />
+    return (
+        <LabeledContainer label={label}>
+            <input
+                {...restProps}
+                value={value}
+                onChange={handleOnChange}
+                list={did}
+            />
+
+            {!!datalist?.length && (
+                <datalist id={did}>
+                    {datalist.map((option, index) => (
+                        <option key={index} value={option}></option>
+                    ))}
+                </datalist>
+            )}
+        </LabeledContainer>
+    )
 }
+
+const LabeledContainer = ({
+    label,
+    className,
+    children,
+}: {
+    label: ReactNode
+    className?: string
+    children: ReactNode
+}) =>
+    label ? (
+        <label className={className}>
+            {label}
+            {children}
+        </label>
+    ) : (
+        children
+    )
 
 export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -127,9 +115,7 @@ export interface InputProps
      */
     label?: ReactNode
     /**
-     * Callback function triggered on value change and receives the current value of the input field.
-     *
-     * @param {TData} value - The current value of the input field.
+     * The list of options for the input field. If provided, the input field will have a datalist element.
      */
     datalist?: string[]
     /**
