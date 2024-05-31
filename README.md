@@ -42,17 +42,17 @@ yarn add @galiprandi/react-tools
 ## Components:
 
 -   `<Form />`: A component that wraps the form HTML tag and provides a simple way to create forms in your React application.
-    [details.](#form-component)
+    [Example](#form-component)
 -   `<Input />`: A reusable input component that provides a consistent user experience.
-    [details.](#input-component)
+    [Example](#input-component)
 
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [details.](#datetime-component)
--   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [details.](#dialog-component)
--   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [details.](#observer-component)
+-   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [Example](#datetime-component)
+-   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [Example](#dialog-component)
+-   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [Example](#observer-component)
 
 ## Hooks:
 
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [details.](#usedebounce-hook)
+-   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [Example](#usedebounce-hook)
 
 ## Components
 
@@ -127,6 +127,7 @@ A simple wrapper around the native `input` element. It accepts all the same prop
 -   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
 -   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", "onlyEmail" and "onlyAlphanumeric"
 -   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
+-   `datalist`: An array of strings to use as options in a datalist element.
 
 #### Example:
 
@@ -144,15 +145,16 @@ export const InputExample = () => {
 
       <Input
         type="text"
-        placeholder="Name and Last Name"
+        placeholder="Enter your name and last name"
         // Custom attributes
-        label="Name"
+        label="Name and Last Name"
         className="my-custom-input"
         value={value}
         onChangeValue={setValue}
         onChangeDebounce={setValueDebounced}
         debounceDelay={1000}
         transform="titleCase"
+        datalist={['John Doe', 'Jane Doe', 'John Smith']}
       />
       <p>
         Transformed value: <code>{value}</code>
