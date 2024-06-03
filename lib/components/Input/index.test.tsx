@@ -83,7 +83,6 @@ describe('<Input />', () => {
     it('should be transform value to uppercase', () => {
         const testId = 'test-5'
         const onChangeValue = vi.fn()
-        const transform = 'toUpperCase'
 
         const { getByTestId } = render(
             <Input
@@ -107,7 +106,6 @@ describe('<Input />', () => {
     it('should be called transformFn', () => {
         const testId = 'test-5'
         const onChangeValue = vi.fn()
-        const transform = 'toUpperCase'
 
         const { getByTestId } = render(
             <Input
