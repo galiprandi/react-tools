@@ -18,16 +18,16 @@ jobs:
             - name: 📥 Install pnpm
               uses: pnpm/action-setup@v4
 
-            - name: 📥 Setup Node ${{ matrix.node-version }}
+            - name: 🛠️ Setup Node ${{ matrix.node-version }}
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'pnpm'
 
-            - name: 🔩 Install dependencies
+            - name: 📥 Install dependencies
               run: pnpm install
 
-            - name: 📦 Build app
+            - name: 🏗️ Build app
               run: pnpm run build
 
             - name: 🧪 Run Tests
