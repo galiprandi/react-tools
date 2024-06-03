@@ -1,7 +1,7 @@
 import { ComponentProps, useEffect, useState } from 'react'
 import { iso2LocalDateTime } from '../../utilities/dates'
 
-import { Input } from '../../main'
+import { Input } from '../Input'
 
 /**
  * DateTime component - A wrapper for the Input component that handles ISO date-time values.
