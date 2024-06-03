@@ -1,4 +1,4 @@
-import { Dialog } from '../../lib/components/Dialog'
+import { Dialog } from '../../lib/main.ts'
 
 export const DialogExample = () => {
     return (

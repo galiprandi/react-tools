@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDebounce } from '../../lib/hooks/useDebounce'
+import { useDebounce } from '../../lib/main.ts'
 
 export const DebounceExample = () => {
     const [value, setValue] = useState<string>()
