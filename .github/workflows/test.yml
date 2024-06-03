@@ -9,19 +9,21 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [22.x]
+                node-version: [20.x]
 
         steps:
             - name: 🔗 Checkout
               uses: actions/checkout@v4
 
-            - name: ⚙️ Install pnpm
+            - name: 📥 Install pnpm
               uses: pnpm/action-setup@v4
 
-            - name: ⚙️ Setup Node ${{ matrix.node-version }}
+            - name: 📥 Setup Node ${{ matrix.node-version }}
               uses: actions/setup-node@v4
               with:
-                  node-version: '20.x'
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
+
             - name: 🔩 Install dependencies and build
               run: pnpm install
 
