@@ -89,7 +89,6 @@ describe('<Input />', () => {
                 id={testId}
                 type="text"
                 name="name"
-                defaultValue={'test value'}
                 data-testid={testId}
                 transform="toUpperCase"
                 onChangeValue={onChangeValue}
