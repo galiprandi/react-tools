@@ -21,7 +21,8 @@
         "build": "tsc --p ./tsconfig-build.json && vite build",
         "lint": "eslint . --fix",
         "preview": "vite preview",
-        "release:sync": "sh ./sync-version.sh"
+        "release:sync": "sh ./sync-version.sh",
+        "test": "vitest"
     },
     "peerDependencies": {
         "react": "^18.2.0",
@@ -46,7 +47,8 @@
         "typescript-eslint": "^7.8.0",
         "vite": "^4.5.3",
         "vite-plugin-dts": "^3.7.3",
-        "vite-plugin-lib-inject-css": "^2.0.1"
+        "vite-plugin-lib-inject-css": "^2.0.1",
+        "vitest": "^1.6.0"
     },
     "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724"
 }
