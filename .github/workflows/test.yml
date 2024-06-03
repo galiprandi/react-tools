@@ -1,0 +1,38 @@
+name: 'Run Tests'
+on:
+    pull_request:
+
+jobs:
+    build-and-test:
+        permissions:
+            pull-requests: write
+        runs-on: ubuntu-latest
+        steps:
+            - name: 🔗 Checkout
+              uses: actions/checkout@v4
+
+            - name: ⚙️ Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20.x'
+            - name: 🔩 Install dependencies and build
+              run: npm ci && npm run build
+
+            - name: 🧪 Run Tests
+              run: npm run test:coverage
+
+              # Remove node_modules to see if this action runs entirely compiled
+            - name: 🔩 Remove node_modules
+              run: rm -rf node_modules
+            # - name: 'Test Working Directory Option'
+            #   uses: ./
+            #   with:
+            #       working-directory: './test/mockReports'
+            #       name: 'Mock Reports'
+            # - name: 'Test Default Action'
+            #   # run step also on failure of the previous step
+            #   if: always()
+            #   uses: ./
+            #   with:
+            #       file-coverage-mode: 'all'
+            #       name: 'Root'
