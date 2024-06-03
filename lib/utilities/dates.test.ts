@@ -17,6 +17,12 @@ describe('iso2LocalDateTime', () => {
         expect(iso2LocalDateTime(isoString)).toBe(expectedLocalString)
     })
 
+    it('should handle different time zones correctly', () => {
+        const isoString = '1979-07-04T00:00:00.000Z'
+        const expectedLocalString = '1979-07-03T21:00'
+        expect(iso2LocalDateTime(isoString)).toBe(expectedLocalString)
+    })
+
     it('should handle empty string', () => {
         expect(iso2LocalDateTime('')).toBe('')
     })
