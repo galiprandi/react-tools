@@ -22,7 +22,7 @@
         "lint": "eslint . --fix",
         "preview": "vite preview",
         "release:sync": "sh ./sync-version.sh",
-        "test": "vitest",
+        "test": "TZ=America/Argentina/Tucuman vitest",
         "test:coverage": "npm run test -- --coverage"
     },
     "peerDependencies": {
