@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">7.69% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>1/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">8.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>1/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -99,7 +99,7 @@
 <a name='L34'></a><a href='#L34'>34</a>
 <a name='L35'></a><a href='#L35'>35</a>
 <a name='L36'></a><a href='#L36'>36</a>
-<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -112,30 +112,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const valueTransforms = (
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const valueTransforms = <span class="fstat-no" title="function not covered" >(</span>
   value: string,
   transform?:
     | "toUpperCase"
@@ -148,27 +148,27 @@
     | "onlyEmail"
     | "onlyAlphanumeric"
 ): string =&gt; {
-  switch (transform) {
+<span class="cstat-no" title="statement not covered" >  switch (transform) {</span>
     case "toUpperCase":
-      return value.toUpperCase();
+<span class="cstat-no" title="statement not covered" >      return value.toUpperCase();</span>
     case "toLowerCase":
-      return value.toLowerCase();
+<span class="cstat-no" title="statement not covered" >      return value.toLowerCase();</span>
     case "capitalize":
-      return value.toLowerCase().charAt(0).toUpperCase() + value.slice(1);
+<span class="cstat-no" title="statement not covered" >      return value.toLowerCase().charAt(0).toUpperCase() + value.slice(1);</span>
     case "titleCase":
-      return value.toLowerCase().replace(/\b\w/g, (ch) =&gt; ch.toUpperCase());
+<span class="cstat-no" title="statement not covered" >      return value.toLowerCase().replace(/\b\w/g, <span class="fstat-no" title="function not covered" >(c</span>h) =&gt; <span class="cstat-no" title="statement not covered" >ch.toUpperCase())</span>;</span>
     case "snakeCase":
-      return value.toLowerCase().replace(/\s/g, "_");
+<span class="cstat-no" title="statement not covered" >      return value.toLowerCase().replace(/\s/g, "_");</span>
     case "onlyNumbers":
-      return value.replace(/\D/g, "");
+<span class="cstat-no" title="statement not covered" >      return value.replace(/\D/g, "");</span>
     case "onlyLetters":
-      return value.replace(/[^a-zA-Z]/g, "");
+<span class="cstat-no" title="statement not covered" >      return value.replace(/[^a-zA-Z]/g, "");</span>
     case "onlyEmail":
-      return value.replace(/[^a-zA-Z0-9@._-]/g, "");
+<span class="cstat-no" title="statement not covered" >      return value.replace(/[^a-zA-Z0-9@._-]/g, "");</span>
     case "onlyAlphanumeric":
-      return value.replace(/[^a-zA-Z0-9]/g, "");
+<span class="cstat-no" title="statement not covered" >      return value.replace(/[^a-zA-Z0-9]/g, "");</span>
     default:
-      return value;
+<span class="cstat-no" title="statement not covered" >      return value;</span>
   }
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -178,7 +178,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-06-03T20:31:51.961Z
+                at 2024-06-03T20:46:11.167Z
             </div>
         <script src="../prettify.js"></script>
         <script>
