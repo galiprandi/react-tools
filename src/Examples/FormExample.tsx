@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Form } from '../../lib/components/Form'
-import { Input } from '../../lib/components/Input'
+import { Form } from '../../lib/main.ts'
+import { Input } from '../../lib/main.ts'
 
 export const FormExample = () => {
     const [values, setValues] = useState<MyFormValues>()

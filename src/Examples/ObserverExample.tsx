@@ -1,4 +1,4 @@
-import { Observer } from '../../lib/components/Observer'
+import { Observer } from '../../lib/main.ts'
 import { useState } from 'react'
 
 export const ObserveExample = () => {

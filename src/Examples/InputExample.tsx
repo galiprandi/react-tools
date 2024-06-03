@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Input, type InputProps } from '../../lib/components/Input'
+import { Input, type InputProps } from '../../lib/main.ts'
 
 export const InputExample = () => {
     const [value, setValue] = useState<InputProps['value']>()

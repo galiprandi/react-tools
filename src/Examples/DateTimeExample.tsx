@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DateTime, type DateTimeProps } from '../../lib/components/DateTime'
+import { DateTime, type DateTimeProps } from '../../lib/main.ts'
 
 export const DateTimeExample = () => {
     const now = new Date().toISOString()
