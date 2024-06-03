@@ -1,5 +1,6 @@
 import { ComponentProps, useEffect, useState } from 'react'
 import { Input } from '../../main'
+import { iso2LocalDateTime } from '../../utilities/dates'
 
 /**
  * DateTime component - A wrapper for the Input component that handles ISO date-time values.
@@ -73,28 +74,4 @@ export interface DateTimeProps
      * @param {string} value - The new ISO date-time value in format "YYYY-MM-DDTHH:MM:SS.sssZ".
      */
     onChangeISOValue?: (value: string) => void
-}
-
-/**
- * Converts an ISO date-time string to a local date-time string.
- *
- * @param {string} [date] - The ISO date-time string.
- * @returns {string | undefined} - The local date-time string or undefined if the input is invalid.
- *
- * Example:
- *
- * ```js
- * // Input:  2024-05-14T13:00:00.000Z
- * // Output: 2024-05-14T10:00
- * const localDateTime = iso2LocalDateTime('2024-05-14T13:00:00.000Z');
- * console.log(localDateTime); // "2024-05-14T10:00"
- * ```
- */
-const iso2LocalDateTime = (
-    date?: DateTimeProps['isoValue'],
-): string | undefined => {
-    if (!date || typeof date !== 'string') return date
-    const d = new Date(date)
-    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-    return local.toISOString().slice(0, 16)
 }
