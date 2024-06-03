@@ -25,4 +25,4 @@ dist-ssr
 workspace.code-workspace
 
 # Test files
-/coverage
+coverage
