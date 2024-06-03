@@ -22,7 +22,8 @@
         "lint": "eslint . --fix",
         "preview": "vite preview",
         "release:sync": "sh ./sync-version.sh",
-        "test": "vitest"
+        "test": "vitest",
+        "test:coverage": "npm run test -- --coverage"
     },
     "peerDependencies": {
         "react": "^18.2.0",
@@ -35,6 +36,7 @@
         "@types/react-dom": "^18.2.22",
         "@typescript-eslint/parser": "^6.21.0",
         "@vitejs/plugin-react": "^4.2.1",
+        "@vitest/coverage-istanbul": "^1.6.0",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-react": "^7.34.1",
