@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, cleanup, fireEvent } from '@testing-library/react'
 import { DateTime } from '../../main.ts'
 
