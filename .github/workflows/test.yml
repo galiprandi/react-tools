@@ -23,7 +23,10 @@ jobs:
               with:
                   node-version: '20.x'
             - name: 🔩 Install dependencies and build
-              run: pnpm i && pnpm run build
+              run: pnpm install
+
+            - name: 📦 Build app
+              run: pnpm run build
 
             - name: 🧪 Run Tests
               env:
