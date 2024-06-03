@@ -67,35 +67,66 @@ describe('Form Component', () => {
             email: 'john.doe@mail.com',
         })
     })
-})
 
-it('should include empty values if filterEmptyValues is false', () => {
-    const onSubmit = vi.fn()
-    const testId = 'test-3'
-    render(
-        <Form<TestFormValues>
-            onSubmitValues={onSubmit}
-            filterEmptyValues={true}
-            data-testid={testId}
-        >
-            <label>
-                Name:
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    defaultValue="John Does"
-                />
-            </label>
-            <label>
-                Email:
-                <input type="email" id="email" name="email" />
-            </label>
-            <button type="submit">Submit</button>
-        </Form>,
-    )
+    it('should call onSubmit with form values on submit', () => {
+        const onSubmit = vi.fn()
+        const testId = 'test-3'
+        render(
+            <Form<TestFormValues> onSubmit={onSubmit} data-testid={testId}>
+                <label>
+                    Name:
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        defaultValue="John Doe"
+                    />
+                </label>
+                <label>
+                    Email:
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        defaultValue="john.doe@mail.com"
+                    />
+                </label>
+                <button type="submit">Submit</button>
+            </Form>,
+        )
 
-    fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
-    expect(onSubmit).toHaveBeenCalledTimes(1)
-    expect(onSubmit).toHaveBeenCalledWith({ name: 'John Does' })
+        fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
+        expect(onSubmit).toHaveBeenCalledTimes(1)
+    })
+
+    it('should include empty values if filterEmptyValues is false', () => {
+        const onSubmit = vi.fn()
+        const testId = 'test-4'
+        render(
+            <Form<TestFormValues>
+                onSubmitValues={onSubmit}
+                filterEmptyValues={true}
+                data-testid={testId}
+            >
+                <label>
+                    Name:
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        defaultValue="John Does"
+                    />
+                </label>
+                <label>
+                    Email:
+                    <input type="email" id="email" name="email" />
+                </label>
+                <button type="submit">Submit</button>
+            </Form>,
+        )
+
+        fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
+        expect(onSubmit).toHaveBeenCalledTimes(1)
+        expect(onSubmit).toHaveBeenCalledWith({ name: 'John Does' })
+    })
 })

@@ -23,7 +23,8 @@
         "preview": "vite preview",
         "release:sync": "sh ./sync-version.sh",
         "test": "TZ=America/Argentina/Tucuman vitest",
-        "test:coverage": "npm run test -- --coverage"
+        "test:coverage": "npm run test -- --coverage",
+        "test:ui": "npm run test:coverage -- --ui"
     },
     "peerDependencies": {
         "react": "^18.2.0",
@@ -36,8 +37,9 @@
         "@types/react": "^18.2.71",
         "@types/react-dom": "^18.2.22",
         "@typescript-eslint/parser": "^6.21.0",
-        "@vitest/coverage-istanbul": "^1.6.0",
         "@vitejs/plugin-react": "^4.3.0",
+        "@vitest/coverage-istanbul": "^1.6.0",
+        "@vitest/ui": "^1.6.0",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-react": "^7.34.1",
