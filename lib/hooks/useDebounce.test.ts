@@ -1,12 +1,21 @@
-import { describe, it, expect } from 'vitest'
-
-import { useDebounce } from '../main.ts'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 
+import { useDebounce } from '../main.ts'
+
 describe('useDebounce', () => {
-    it('should return the debounced value', () => {
+    beforeEach(() => {
+        vi.useFakeTimers({ shouldAdvanceTime: true })
+    })
+
+    afterEach(() => {
+        vi.runOnlyPendingTimers()
+        vi.useRealTimers()
+    })
+
+    it('should return the debounced value', async () => {
         const value = 'test-1'
-        const { result } = renderHook(() => useDebounce(value, 1000))
+        const { result } = renderHook(() => useDebounce(value, 200))
         expect(result.current).toBe(value)
     })
 
