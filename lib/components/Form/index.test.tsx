@@ -1,7 +1,7 @@
 import { render, fireEvent, screen } from '@testing-library/react'
 import { describe, it, vi, expect } from 'vitest'
 
-import { Form } from './index.tsx'
+import { Form } from '../../main.ts'
 
 interface TestFormValues {
     name: string
