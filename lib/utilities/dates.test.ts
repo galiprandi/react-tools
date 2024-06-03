@@ -1,16 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { iso2LocalDateTime } from './dates.ts'
 
 describe('iso2LocalDateTime', () => {
-    const currentTZ = process.env.TZ
-    beforeEach(() => {
-        process.env.TZ = 'America/Argentina/Tucuman'
-    })
-
-    afterEach(() => {
-        process.env.TZ = currentTZ
-    })
-
     const invalidDates = [undefined, null, 12345, 'invalid date string']
 
     invalidDates.forEach((invalidDate) => {
