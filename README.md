@@ -3,431 +3,204 @@
 A set of simple and intuitive utilities for developing React applications.
 
 <br style="padding: 50px 0;"/>
-    <p align="center">
-        <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
-    </p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
+</p>
 
 <br style="padding: 50px 0;"/>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
-        <img src="https://img.shields.io/npm/d18m/%40galiprandi%2Freact-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Downloads"/>
-    </a>
-    <a href="https://jsr.io/@galiprandi/react-tools">
-        <img src="https://img.shields.io/jsr/v/%40galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="NPM Downloads"/>
-    </a>
-    <a href="https://github.com/galiprandi/react-tools">
-        <img src="https://img.shields.io/github/stars/galiprandi/react-tools?style=for-the-badge&logo=github&color=181717" alt="JSR Version"/>
-    </a>
+  <a href="https://www.npmjs.com/package/@galiprandi/react-tools">
+    <img src="https://img.shields.io/npm/d18m/%40galiprandi%2Freact-tools?style=for-the-badge&logo=npm&color=CB3837" alt="NPM Downloads"/>
+  </a>
+  <a href="https://jsr.io/@galiprandi/react-tools">
+    <img src="https://img.shields.io/jsr/v/%40galiprandi/react-tools?style=for-the-badge&logo=javascript&color=F7DF1E" alt="JSR Version"/>
+  </a>
+  <a href="https://github.com/galiprandi/react-tools">
+    <img src="https://img.shields.io/github/stars/galiprandi/react-tools?style=for-the-badge&logo=github&color=181717" alt="GitHub Stars"/>
+  </a>
 </p>
 
-#### Welcome to `@galiprandi/react-tools`, a set of simple and intuitive utilities for developing React applications. This package includes key tools that can streamline your development process, all while being dependency-free.
+---
 
-### Playground
+## Overview
 
-Try out the components in the playground: [@galiprandi/react-tools Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
+**@galiprandi/react-tools** is a dependency-free utility package offering composable components and hooks that simplify React development while maintaining accessibility and performance.
 
-### Installation
+### 🔗 [Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
 
-To install use one of the following commands:
+---
+
+## 🚀 Installation
 
 ```bash
 npm i @galiprandi/react-tools
-```
-
-```bash
+# or
+yarn add @galiprandi/react-tools
+# or
 pnpm i @galiprandi/react-tools
 ```
 
-```bash
-yarn add @galiprandi/react-tools
-```
+---
 
-## Components:
+## 📦 Components
 
--   `<Form />`: A component that wraps the form HTML tag and provides a simple way to create forms in your React application.
-    [Example](#form-component)
--   `<Input />`: A reusable input component that provides a consistent user experience.
-    [Example](#input-component)
+- `<Form />`: Enhanced `form` element wrapper.
+- `<Input />`: Reusable and extensible `input` component.
+- `<DateTime />`: `datetime-local` input with ISO format support.
+- `<Dialog />`: Accessible dialog/modal wrapper.
+- `<Observer />`: Tracks element visibility via Intersection Observer.
+- `<LazyRender />`: Delays rendering until visible in viewport.
 
--   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [Example](#datetime-component)
--   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [Example](#dialog-component)
--   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [Example](#observer-component)
--   `<LazyRender />`: A component that delays rendering its children until it becomes visible in the viewport. Useful for improving performance by deferring the rendering of off-screen content (e.g., cards, images, charts, etc.). [Example](#lazyrender-component)
+## 🪝 Hooks
 
-## Hooks:
+- `useDebounce(value, delay)`: Returns a debounced value.
 
--   `useDebounce()`: A hook that takes two arguments, value and delay, and return a debounced value. [Example](#usedebounce-hook)
+---
 
-## Components
+## 📘 Components in Detail
 
-### Form component
+### Form
 
-A component that wraps the `form` HTML tag and provides a simple way to create forms in your React application.
+Wraps a native `<form>` and captures values on submit.
 
-#### Adicional Props:
+**Props:**
+- `onSubmitValues: (values: T) => void`
+- `filterEmptyValues?: boolean` – Remove empty fields before submit. *(Default: false)*
 
--   `onSubmitValues:` Callback function that is called when the form is submitted and recibe a object with the form values.
--   `filterEmptyValues:` Boolean, defines if the empty values are filtered from the object passed to the `onSubmitValues` callback. (Default: false)
-
-#### Example:
-
-```js
-import { Form, Input } from '@galiprandi/react-tools'
-import { useState } from 'react'
-
-export const FormExample = () => {
-    const [values, setValues] = useState<MyFormValues>()
-
-    return (
-        <section>
-            <hr />
-            <h2>Form</h2>
-            <Form<MyFormValues>
-                onSubmitValues={setValues}
-                filterEmptyValues={true}
-            >
-                <fieldset>
-                    <legend>Form Example</legend>
-                    <Input
-                        name="username"
-                        label="username"
-                        placeholder="Username"
-                    />
-                    <br />
-                    <Input
-                        name="password"
-                        label="password"
-                        placeholder="Password"
-                        type="password"
-                    />
-                    <br />
-                    <button type="submit">Login</button>
-                </fieldset>
-            </Form>
-            <p>
-                <br />
-                onChangeISOValue: <code>{JSON.stringify(values)}</code>
-            </p>
-        </section>
-    )
-}
-
-type MyFormValues = {
-    username: string
-    password: string
-}
-```
-
-### Input component
-
-A simple wrapper around the native `input` element. It accepts all the same props as the native input element and adds a few additional props for convenience.
-
-#### Adicional Props:
-
--   `label`: A label for the input element. If provided, we add a label element with the provided text.
--   `onChangeValue`: A callback function that is called when the input value changes
--   `onChangeDebounce`: A callback function that is called when the input value changes after the debounce delay.
--   `debounceDelay`: The delay in milliseconds for the debounce.
--   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
--   `transform`: The type of transformation to apply to the input value. Options include "toUpperCase", "toLowerCase", "capitalize", "titleCase", "snakeCase", "onlyNumbers", "onlyLetters", "onlyEmail" and "onlyAlphanumeric"
--   `transformFn`: A custom function to apply to the input value. This function takes a string as input and returns a string as output. If both transform and transformFn are provided, the transformFn function will take precedence.
--   `datalist`: An array of strings to use as options in a datalist element.
-
-#### Example:
-
-```js
-import { useState } from "react";
-import { Input, type InputProps } from '@galiprandi/react-tools';
-
-export const InputExample = () => {
-  const [value, setValue] = useState<InputProps["value"]>();
-  const [valueDebounced, setValueDebounced] = useState<InputProps["value"]>();
-
-  return (
-    <section>
-      <h2>Input</h2>
-
-      <Input
-        type="text"
-        placeholder="Enter your name and last name"
-        // Custom attributes
-        label="Name and Last Name"
-        className="my-custom-input"
-        value={value}
-        onChangeValue={setValue}
-        onChangeDebounce={setValueDebounced}
-        debounceDelay={1000}
-        transform="titleCase"
-        datalist={['John Doe', 'Jane Doe', 'John Smith']}
-      />
-      <p>
-        Transformed value: <code>{value}</code>
-        <br />
-        Debounced value (1s): <code>{valueDebounced}</code>
-      </p>
-    </section>
-  );
-};
-```
-
-### DateTime component
-
-A simple wrapper around the native `input` element with `type="datetime-local"`. It accepts all the same props as the native input element and adds a few additional props for convenience.
-
-#### Adicional Props:
-
--   `label`: A label for the input element. If provided, we add a label element with the provided text.
--   `className`: A class name to apply to the input element. If a label is provided, the class name is applied to the label and input elements.
--   `onChangeValue`: A callback function that is called when the input value changes.
--   `onChangeISOValue`: A callback function that is called when the input value changes and returns the date in RFC 3339 format.
--   `isoValue`: The date in RFC 3339 format.
--   Any other prop that the our `Input` component accepts (like `onChangeDebounce`, `transform` and `transformFn`).
-
-#### Example:
-
-```js
-import { useState } from 'react';
-import { DateTime, type DateTimeProps } from '@galiprandi/react-tools';
-
-export const DateTimeExample = () => {
-  const now = new Date().toISOString();
-  const [isoValue, setIsoValue] = useState<DateTimeProps['isoValue']>(now);
-
-  return (
-    <section>
-      <hr />
-      <h2>DateTime</h2>
-      <DateTime
-        // Custom attributes
-        isoValue={isoValue}
-        label="Choice your birthday"
-        onChangeISOValue={setIsoValue}
-      />
-      <p>
-        onChangeISOValue: <code>{isoValue}</code>
-      </p>
-    </section>
-  );
-};
-
-
-```
-
-### Dialog component
-
-A component that wraps the `dialog` HTML tag and provides a simple way to create accessibility dialogs and modals in your React application.
-
-#### Adicional Props:
-
--   `isOpen:` Boolean, defines if the dialog is open or closed. (Optional)
--   `behavior:` 'dialog' | 'modal', defines the behavior of the dialog. (Default: 'modal')
--   `onOpen:` Callback function executed when the dialog is opened. (Optional)
--   `onClose:` Callback function executed when the dialog is closed. (Optional)
--   `children:` ReactNode, the content of the dialog. (Optional)
--   `opener:` ReactNode, the element that opens the dialog. (Optional)
-
-#### Example:
-
-```js
-import { Dialog } from '@galiprandi/react-tools'
-
-export const DialogExample = () => {
-    return (
-        <section>
-            <hr />
-            <h2>Dialog</h2>
-
-            <Dialog
-                // Custom attributes
-                behavior="modal"
-                opener={<button>Toggle Dialog</button>}
-                onOpen={() => console.info('Dialog opened')}
-                onClose={() => console.info('Dialog closed')}
-            >
-                <h2>Hello there 👋</h2>
-                <p>This is a dialog example.</p>
-                <p>
-                    For information on how to use html dialogs, or styling them,
-                    <a
-                        href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {' '}
-                        check documentation on MDN website
-                    </a>
-                </p>
-            </Dialog>
-        </section>
-    )
-}
-```
-
-### Observer component
-
-A component that allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more.
-
-#### Adicional Props:
-
--   `children:` ReactNode, the content of the observer.
--   `onAppear:` Callback function executed when the element enters the viewport. (Optional)
--   `onDisappear` Callback function executed when the element exits the viewport. (Optional)
--   `wrapper:` HTMLElement, the element that is used as wrapper of children. (Default: 'div')
--   `root:` HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
--   `rootMargin` Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
--   `threshold` Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
-
-#### Example:
-
-```js
-import { Observer } from '@galiprandi/react-tools'
-import { useState } from 'react'
-
-export const ObserveExample = () => {
-    const [inScreen, setInScreen] = useState<number[]>([])
-    const images = Array.from({ length: 5 }, (_, i) => i + 1)
-
-    return (
-        <section>
-            <hr />
-            <h2>Observer</h2>
-            <p>
-                <small>
-                    A component that allows you to track when an element enters
-                    or exits the viewport. This is useful for lazy loading
-                    images, infinite scrolling, and more.
-                </small>
-            </p>
-            <div
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                    right: 0,
-                    fontSize: 20,
-                    background: '#283618',
-                    padding: 15,
-                }}
-            >
-                Images in screen: {inScreen.join(' | ')}
-            </div>
-            <br />
-            {images.map((i) => (
-                <Observer
-                    key={i}
-                    wrapper="p"
-                    onAppear={() =>
-                        setInScreen((prev) => Array.from(new Set([...prev, i])))
-                    }
-                    onDisappear={() =>
-                        setInScreen((prev) => prev.filter((item) => item !== i))
-                    }
-                    threshold={0.5}
-                >
-                    <>
-                        <img
-                            src={`https://picsum.photos/500/500?random=${i}`}
-                            loading="lazy"
-                            alt="Free image"
-                            width={500}
-                            height={500}
-                        />
-                        <br />
-                    </>
-                </Observer>
-            ))}
-        </section>
-    )
-}
-```
-
-### LazyRender component
-
-A component that delays rendering its children until it becomes visible in the viewport. Useful for improving performance by deferring the rendering of off-screen content (e.g., cards, images, charts, etc.).
-
-#### Adicional Props:
-
--   `children:` ReactNode – The content to render once visible.
--   `wrapper:` HTMLElement, the element that is used as wrapper of children. (Default: 'div')
--   `placeholder:` ReactNode, the content to render when the component is out of view. (Default: null)
--   `root:` HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
--   `rootMargin` Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
--   `threshold` Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
-
-#### Example:
-
+**Example:**
 ```tsx
-import { LazyRender } from '@galiprandi/react-tools'
-
-export const LazyRenderExample = () => {
-    return (
-        <section>
-            <hr />
-            <h2>LazyRender</h2>
-            <div style={{ height: '100vh' }}>
-                Scroll down to trigger LazyRender...
-            </div>
-
-            <LazyRender wrapper="section" placeholder={<p>Loading...</p>}>
-                <div style={{ padding: 20, background: '#eee' }}>
-                    <h3>I was lazily rendered! 🐢</h3>
-                    <p>This content only rendered once in view.</p>
-                </div>
-            </LazyRender>
-        </section>
-    )
-}
+<Form<MyFormValues> onSubmitValues={setValues} filterEmptyValues>
+  <Input name="username" label="Username" placeholder="Username" />
+  <Input name="password" label="Password" placeholder="Password" type="password" />
+  <button type="submit">Login</button>
+</Form>
 ```
 
-## Hooks
+---
 
-### useDebounce hook
+### Input
 
-A simple hook that takes two arguments, value and delay, and returns a debounced value. Its used internally by some components, but you can use it in your custom hooks or components.
+Enhanced `input` with support for transformations, debouncing, datalist, and more.
 
-#### Example:
+**Additional Props:**
+- `label`
+- `onChangeValue`, `onChangeDebounce`, `debounceDelay`
+- `transform`: "toUpperCase" | "toLowerCase" | "capitalize" | "titleCase" | "snakeCase" | "onlyNumbers" | "onlyLetters" | "onlyEmail" | "onlyAlphanumeric"
+- `transformFn`: `(value: string) => string`
+- `datalist: string[]`
 
-```js
-import { useDebounce } from '@galiprandi/react-tools'
-import { useState } from 'react'
-
-export const DebounceExample = () => {
-    const [value, setValue] = useState<string>()
-    const debouncedValue = useDebounce(value, 1000)
-
-    return (
-        <section>
-            <hr />
-            <h2>useDebounce</h2>
-
-            <input
-                type="text"
-                placeholder="Type something..."
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-            />
-            <p>
-                Value: <code>{value}</code>
-                <br />
-                Debounced value (1s): <code>{debouncedValue}</code>
-            </p>
-        </section>
-    )
-}
+**Example:**
+```tsx
+<Input
+  label="Name"
+  placeholder="Enter full name"
+  transform="titleCase"
+  onChangeValue={setValue}
+  onChangeDebounce={setValueDebounced}
+  debounceDelay={1000}
+  datalist={["John Doe", "Jane Smith"]}
+/>
 ```
 
-## Contribution
+---
 
-Contributions are welcome! To contribute:
+### DateTime
 
-1. Fork this repository.
-2. Create a branch with a meaningful description.
-3. Make the desired changes.
-4. Update the **documentation** if necessary.
-5. Open a Pull Request to the main branch.
+Wrapper for `input[type=datetime-local]` with ISO (RFC 3339) support.
 
-If you find an issue or have a suggestion to improve the project, feel free to [open an issue](https://github.com/galiprandi/react-tools/issues).
+**Additional Props:**
+- `isoValue`: string
+- `onChangeISOValue`: (iso: string) => void
+- Inherits all `Input` props
+
+**Example:**
+```tsx
+<DateTime
+  label="Select your birthday"
+  isoValue={isoValue}
+  onChangeISOValue={setIsoValue}
+/>
+```
+
+---
+
+### Dialog
+
+Wraps the native `dialog` element with modal support and accessibility features.
+
+**Props:**
+- `isOpen?: boolean`
+- `behavior?: 'dialog' | 'modal'` *(Default: 'modal')*
+- `onOpen?`, `onClose?`
+- `opener?`: ReactNode
+- `children?`: ReactNode
+
+**Example:**
+```tsx
+<Dialog
+  behavior="modal"
+  opener={<button>Open Dialog</button>}
+  onOpen={() => console.log('Opened')}
+  onClose={() => console.log('Closed')}
+>
+  <h2>Hello 👋</h2>
+  <p>This is a dialog example.</p>
+</Dialog>
+```
+
+---
+
+### Observer
+
+Detects when a child enters/exits the viewport.
+
+**Props:**
+- `onChange: (isVisible: boolean) => void`
+- `threshold?: number | number[]`
+
+**Example:**
+```tsx
+<Observer onChange={visible => console.log(visible)}>
+  <p>Track my visibility</p>
+</Observer>
+```
+
+---
+
+### LazyRender
+
+Renders children only when visible in viewport.
+
+**Props:**
+- `placeholder?: ReactNode`
+- `threshold?: number | number[]`
+
+**Example:**
+```tsx
+<LazyRender placeholder={<div>Loading...</div>}>
+  <img src="/heavy-content.jpg" alt="Lazy Loaded" />
+</LazyRender>
+```
+
+---
+
+## 🔁 Hook: useDebounce
+
+Returns a debounced value after a delay.
+
+**Signature:**
+```ts
+function useDebounce<T>(value: T, delay: number): T;
+```
+
+**Example:**
+```tsx
+const debounced = useDebounce(searchTerm, 500);
+```
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
+MIT © [@galiprandi](https://github.com/galiprandi)
