@@ -6,6 +6,7 @@ import { FormExample } from './Examples/FormExample'
 import { InputExample } from './Examples/InputExample'
 import { ObserveExample } from './Examples/ObserverExample'
 import { LazyRenderExample } from './Examples/LazyRenderExample'
+import { AsyncBlockExample } from './Examples/AsyncBlockExample'
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                 tools that can streamline your development process.
             </p>
 
+            <AsyncBlockExample />
             <FormExample />
             <InputExample />
             <DateTimeExample />

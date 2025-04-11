@@ -45,35 +45,78 @@ pnpm i @galiprandi/react-tools
 
 ## 📦 Components
 
-- `<Form />`: Enhanced `form` element wrapper.
-- `<Input />`: Reusable and extensible `input` component.
-- `<DateTime />`: `datetime-local` input with ISO format support.
-- `<Dialog />`: Accessible dialog/modal wrapper.
-- `<Observer />`: Tracks element visibility via Intersection Observer.
-- `<LazyRender />`: Delays rendering until visible in viewport.
+-   `<AsyncBlock />`: Declaratively renders asynchronous content with state handling.
+-   `<Form />`: Enhanced `form` element wrapper.
+-   `<Input />`: Reusable and extensible `input` component.
+-   `<DateTime />`: `datetime-local` input with ISO format support.
+-   `<Dialog />`: Accessible dialog/modal wrapper.
+-   `<Observer />`: Tracks element visibility via Intersection Observer.
+-   `<LazyRender />`: Delays rendering until visible in viewport.
 
 ## 🪝 Hooks
 
-- `useDebounce(value, delay)`: Returns a debounced value.
+-   `useDebounce(value, delay)`: Returns a debounced value.
 
 ---
 
 ## 📘 Components in Detail
+
+### AsyncBlock
+
+Declaratively renders asynchronous content with pending, success, and error states.
+
+**Props:**
+
+-   `promiseFn: (signal?: AbortSignal) => Promise<T>` - Function that returns a Promise
+-   `pending: ReactNode | (() => ReactNode)` - Content to display during loading
+-   `success: (data: T) => ReactNode` - Function to render on successful resolution
+-   `error: (err: unknown) => ReactNode` - Function to render on error
+-   `timeOut?: number` - Optional timeout in milliseconds
+-   `deps?: any[]` - Dependencies to re-run the promise when changed
+-   `onSuccess?: (data: T) => void` - Optional callback on success
+-   `onError?: (err: unknown) => void` - Optional callback on error
+
+**Example:**
+
+```tsx
+<AsyncBlock
+    promiseFn={() => fetch(`/api/users/${userId}`).then((res) => res.json())}
+    pending={<p>Loading user data...</p>}
+    success={(data) => (
+        <div>
+            <h2>{data.name}</h2>
+            <p>Email: {data.email}</p>
+        </div>
+    )}
+    error={(err) => <p>Error: {(err as Error)?.message}</p>}
+    timeOut={5000} // Cancel after 5 seconds
+    deps={[userId]} // Re-run when userId changes
+/>
+```
+
+---
 
 ### Form
 
 Wraps a native `<form>` and captures values on submit.
 
 **Props:**
-- `onSubmitValues: (values: T) => void`
-- `filterEmptyValues?: boolean` – Remove empty fields before submit. *(Default: false)*
+
+-   `onSubmitValues: (values: T) => void`
+-   `filterEmptyValues?: boolean` – Remove empty fields before submit. _(Default: false)_
 
 **Example:**
+
 ```tsx
 <Form<MyFormValues> onSubmitValues={setValues} filterEmptyValues>
-  <Input name="username" label="Username" placeholder="Username" />
-  <Input name="password" label="Password" placeholder="Password" type="password" />
-  <button type="submit">Login</button>
+    <Input name="username" label="Username" placeholder="Username" />
+    <Input
+        name="password"
+        label="Password"
+        placeholder="Password"
+        type="password"
+    />
+    <button type="submit">Login</button>
 </Form>
 ```
 
@@ -84,22 +127,24 @@ Wraps a native `<form>` and captures values on submit.
 Enhanced `input` with support for transformations, debouncing, datalist, and more.
 
 **Additional Props:**
-- `label`
-- `onChangeValue`, `onChangeDebounce`, `debounceDelay`
-- `transform`: "toUpperCase" | "toLowerCase" | "capitalize" | "titleCase" | "snakeCase" | "onlyNumbers" | "onlyLetters" | "onlyEmail" | "onlyAlphanumeric"
-- `transformFn`: `(value: string) => string`
-- `datalist: string[]`
+
+-   `label`
+-   `onChangeValue`, `onChangeDebounce`, `debounceDelay`
+-   `transform`: "toUpperCase" | "toLowerCase" | "capitalize" | "titleCase" | "snakeCase" | "onlyNumbers" | "onlyLetters" | "onlyEmail" | "onlyAlphanumeric"
+-   `transformFn`: `(value: string) => string`
+-   `datalist: string[]`
 
 **Example:**
+
 ```tsx
 <Input
-  label="Name"
-  placeholder="Enter full name"
-  transform="titleCase"
-  onChangeValue={setValue}
-  onChangeDebounce={setValueDebounced}
-  debounceDelay={1000}
-  datalist={["John Doe", "Jane Smith"]}
+    label="Name"
+    placeholder="Enter full name"
+    transform="titleCase"
+    onChangeValue={setValue}
+    onChangeDebounce={setValueDebounced}
+    debounceDelay={1000}
+    datalist={['John Doe', 'Jane Smith']}
 />
 ```
 
@@ -110,16 +155,18 @@ Enhanced `input` with support for transformations, debouncing, datalist, and mor
 Wrapper for `input[type=datetime-local]` with ISO (RFC 3339) support.
 
 **Additional Props:**
-- `isoValue`: string
-- `onChangeISOValue`: (iso: string) => void
-- Inherits all `Input` props
+
+-   `isoValue`: string
+-   `onChangeISOValue`: (iso: string) => void
+-   Inherits all `Input` props
 
 **Example:**
+
 ```tsx
 <DateTime
-  label="Select your birthday"
-  isoValue={isoValue}
-  onChangeISOValue={setIsoValue}
+    label="Select your birthday"
+    isoValue={isoValue}
+    onChangeISOValue={setIsoValue}
 />
 ```
 
@@ -130,22 +177,24 @@ Wrapper for `input[type=datetime-local]` with ISO (RFC 3339) support.
 Wraps the native `dialog` element with modal support and accessibility features.
 
 **Props:**
-- `isOpen?: boolean`
-- `behavior?: 'dialog' | 'modal'` *(Default: 'modal')*
-- `onOpen?`, `onClose?`
-- `opener?`: ReactNode
-- `children?`: ReactNode
+
+-   `isOpen?: boolean`
+-   `behavior?: 'dialog' | 'modal'` _(Default: 'modal')_
+-   `onOpen?`, `onClose?`
+-   `opener?`: ReactNode
+-   `children?`: ReactNode
 
 **Example:**
+
 ```tsx
 <Dialog
-  behavior="modal"
-  opener={<button>Open Dialog</button>}
-  onOpen={() => console.log('Opened')}
-  onClose={() => console.log('Closed')}
+    behavior="modal"
+    opener={<button>Open Dialog</button>}
+    onOpen={() => console.log('Opened')}
+    onClose={() => console.log('Closed')}
 >
-  <h2>Hello 👋</h2>
-  <p>This is a dialog example.</p>
+    <h2>Hello 👋</h2>
+    <p>This is a dialog example.</p>
 </Dialog>
 ```
 
@@ -156,13 +205,15 @@ Wraps the native `dialog` element with modal support and accessibility features.
 Detects when a child enters/exits the viewport.
 
 **Props:**
-- `onChange: (isVisible: boolean) => void`
-- `threshold?: number | number[]`
+
+-   `onChange: (isVisible: boolean) => void`
+-   `threshold?: number | number[]`
 
 **Example:**
+
 ```tsx
-<Observer onChange={visible => console.log(visible)}>
-  <p>Track my visibility</p>
+<Observer onChange={(visible) => console.log(visible)}>
+    <p>Track my visibility</p>
 </Observer>
 ```
 
@@ -173,13 +224,15 @@ Detects when a child enters/exits the viewport.
 Renders children only when visible in viewport.
 
 **Props:**
-- `placeholder?: ReactNode`
-- `threshold?: number | number[]`
+
+-   `placeholder?: ReactNode`
+-   `threshold?: number | number[]`
 
 **Example:**
+
 ```tsx
 <LazyRender placeholder={<div>Loading...</div>}>
-  <img src="/heavy-content.jpg" alt="Lazy Loaded" />
+    <img src="/heavy-content.jpg" alt="Lazy Loaded" />
 </LazyRender>
 ```
 
@@ -190,13 +243,15 @@ Renders children only when visible in viewport.
 Returns a debounced value after a delay.
 
 **Signature:**
+
 ```ts
-function useDebounce<T>(value: T, delay: number): T;
+function useDebounce<T>(value: T, delay: number): T
 ```
 
 **Example:**
+
 ```tsx
-const debounced = useDebounce(searchTerm, 500);
+const debounced = useDebounce(searchTerm, 500)
 ```
 
 ---
