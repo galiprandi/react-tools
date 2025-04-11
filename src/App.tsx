@@ -5,6 +5,7 @@ import { DialogExample } from './Examples/DialogExample'
 import { FormExample } from './Examples/FormExample'
 import { InputExample } from './Examples/InputExample'
 import { ObserveExample } from './Examples/ObserverExample'
+import { LazyRenderExample } from './Examples/LazyRenderExample'
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
             <DateTimeExample />
             <DialogExample />
             <ObserveExample />
+            <LazyRenderExample />
             <DebounceExample />
         </main>
     )

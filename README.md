@@ -1,3 +1,7 @@
+# @galiprandi/react-tools
+
+A set of simple and intuitive utilities for developing React applications.
+
 <br style="padding: 50px 0;"/>
     <p align="center">
         <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
@@ -49,6 +53,7 @@ yarn add @galiprandi/react-tools
 -   `<DateTime />`: A reusable input component with `type="datetime-local"` that use dates in RFC 3339 format. [Example](#datetime-component)
 -   `<Dialog />`: A component that wraps the dialog HTML tag and provides a simple way to create accessibility dialogs and modals in your React application. [Example](#dialog-component)
 -   `<Observer />`: A component allows you to track when an element enters or exits the viewport. This is useful for lazy loading images, infinite scrolling, and more. [Example](#observer-component)
+-   `<LazyRender />`: A component that delays rendering its children until it becomes visible in the viewport. Useful for improving performance by deferring the rendering of off-screen content (e.g., cards, images, charts, etc.). [Example](#lazyrender-component)
 
 ## Hooks:
 
@@ -331,6 +336,43 @@ export const ObserveExample = () => {
                     </>
                 </Observer>
             ))}
+        </section>
+    )
+}
+```
+
+### LazyRender component
+
+A component that delays rendering its children until it becomes visible in the viewport. Useful for improving performance by deferring the rendering of off-screen content (e.g., cards, images, charts, etc.).
+
+#### Adicional Props:
+
+-   `children:` ReactNode – The content to render once visible.
+-   `wrapper:` HTMLElement, the element that is used as wrapper of children. (Default: 'div')
+-   `root:` HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
+-   `rootMargin` Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
+-   `threshold` Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
+
+#### Example:
+
+```tsx
+import { LazyRender } from '@galiprandi/react-tools'
+
+export const LazyRenderExample = () => {
+    return (
+        <section>
+            <hr />
+            <h2>LazyRender</h2>
+            <div style={{ height: '100vh' }}>
+                Scroll down to trigger LazyRender...
+            </div>
+
+            <LazyRender>
+                <div style={{ padding: 20, background: '#eee' }}>
+                    <h3>I was lazily rendered! 🐢</h3>
+                    <p>This content only rendered once in view.</p>
+                </div>
+            </LazyRender>
         </section>
     )
 }
