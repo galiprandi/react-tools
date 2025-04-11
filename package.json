@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "dev": "vite",
-        "publish": "npm run publish:jsr && npm run publish:npm",
+        "publish": "npm run publish:npm",
         "build": "tsc --p ./tsconfig-build.json && vite build",
         "lint": "eslint ./lib  --fix",
         "release:sync": "sh ./sync-version.sh",
@@ -51,6 +51,7 @@
         "glob": "^10.3.14",
         "globals": "^15.2.0",
         "happy-dom": "^14.12.0",
+        "jsr": "^0.13.4",
         "prettier": "3.2.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
