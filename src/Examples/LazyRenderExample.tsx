@@ -12,7 +12,7 @@ export const LazyRenderExample = () => {
                     viewport.
                 </small>
             </p>
-            <LazyRender>
+            <LazyRender wrapper="section" placeholder={<p>Loading...</p>}>
                 <img
                     src={`https://picsum.photos/500/500`}
                     loading="lazy"

@@ -22,7 +22,7 @@ import { Observer } from '../Observer'
  * };
  * ```
  */ export const LazyRender = (props: LazyRenderProps) => {
-    const { wrapper = 'div', ...options } = props
+    const { wrapper = 'div', placeholder = null, ...options } = props
     const [render, setRender] = useState(false)
 
     return (
@@ -32,7 +32,7 @@ import { Observer } from '../Observer'
             wrapper={wrapper}
             {...options}
         >
-            {render && props.children}
+            {render ? props.children : placeholder}
         </Observer>
     )
 }
@@ -55,4 +55,9 @@ export interface LazyRenderProps
      * @default 'div'
      */
     wrapper?: keyof ReactHTML
+    /**
+     * The content to render when the component is out of view.
+     * Default: null
+     */
+    placeholder?: React.ReactNode
 }

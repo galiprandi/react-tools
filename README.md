@@ -349,6 +349,7 @@ A component that delays rendering its children until it becomes visible in the v
 
 -   `children:` ReactNode – The content to render once visible.
 -   `wrapper:` HTMLElement, the element that is used as wrapper of children. (Default: 'div')
+-   `placeholder:` ReactNode, the content to render when the component is out of view. (Default: null)
 -   `root:` HTMLElement, the element that is used as the viewport for checking visibility of the target. (Optional)
 -   `rootMargin` Margin around the root. Can have values similar to the CSS margin property, e.g. "10px 20px 30px 40px" (top, right, bottom, left). The values can be percentages. (Optional)
 -   `threshold` Number, a number between 0 and 1 indicating the percentage of the target's visibility the observer's callback should be executed. (Default: 0)
@@ -367,7 +368,7 @@ export const LazyRenderExample = () => {
                 Scroll down to trigger LazyRender...
             </div>
 
-            <LazyRender>
+            <LazyRender wrapper="section" placeholder={<p>Loading...</p>}>
                 <div style={{ padding: 20, background: '#eee' }}>
                     <h3>I was lazily rendered! 🐢</h3>
                     <p>This content only rendered once in view.</p>
