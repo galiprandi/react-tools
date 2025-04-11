@@ -56,6 +56,7 @@ export const Observer = (props: ObserverProps): ObserverReturn => {
         }
     }, [ref, options])
 
+    // eslint-disable-next-line react/no-children-prop
     return createElement(wrapper, { ref, children })
 }
 
