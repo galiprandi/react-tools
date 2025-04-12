@@ -21,7 +21,7 @@ import { Observer } from '../Observer'
  *     );
  * };
  * ```
- */ export const LazyRender = (props: LazyRenderProps) => {
+ */ export const LazyRender = (props: LazyRenderProps): JSX.Element => {
     const { wrapper = 'div', placeholder = null, ...options } = props
     const [render, setRender] = useState(false)
 
