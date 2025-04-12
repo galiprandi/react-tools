@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "dev": "vite",
-        "publish": "npm run publish:npm",
+        "publish": "npm run publish:npm && npm run publish:jsr",
         "build": "tsc --p ./tsconfig-build.json && vite build",
         "lint": "eslint ./lib  --fix",
         "release:sync": "sh ./sync-version.sh",
