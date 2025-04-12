@@ -2,8 +2,8 @@
 
 A set of simple and intuitive utilities for developing React applications.
 
-<p align="center">
-![react-tools](https://raw.githubusercontent.com/galiprandi/react-tools/refs/heads/main/lib/assets/logo.svg)
+<p align="center" style="background-color: white">
+  <img src="lib/assets/logo.svg" alt="Logo" width="300" height="180">
 </p>
 
 ***
