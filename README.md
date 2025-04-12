@@ -2,7 +2,7 @@
 
 A set of simple and intuitive utilities for developing React applications.
 
-<p align="center" style="background-color: white">
+<p align="center" style="background-color: white; border-radius: 5px;">
   <img src="lib/assets/logo.svg" alt="Logo" width="300" height="180">
 </p>
 
