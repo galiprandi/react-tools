@@ -4,7 +4,7 @@ A set of simple and intuitive utilities for developing React applications.
 
 <br style="padding: 50px 0;"/>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/galiprandi/react-tools/171080a598bfd9464e6825e385a300c04805da2c/src/assets/react-tools-slim.svg" alt="react tools" width="350" title="react tools"/>
+  <img src="https://raw.githubusercontent.com/galiprandi/react-tools/refs/heads/main/lib/assets/logo.svg" alt="react tools" width="350" title="react tools"/>
 </p>
 
 <br style="padding: 50px 0;"/>
