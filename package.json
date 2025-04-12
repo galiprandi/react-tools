@@ -24,7 +24,7 @@
         "lint": "eslint ./lib  --fix",
         "release:sync": "sh ./sync-version.sh",
         "test": "TZ=America/Argentina/Tucuman vitest",
-        "test:coverage": "npm run test -- --coverage",
+        "test:coverage": "npm run test -- run --coverage",
         "test:ui": "npm run test:coverage -- --ui",
         "prepublish": "npm run release:sync && npm run build",
         "publish:jsr": "jsr publish --allow-dirty",
