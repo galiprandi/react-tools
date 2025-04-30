@@ -35,6 +35,7 @@
 * [Hooks](#hooks)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
+  * [useList](#uselist)
 * [Accessibility & Performance](#accessibility--performance)
 * [FAQ](#faq)
 * [License](#license)
@@ -254,8 +255,6 @@ Only renders children when they become visible in the viewport.
 
 ## 🪝 Hooks
 
-***
-
 ### useDebounce
 
 **Description**\
@@ -359,6 +358,40 @@ function FutureExecution({ targetDate }: { targetDate: Date }) {
 
 ***
 
+### useList
+
+**Description**
+A React hook to simplify managing array state in components. It provides immutable helper methods for common operations like adding, inserting, removing, updating, finding, and counting items based on index or item properties, reducing boilerplate compared to manual state updates.
+
+**Parameters**
+
+| Parameter   | Type   | Description                                 |
+|-------------|--------|---------------------------------------------|
+| `initialList`| `T[]`  | The initial array state (defaults to `[]`) |
+
+**Returns**
+An object containing the current array state (`list`) and helper functions to modify or query it immutably.
+
+| Property         | Type                                                        | Description                                                                                                                               |
+|------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `list`           | `T[]`                                                       | The current array state.                                                                                                                  |
+| `addItem`        | `(item: T) => void`                                         | Adds an `item` to the end of the array.                                                                                                   |
+| `insert`         | `(index: number, item: T) => void`                          | Inserts an `item` at the specified `index`. If the index is out of bounds, the item is added to the beginning (index < 0) or end (index > length). |
+| `insertMany`     | `(items: T[]) => void`                                      | Adds multiple `items` to the end of the array. Does nothing if input is not an array or is empty.                                       |
+| `removeByIdx`    | `(index: number) => void`                                   | Removes the item at the specified `index`. If the index is out of bounds, the list remains unchanged.                                   |
+| `removeBy`       | `(key: string \| undefined \| null, value: any) => void`    | Removes the **first** item where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, removes the first item where `item` strictly equals `value` (useful for primitives). If no match is found, the list remains unchanged. |
+| `removeManyBy`   | `(key: string \| undefined \| null, value: any) => void`    | Removes **all** items where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, removes all items where `item` strictly equals `value` (useful for primitives). If no match is found, the list remains unchanged. |
+| `updateByIdx`    | `(index: number, updateFn: (item: T) => T) => void`         | Updates the item at the specified `index` using an immutable `updateFn`. If the index is out of bounds, the list remains unchanged.    |
+| `updateBy`       | `(key: string \| undefined \| null, value: any, updateFn: (item: T) => T) => void` | Updates the **first** item where `item[key]` strictly equals `value` (or `item === value` if `key` is null/undefined) using an immutable `updateFn`. If no match is found, the list remains unchanged. |
+| `updateManyBy`   | `(key: string \| undefined \| null, value: any, updateFn: (item: T) => T) => void` | Updates **all** items where `item[key]` strictly equals `value` (or `item === value` if `key` is null/undefined) using an immutable `updateFn`. If no matches are found, the list remains unchanged. |
+| `clearList`      | `() => void`                                                | Removes all items from the list, setting it to an empty array.                                                                           |
+| `setList`        | `(newList: T[] \| ((currentList: T[]) => T[])) => void`     | Replaces the entire list array, similar to the standard `useState` setter. Accepts a new array or a function updater.                 |
+| `findItemBy`     | `(key: string \| undefined \| null, value: any) => T \| undefined` | Finds and returns the **first** item where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, finds the first item where `item` strictly equals `value`. Does not modify the list. Returns `undefined` if not found. |
+| `findItemsBy`    | `(key: string \| undefined \| null, value: any) => T[]`       | Finds and returns **all** items where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, finds all items where `item` strictly equals `value`. Does not modify the list. Returns an empty array if no matches are found. |
+| `count`          | `(predicate?: (item: T) => boolean) => number`              | Returns the total number of items in the list, or the count of items matching an optional `predicate`. Does not modify the list.       |
+
+***
+
 ## ♿ Accessibility & Performance
 
 All components follow accessibility best practices:
@@ -388,6 +421,3 @@ A: Open an issue on the [GitHub repo](https://github.com/galiprandi/react-tools/
 ## 📄 License
 
 MIT © [@galiprandi](https://github.com/galiprandi)
-
-```
-```
