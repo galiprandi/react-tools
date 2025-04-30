@@ -18,27 +18,27 @@
   </a>
 </p>
 
----
+***
 
 ## 📚 Table of Contents
 
-- [Overview](#overview)
-- [Installation](#installation)
-- [Components](#components)
-  - [AsyncBlock](#asyncblock)
-  - [Form](#form)
-  - [Input](#input)
-  - [DateTime](#datetime)
-  - [Dialog](#dialog)
-  - [Observer](#observer)
-  - [LazyRender](#lazyrender)
-- [Hooks](#hooks)
-  - [useDebounce](#usedebounce)
-- [Accessibility & Performance](#accessibility--performance)
-- [FAQ](#faq)
-- [License](#license)
+* [Overview](#overview)
+* [Installation](#installation)
+* [Components](#components)
+  * [AsyncBlock](#asyncblock)
+  * [Form](#form)
+  * [Input](#input)
+  * [DateTime](#datetime)
+  * [Dialog](#dialog)
+  * [Observer](#observer)
+  * [LazyRender](#lazyrender)
+* [Hooks](#hooks)
+  * [useDebounce](#usedebounce)
+* [Accessibility & Performance](#accessibility--performance)
+* [FAQ](#faq)
+* [License](#license)
 
----
+***
 
 ## 🧠 Overview
 
@@ -46,7 +46,7 @@
 
 👉 [Live Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
 
----
+***
 
 ## 🚀 Installation
 
@@ -58,15 +58,15 @@ yarn add @galiprandi/react-tools
 pnpm add @galiprandi/react-tools
 ```
 
----
+***
 
 ## 📦 Components
 
----
+***
 
 ### AsyncBlock
 
-**Description**  
+**Description**\
 Declarative component to render async data with loading, success, and error states. Automatically cancels in-flight requests when dependencies change.
 
 **Example**
@@ -95,11 +95,11 @@ Declarative component to render async data with loading, success, and error stat
 | `onSuccess`  | `(data: T) => void`                      | Optional success callback                |
 | `onError`    | `(err: unknown) => void`                 | Optional error callback                  |
 
----
+***
 
 ### Form
 
-**Description**  
+**Description**\
 Enhanced `<form>` element that automatically gathers and returns values on submit.
 
 **Example**
@@ -118,11 +118,11 @@ Enhanced `<form>` element that automatically gathers and returns values on submi
 | `onSubmitValues`   | `(values: T) => void`          | Handles form submission with collected values |
 | `filterEmptyValues`| `boolean` *(default: false)*   | Remove empty fields before submission        |
 
----
+***
 
 ### Input
 
-**Description**  
+**Description**\
 Custom input component supporting transformations, debounce, datalist, and more.
 
 **Example**
@@ -150,11 +150,11 @@ Custom input component supporting transformations, debounce, datalist, and more.
 | `debounceDelay`     | `number`                            | Delay in milliseconds                    |
 | `datalist`          | `string[]`                          | List of autocomplete suggestions         |
 
----
+***
 
 ### DateTime
 
-**Description**  
+**Description**\
 A wrapper around `<input type="datetime-local" />` that handles ISO string conversion.
 
 **Example**
@@ -175,11 +175,11 @@ A wrapper around `<input type="datetime-local" />` that handles ISO string conve
 | `onChangeISOValue`  | `(iso: string) => void`           | Callback with ISO string                |
 | `...InputProps`     | All `<Input />` props             | Inherits all Input behavior             |
 
----
+***
 
 ### Dialog
 
-**Description**  
+**Description**\
 Accessible dialog/modal component built on top of the native `<dialog>` element.
 
 **Example**
@@ -205,11 +205,11 @@ Accessible dialog/modal component built on top of the native `<dialog>` element.
 | `opener`    | `ReactNode`                   | Element to trigger opening                 |
 | `children`  | `ReactNode`                   | Content inside the dialog                  |
 
----
+***
 
 ### Observer
 
-**Description**  
+**Description**\
 Tracks whether a child element is visible in the viewport using `IntersectionObserver`.
 
 **Example**
@@ -227,11 +227,11 @@ Tracks whether a child element is visible in the viewport using `IntersectionObs
 | `onChange`  | `(isVisible: boolean) => void`   | Callback when visibility changes        |
 | `threshold` | `number \| number[]`             | Intersection threshold (optional)       |
 
----
+***
 
 ### LazyRender
 
-**Description**  
+**Description**\
 Only renders children when they become visible in the viewport.
 
 **Example**
@@ -249,15 +249,15 @@ Only renders children when they become visible in the viewport.
 | `placeholder`| `ReactNode`               | Rendered before children become visible   |
 | `threshold`  | `number \| number[]`      | Optional visibility sensitivity           |
 
----
+***
 
 ## 🪝 Hooks
 
----
+***
 
 ### useDebounce
 
-**Description**  
+**Description**\
 A React hook that returns a debounced version of a value. Useful for search input, filters, etc.
 
 **Example**
@@ -273,37 +273,111 @@ const debouncedSearch = useDebounce(searchTerm, 500);
 | `value`       | `T`       | Value to debounce              |
 | `delay`       | `number`  | Delay in milliseconds          |
 
-**Returns**  
+**Returns**\
 Debounced version of the value (`T`).
 
----
+***
+
+### useTimer
+
+**Description**
+A React hook to manage `setTimeout`, `setInterval`, and date-based timers with automatic cleanup and event callbacks. Useful for scheduling actions and ensuring timers don't leak when components unmount.
+
+**Parameters (options)**
+
+| Parameter         | Type                               | Description                                                     |
+|-------------------|------------------------------------|-----------------------------------------------------------------|
+| `onSetTimer`      | `(timerId: number) => void`        | Callback fired when a new timer is successfully set.            |
+| `onCancelTimer`   | `(timerId: number) => void`        | Callback fired when an active timer is cleared/cancelled.       |
+| `onTimerComplete` | `(timerId: number) => void`        | Callback fired when a timer completes naturally (timeout) or for each interval execution (interval/limited interval). |
+| `onProgress`      | `(progress: number, elapsedMs: number, totalMs: number) => void` | Callback fired periodically during long timers (`setTimeout`) and limited intervals to report progress (0 to 1). |
+
+**Returns**
+An object containing control methods and status/info getters.
+
+| Property               | Type                                                     | Description                                                              |
+|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------|
+| `setTimeout`           | `(callback: () => void, delay: number \| Date) => number \| null` | Sets a timeout with event callbacks. Accepts milliseconds or a future `Date`. Returns the timer ID. |
+| `setInterval`          | `(callback: () => void, delay: number) => number \| null`       | Sets an interval with event callbacks. Accepts milliseconds. Returns the timer ID. |
+| `setTimeoutDate`       | `(callback: () => void, targetDate: Date) => number \| null`    | Sets a timeout to execute at a specific future `Date`. Returns the timer ID. |
+| `setLimitedInterval`   | `(callback: () => void, delay: number, iterations: number) => number \| null` | Sets an interval that executes a fixed number of times. Returns the timer ID. |
+| `clearTimer`           | `() => void`                                             | Clears any currently active timer set by this hook instance.             |
+| `isActive`             | `() => boolean`                                          | Returns `true` if a timer is currently active, `false` otherwise.        |
+| `getCurrentTimerId`    | `() => number \| null`                                   | Returns the ID of the currently active timer, or `null`.                 |
+| `getRemainingIterations`| `() => number \| null`                                   | For `setLimitedInterval`, returns remaining executions.                  |
+| `getRemainingTime`     | `() => number`                                           | For an active `setTimeout`, returns estimated remaining time in ms, otherwise `-1`. |
+
+**Example**
+
+This example demonstrates how to use `setTimeoutDate` within a React component (`FutureExecution`) to schedule an action for a specific future `targetDate` (passed as a prop). It utilizes the hook's event callbacks (`onSetTimer`, `onTimerComplete`, `onCancelTimer`, `onProgress`) to log the timer's lifecycle and progress, and ensures cleanup via `useEffect`.
+
+```tsx
+import { useEffect } from 'react';
+import { useTimer } from '@galiprandi/react-tools';
+
+function FutureExecution({ targetDate }: { targetDate: Date }) {
+  const { setTimeoutDate, clearTimer } = useTimer({
+    onSetTimer: (id) => console.log(`Timer ID ${id} set for future execution`),
+    onTimerComplete: (id) => console.log(`Timer ID ${id} completed!`),
+    onCancelTimer: (id) => console.log(`Timer ID ${id} cancelled!`),
+    onProgress: (progress) =>
+      console.log(`Progress: ${Math.round(progress * 100)}%`),
+  });
+
+  useEffect(() => {
+    console.log(`Scheduling action for: ${targetDate.toLocaleTimeString()}`);
+
+    setTimeoutDate(() => {
+      // Do something here, like a fake fetch request
+      console.log("--- Fake fetch executed! ---");
+    }, targetDate);
+
+    // Don't forget to clear the timer
+    return () => {
+      console.log('Component unmounting or targetDate change, clearing timer.');
+      clearTimer();
+    };
+  }, [setTimeoutDate, clearTimer, targetDate]);
+
+  return (
+    <div>
+      <p>Check the console for timer messages.</p>
+    </div>
+  );
+}
+```
+
+***
 
 ## ♿ Accessibility & Performance
 
 All components follow accessibility best practices:
 
-- ✅ `Dialog` uses proper ARIA roles and keyboard focus control.
-- ✅ `Input` supports labeling, aria attributes, and datalists.
-- ✅ `LazyRender` and `Observer` use `IntersectionObserver` to optimize rendering.
+* ✅ `Dialog` uses proper ARIA roles and keyboard focus control.
+* ✅ `Input` supports labeling, aria attributes, and datalists.
+* ✅ `LazyRender` and `Observer` use `IntersectionObserver` to optimize rendering.
 
----
+***
 
 ## ❓ FAQ
 
-**Q: Is this compatible with React Native?**  
+**Q: Is this compatible with React Native?**\
 A: No, this library is intended for use in React DOM (web).
 
-**Q: Can I style components with Tailwind or CSS modules?**  
+**Q: Can I style components with Tailwind or CSS modules?**\
 A: Yes, components are unstyled and fully customizable.
 
-**Q: Does it support SSR or work in Next.js?**  
+**Q: Does it support SSR or work in Next.js?**\
 A: Yes, all components are compatible with SSR environments.
 
-**Q: How can I report a bug or request a new feature?**  
+**Q: How can I report a bug or request a new feature?**\
 A: Open an issue on the [GitHub repo](https://github.com/galiprandi/react-tools/issues).
 
----
+***
 
 ## 📄 License
 
 MIT © [@galiprandi](https://github.com/galiprandi)
+
+```
+```
