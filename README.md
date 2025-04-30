@@ -34,6 +34,7 @@
   * [LazyRender](#lazyrender)
 * [Hooks](#hooks)
   * [useDebounce](#usedebounce)
+  * [useTimer](#usetimer)
 * [Accessibility & Performance](#accessibility--performance)
 * [FAQ](#faq)
 * [License](#license)
@@ -281,7 +282,16 @@ Debounced version of the value (`T`).
 ### useTimer
 
 **Description**
-A React hook to manage `setTimeout`, `setInterval`, and date-based timers with automatic cleanup and event callbacks. Useful for scheduling actions and ensuring timers don't leak when components unmount.
+Managing timers like `setTimeout` and `setInterval` directly in React components can be complex, often leading to issues like memory leaks, unexpected behavior during re-renders, or difficulties in cancellation when components unmount.
+
+The `useTimer` hook abstracts this complexity, providing a safe, declarative, and easy-to-use way to work with various types of timers. It ensures automatic cleanup, integrates with component lifecycles, and offers event callbacks for monitoring timer status, including progress for longer durations.
+
+**Features**
+
+* **Automatic Cleanup:** Timers are automatically cleared when the component using the hook unmounts, preventing memory leaks.
+* **Lifecycle Events:** Receive notifications when a timer is set, cancelled, completes, or reports progress.
+* **Flexible Scheduling:** Set timers by milliseconds, a future `Date` object, or as limited intervals.
+* **Simplified Control:** Clear any active timer with a single method call.
 
 **Parameters (options)**
 
@@ -309,7 +319,7 @@ An object containing control methods and status/info getters.
 
 **Example**
 
-This example demonstrates how to use `setTimeoutDate` within a React component (`FutureExecution`) to schedule an action for a specific future `targetDate` (passed as a prop). It utilizes the hook's event callbacks (`onSetTimer`, `onTimerComplete`, `onCancelTimer`, `onProgress`) to log the timer's lifecycle and progress, and ensures cleanup via `useEffect`.
+This example demonstrates how `useTimer` simplifies scheduling an action for a specific future `targetDate` and automatically handles cleanup, while utilizing event callbacks to monitor its state.
 
 ```tsx
 import { useEffect } from 'react';
@@ -332,7 +342,7 @@ function FutureExecution({ targetDate }: { targetDate: Date }) {
       console.log("--- Fake fetch executed! ---");
     }, targetDate);
 
-    // Don't forget to clear the timer
+    // ⚠️ Remember to clear the timer when the component unmounts or when the targetDate changes
     return () => {
       console.log('Component unmounting or targetDate change, clearing timer.');
       clearTimer();
