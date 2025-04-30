@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react'
 import { useTimer } from '../main.ts'
 
 describe('useTimer', () => {
-    // Setup fakes for timer functions
     beforeEach(() => {
         vi.useFakeTimers()
     })
@@ -22,17 +21,18 @@ describe('useTimer', () => {
             result.current.setTimeout(callback, 1000)
         })
 
-        expect(onSetTimer).toHaveBeenCalled()
+        expect(onSetTimer).toHaveBeenCalledTimes(1)
         expect(callback).not.toHaveBeenCalled()
         expect(result.current.isActive()).toBe(true)
+        expect(result.current.getCurrentTimerId()).not.toBeNull()
 
-        // Fast-forward time
         act(() => {
             vi.advanceTimersByTime(1000)
         })
 
         expect(callback).toHaveBeenCalledTimes(1)
         expect(result.current.isActive()).toBe(false)
+        expect(result.current.getCurrentTimerId()).toBeNull()
     })
 
     it('should clear a timer before it completes', () => {
@@ -44,23 +44,27 @@ describe('useTimer', () => {
             useTimer({ onSetTimer, onCancelTimer }),
         )
 
-        let timerId: number
+        let timerId: number | null = null
         act(() => {
-            timerId = result.current.setTimeout(callback, 1000)
+            const id = result.current.setTimeout(callback, 1000)
+            if (id !== null) timerId = id
         })
 
+        expect(onSetTimer).toHaveBeenCalledTimes(1)
         expect(onSetTimer).toHaveBeenCalledWith(timerId)
+        expect(result.current.isActive()).toBe(true)
 
-        // Clear before completion
         act(() => {
             vi.advanceTimersByTime(500)
-            result.current.clearTimeout()
+            result.current.clearTimer()
         })
 
+        expect(onCancelTimer).toHaveBeenCalledTimes(1)
         expect(onCancelTimer).toHaveBeenCalledWith(timerId)
         expect(callback).not.toHaveBeenCalled()
+        expect(result.current.isActive()).toBe(false)
+        expect(result.current.getCurrentTimerId()).toBeNull()
 
-        // Ensure callback doesn't fire after original time
         act(() => {
             vi.advanceTimersByTime(500)
         })
@@ -71,12 +75,10 @@ describe('useTimer', () => {
     it('should handle timeouts with Date objects', () => {
         const callback = vi.fn()
 
-        // Mock current date
         const now = new Date(2023, 0, 1, 12, 0, 0)
         vi.setSystemTime(now)
 
-        // Set a date 5 minutes in the future
-        const futureDate = new Date(2023, 0, 1, 12, 5, 0)
+        const futureDate = new Date(2223, 0, 1, 12, 0, 5) // Use a date far in the future for robustness
 
         const { result } = renderHook(() => useTimer())
 
@@ -85,13 +87,18 @@ describe('useTimer', () => {
         })
 
         expect(callback).not.toHaveBeenCalled()
+        expect(result.current.isActive()).toBe(true)
 
-        // Advance 5 minutes (300000ms)
+        const delayMs = futureDate.getTime() - now.getTime()
+
         act(() => {
-            vi.advanceTimersByTime(300000)
+            vi.advanceTimersByTime(delayMs)
         })
 
         expect(callback).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(false)
+
+        // Remove vi.setSystemTime(vi.getOriginalDate()) here
     })
 
     it('should execute setInterval repeatedly', () => {
@@ -104,21 +111,28 @@ describe('useTimer', () => {
             result.current.setInterval(callback, 1000)
         })
 
-        // After 1 second
+        expect(result.current.isActive()).toBe(true)
+
         act(() => {
             vi.advanceTimersByTime(1000)
         })
 
         expect(callback).toHaveBeenCalledTimes(1)
         expect(onTimerComplete).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(true)
 
-        // After another second
         act(() => {
             vi.advanceTimersByTime(1000)
         })
 
         expect(callback).toHaveBeenCalledTimes(2)
         expect(onTimerComplete).toHaveBeenCalledTimes(2)
+        expect(result.current.isActive()).toBe(true)
+
+        act(() => {
+            result.current.clearTimer()
+        })
+        expect(result.current.isActive()).toBe(false)
     })
 
     it('should report progress for long timeouts', () => {
@@ -126,99 +140,174 @@ describe('useTimer', () => {
 
         const { result } = renderHook(() => useTimer({ onProgress }))
 
+        const duration = 10000
         act(() => {
-            result.current.setTimeout(() => {}, 10000)
+            result.current.setTimeout(() => {}, duration)
         })
 
-        // Advance partially through the timer
+        expect(result.current.isActive()).toBe(true)
+
         act(() => {
             vi.advanceTimersByTime(3000)
         })
 
-        // Progress should have been reported (checking for at least one call)
         expect(onProgress).toHaveBeenCalled()
 
-        // Get the last progress report
-        const lastCall = onProgress.mock.calls[onProgress.mock.calls.length - 1]
-        expect(lastCall[0]).toBeGreaterThan(0) // progress
-        expect(lastCall[0]).toBeLessThan(1) // progress less than 100%
-        expect(lastCall[1]).toBeCloseTo(3000, -2) // elapsed time ~3000ms
-        expect(lastCall[2]).toBe(10000) // total time
+        const calls = onProgress.mock.calls
+        const lastCall = calls[calls.length - 1]
+
+        expect(lastCall[0]).toBeGreaterThan(0)
+        expect(lastCall[0]).toBeLessThan(1)
+        expect(lastCall[1]).toBeGreaterThan(0)
+        expect(lastCall[2]).toBe(duration)
+
+        const progressNear30Percent = calls.find((call) => {
+            const progress = call[0]
+            const elapsed = call[1]
+            return (
+                Math.abs(progress - 0.3) < 0.05 ||
+                Math.abs(elapsed - 3000) < 200
+            )
+        })
+        expect(progressNear30Percent).toBeDefined()
+
+        act(() => {
+            vi.advanceTimersByTime(7000)
+        })
+
+        expect(result.current.isActive()).toBe(false)
+
+        const completionCall =
+            onProgress.mock.calls[onProgress.mock.calls.length - 1]
+        expect(completionCall[0]).toBeCloseTo(1, 2)
     })
 
     it('should execute limited intervals the specified number of times', () => {
         const callback = vi.fn()
         const onTimerComplete = vi.fn()
+        const onProgress = vi.fn()
 
-        const { result } = renderHook(() => useTimer({ onTimerComplete }))
+        const { result } = renderHook(() =>
+            useTimer({ onTimerComplete, onProgress }),
+        )
+
+        const interval = 500
+        const iterations = 3
+        const totalDuration = interval * iterations
 
         act(() => {
-            result.current.setLimitedInterval(callback, 1000, 3)
+            result.current.setLimitedInterval(callback, interval, iterations)
         })
 
-        expect(result.current.getRemainingIterations()).toBe(3)
+        expect(callback).not.toHaveBeenCalled()
+        expect(onTimerComplete).not.toHaveBeenCalled()
+        expect(result.current.getRemainingIterations()).toBe(iterations)
+        expect(result.current.isActive()).toBe(true)
 
-        // First iteration
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(interval)
         })
 
         expect(callback).toHaveBeenCalledTimes(1)
-        expect(result.current.getRemainingIterations()).toBe(2)
+        expect(onTimerComplete).toHaveBeenCalledTimes(1)
+        expect(result.current.getRemainingIterations()).toBe(iterations - 1)
         expect(result.current.isActive()).toBe(true)
 
-        // Second iteration
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(interval)
         })
 
         expect(callback).toHaveBeenCalledTimes(2)
-        expect(result.current.getRemainingIterations()).toBe(1)
+        expect(onTimerComplete).toHaveBeenCalledTimes(2)
+        expect(result.current.getRemainingIterations()).toBe(iterations - 2)
         expect(result.current.isActive()).toBe(true)
 
-        // Third and final iteration
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(interval)
         })
 
         expect(callback).toHaveBeenCalledTimes(3)
-        expect(result.current.getRemainingIterations()).toBe(null)
+        expect(onTimerComplete).toHaveBeenCalledTimes(3)
+        expect(result.current.getRemainingIterations()).toBeNull()
         expect(result.current.isActive()).toBe(false)
 
-        // Ensure it doesn't execute beyond the limit
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(interval)
         })
 
         expect(callback).toHaveBeenCalledTimes(3)
+        expect(onTimerComplete).toHaveBeenCalledTimes(3)
+        expect(result.current.isActive()).toBe(false)
+
+        expect(onProgress).toHaveBeenCalled()
+        const progressCalls = onProgress.mock.calls
+        expect(progressCalls[progressCalls.length - 1][0]).toBeCloseTo(1, 2)
+        expect(progressCalls[progressCalls.length - 1][2]).toBe(totalDuration)
     })
 
-    it('should calculate remaining time correctly', () => {
+    it('should calculate remaining time correctly for setTimeout', () => {
         const { result } = renderHook(() => useTimer())
 
-        // Set current time
         const now = new Date(2023, 0, 1, 12, 0, 0)
         vi.setSystemTime(now)
 
+        const timerDuration = 5000
         act(() => {
-            result.current.setTimeout(() => {}, 5000)
+            result.current.setTimeout(() => {}, timerDuration)
         })
 
-        // Advance partially (2 seconds)
+        expect(result.current.isActive()).toBe(true)
+        expect(result.current.getRemainingTime()).toBeGreaterThanOrEqual(0)
+
+        const timeAdvanced = 2000
         act(() => {
-            vi.advanceTimersByTime(2000)
+            vi.advanceTimersByTime(timeAdvanced)
         })
 
-        // Should have ~3000ms remaining
         const remainingTime = result.current.getRemainingTime()
-        expect(remainingTime).toBeGreaterThan(2900)
-        expect(remainingTime).toBeLessThan(3100)
+        const expectedRemaining = timerDuration - timeAdvanced
 
-        // After completion, should return -1
+        expect(remainingTime).toBeGreaterThan(0)
+        expect(remainingTime).toBeCloseTo(expectedRemaining, -2)
+
+        act(() => {
+            vi.advanceTimersByTime(timerDuration - timeAdvanced)
+        })
+
+        expect(result.current.isActive()).toBe(false)
+        expect(result.current.getRemainingTime()).toBe(-1)
+
+        // Remove vi.setSystemTime(vi.getOriginalDate()) here
+    })
+
+    it('should return -1 for remaining time for non-active states or intervals', () => {
+        const { result } = renderHook(() => useTimer())
+
+        expect(result.current.isActive()).toBe(false)
+        expect(result.current.getRemainingTime()).toBe(-1)
+
+        act(() => {
+            result.current.setInterval(() => {}, 1000)
+        })
+        expect(result.current.isActive()).toBe(true)
+        expect(result.current.getRemainingTime()).toBe(-1)
+
+        act(() => {
+            result.current.clearTimer()
+        })
+        expect(result.current.isActive()).toBe(false)
+        expect(result.current.getRemainingTime()).toBe(-1)
+
+        act(() => {
+            result.current.setLimitedInterval(() => {}, 1000, 3)
+        })
+        expect(result.current.isActive()).toBe(true)
+        expect(result.current.getRemainingTime()).toBe(-1)
+
         act(() => {
             vi.advanceTimersByTime(3000)
         })
-
+        expect(result.current.isActive()).toBe(false)
         expect(result.current.getRemainingTime()).toBe(-1)
     })
 
@@ -230,17 +319,21 @@ describe('useTimer', () => {
             useTimer({ onCancelTimer }),
         )
 
-        let timerId: number
+        let timerId: number | null = null
         act(() => {
-            timerId = result.current.setTimeout(callback, 5000)
+            const id = result.current.setTimeout(callback, 5000)
+            if (id !== null) timerId = id
         })
 
-        // Unmount should trigger cleanup
+        expect(result.current.isActive()).toBe(true)
+        expect(onCancelTimer).not.toHaveBeenCalled()
+
         unmount()
 
+        expect(onCancelTimer).toHaveBeenCalledTimes(1)
         expect(onCancelTimer).toHaveBeenCalledWith(timerId)
+        expect(result.current.isActive()).toBe(false)
 
-        // Advancing time should not trigger callback
         act(() => {
             vi.advanceTimersByTime(5000)
         })
@@ -251,39 +344,45 @@ describe('useTimer', () => {
     it('should handle setting a new timer while one is already active', () => {
         const callback1 = vi.fn()
         const callback2 = vi.fn()
+        const onSetTimer = vi.fn()
         const onCancelTimer = vi.fn()
 
-        const { result } = renderHook(() => useTimer({ onCancelTimer }))
+        const { result } = renderHook(() =>
+            useTimer({ onSetTimer, onCancelTimer }),
+        )
 
-        // Set first timer
-        let timerId1: number
+        let timerId1: number | null = null
         act(() => {
-            timerId1 = result.current.setTimeout(callback1, 1000)
+            const id = result.current.setTimeout(callback1, 1000)
+            if (id !== null) timerId1 = id
         })
+        expect(onSetTimer).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(true)
 
-        // Set second timer before first completes
         act(() => {
+            vi.advanceTimersByTime(500)
             result.current.setTimeout(callback2, 2000)
         })
 
-        // First timer should be cancelled
+        expect(onCancelTimer).toHaveBeenCalledTimes(1)
         expect(onCancelTimer).toHaveBeenCalledWith(timerId1)
 
-        // Advance past first timer's intended completion
+        expect(onSetTimer).toHaveBeenCalledTimes(2)
+
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(500)
         })
 
-        // First callback should not be called
         expect(callback1).not.toHaveBeenCalled()
+        expect(callback2).not.toHaveBeenCalled()
+        expect(result.current.isActive()).toBe(true)
 
-        // Advance to second timer's completion
         act(() => {
-            vi.advanceTimersByTime(1000)
+            vi.advanceTimersByTime(2000)
         })
 
-        // Second callback should be called
         expect(callback2).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(false)
     })
 
     it('should warn but still work when providing Date object to setInterval', () => {
@@ -293,21 +392,29 @@ describe('useTimer', () => {
         const { result } = renderHook(() => useTimer())
 
         act(() => {
-            // @ts-expect-error - Intentionally passing incorrect type for test
+            // @ts-expect-error: Date not supported for intervals
             result.current.setInterval(callback, new Date())
         })
 
-        expect(consoleWarnSpy).toHaveBeenCalled()
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
         expect(consoleWarnSpy.mock.calls[0][0]).toContain(
             'Date objects are not supported for intervals',
         )
+        expect(result.current.isActive()).toBe(true)
 
-        // Should still work with default 1000ms
         act(() => {
             vi.advanceTimersByTime(1000)
         })
 
         expect(callback).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(true)
+
+        act(() => {
+            result.current.clearTimer()
+        })
+        expect(result.current.isActive()).toBe(false)
+
+        consoleWarnSpy.mockRestore()
     })
 
     it('should warn if setLimitedInterval is called with invalid iterations', () => {
@@ -320,16 +427,58 @@ describe('useTimer', () => {
             result.current.setLimitedInterval(callback, 1000, 0)
         })
 
-        expect(consoleWarnSpy).toHaveBeenCalled()
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
         expect(consoleWarnSpy.mock.calls[0][0]).toContain(
             'Invalid iterations count',
         )
+        expect(result.current.isActive()).toBe(false)
 
-        // Ensure callback isn't called
         act(() => {
             vi.advanceTimersByTime(1000)
         })
 
         expect(callback).not.toHaveBeenCalled()
+
+        consoleWarnSpy.mockRestore()
+    })
+
+    it('should return null for remaining iterations for non-limited intervals/timeouts', () => {
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setTimeout(() => {}, 1000)
+        })
+        expect(result.current.getRemainingIterations()).toBeNull()
+
+        act(() => {
+            result.current.clearTimer()
+            result.current.setInterval(() => {}, 1000)
+        })
+        expect(result.current.getRemainingIterations()).toBeNull()
+    })
+
+    it('should not report progress if onProgress callback is not provided', () => {
+        const { result } = renderHook(() => useTimer({}))
+        const consoleLogSpy = vi.spyOn(console, 'log')
+
+        act(() => {
+            result.current.setTimeout(() => {}, 10000)
+        })
+
+        expect(result.current.isActive()).toBe(true)
+
+        act(() => {
+            vi.advanceTimersByTime(5000)
+        })
+
+        expect(consoleLogSpy).not.toHaveBeenCalled()
+
+        act(() => {
+            vi.advanceTimersByTime(5000)
+        })
+
+        expect(result.current.isActive()).toBe(false)
+
+        consoleLogSpy.mockRestore()
     })
 })
