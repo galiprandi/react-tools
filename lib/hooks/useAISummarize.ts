@@ -63,8 +63,8 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
       format,
       length,
       sharedContext,
-      monitor(m) {
-        m.onprogress = (e) => {
+      monitor(m: AICreateMonitor) {
+        m.onprogress = (e: AICreateMonitorProgressEvent) => {
           setProgress({ loaded: e.loaded, total: e.total });
         };
       },
