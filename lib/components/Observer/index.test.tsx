@@ -27,7 +27,7 @@ describe('Observer Component', () => {
         vi.clearAllMocks()
     })
 
-    it.only('should render children correctly', () => {
+    it('should render children correctly', () => {
         render(
             <Observer>
                 <p data-testid="child-element">Test Content</p>
