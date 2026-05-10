@@ -12,6 +12,7 @@ export const UseAISummarizePage = () => {
         type: 'tldr',
         format: 'plain-text',
         length: 'short',
+        preference: 'auto',
         outputLanguage: 'en',
         streaming: true,
         warmup: false,
@@ -164,6 +165,25 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                                     <option value="medium">Medium</option>
                                     <option value="long">Long</option>
                                 </select>
+                            </div>
+
+                            <div>
+                                <label htmlFor="preference" data-tooltip="Execution preference: Auto (balanced), Capability (high quality)">
+                                    Preference
+                                </label>
+                                <select
+                                    id="preference"
+                                    value={options.preference}
+                                    onChange={(e) => setOptions({ ...options, preference: e.target.value as UseAISummarizeOptions['preference'] })}
+                                >
+                                    <option value="auto" disabled={!summarize.supportedPreferences.includes('auto')}>Auto</option>
+                                    <option value="capability" disabled={!summarize.supportedPreferences.includes('capability')}>Capability</option>
+                                </select>
+                                {!summarize.supportedPreferences.includes(options.preference || 'auto') && (
+                                    <small style={{ color: 'orange', display: 'block', marginTop: '0.25rem' }}>
+                                        Selected preference not supported by browser
+                                    </small>
+                                )}
                             </div>
 
                             <div>

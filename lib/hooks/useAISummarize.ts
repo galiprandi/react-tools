@@ -19,6 +19,8 @@ export interface UseAISummarizeOptions {
   outputLanguage?: string;
   /** Expected context languages */
   expectedContextLanguages?: string[];
+  /** Preference for execution speed vs capability (auto or capability only - speed not supported in current Chrome versions) */
+  preference?: 'auto' | 'capability';
   /** Enable streaming output for real-time results */
   streaming?: boolean;
   /** Preload the model on component mount for faster first summary */
@@ -52,6 +54,8 @@ export interface UseAISummarizeResult {
   progress: DownloadProgress | null;
   /** Error object if summarization failed */
   error: Error | null;
+  /** Supported preference values based on browser capabilities */
+  supportedPreferences: ('auto' | 'capability')[];
   /** Function to summarize text */
   summarize: (text: string, context?: string) => Promise<void>;
   /** Function to reset the hook state */
@@ -79,6 +83,7 @@ interface SummarizerCreateOptions {
   expectedInputLanguages?: UseAISummarizeOptions['expectedInputLanguages'];
   outputLanguage?: UseAISummarizeOptions['outputLanguage'];
   expectedContextLanguages?: UseAISummarizeOptions['expectedContextLanguages'];
+  preference?: UseAISummarizeOptions['preference'];
   monitor?(m: CreateMonitor): void;
 }
 
@@ -115,11 +120,12 @@ interface AISummarizer {
  * @returns An object with data, status, progress, error, and functions to summarize or reset
  */
 export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummarizeResult {
-  const { type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages, streaming = false, warmup = false } = options;
+  const { type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages, preference, streaming = false, warmup = false } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AISummarizeStatus>('idle');
   const [progress, setProgress] = useState<DownloadProgress | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [supportedPreferences, setSupportedPreferences] = useState<('auto' | 'capability')[]>(['auto']);
 
   const summarizerRef = useRef<AISummarizer | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -175,6 +181,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
       expectedInputLanguages,
       outputLanguage,
       expectedContextLanguages,
+      preference,
       monitor(m: CreateMonitor) {
         m.addEventListener('downloadprogress', (e: ProgressEvent) => {
           setProgress({ loaded: e.loaded, total: e.total });
@@ -184,7 +191,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
 
     summarizerRef.current = instance;
     return instance;
-  }, [type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages]);
+  }, [type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages, preference]);
 
   const summarize = useCallback(
     async (text: string, context?: string) => {
@@ -227,6 +234,37 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
   );
 
   useEffect(() => {
+    const detectSupportedPreferences = async () => {
+      if (typeof window === 'undefined' || typeof (window as unknown as { Summarizer?: unknown }).Summarizer !== 'function') {
+        return;
+      }
+
+      const Summarizer = (window as unknown as { Summarizer: { create?: (options?: SummarizerCreateOptions) => Promise<AISummarizer> } }).Summarizer;
+      if (typeof Summarizer.create !== 'function') {
+        return;
+      }
+
+      const preferences: ('auto' | 'capability')[] = [];
+      // Note: This list is based on Chrome's official documentation as of 2026.
+      // Only 'auto' and 'capability' are supported in current Chrome versions.
+      // 'speed' is documented but not yet implemented.
+      const preferenceOptions = ['auto', 'capability'] as const;
+
+      for (const pref of preferenceOptions) {
+        try {
+          const instance = await Summarizer.create({ preference: pref });
+          instance.destroy();
+          preferences.push(pref);
+        } catch (e) {
+          // Preference not supported, skip it
+        }
+      }
+
+      setSupportedPreferences(preferences);
+    };
+
+    detectSupportedPreferences();
+
     if (warmup) {
       createSummarizer().then(() => setStatus('idle')).catch(() => {});
     }
@@ -248,6 +286,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
     status,
     progress,
     error,
+    supportedPreferences,
     summarize,
     reset,
   };

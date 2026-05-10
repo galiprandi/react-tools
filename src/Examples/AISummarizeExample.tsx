@@ -17,6 +17,7 @@ The various sub-fields of AI research are centered around particular goals and t
         type: 'tldr',
         format: 'plain-text',
         length: 'short',
+        preference: 'auto',
         streaming: false,
         warmup: false,
     })
@@ -103,6 +104,25 @@ The various sub-fields of AI research are centered around particular goals and t
                                 <option value="medium">Medium</option>
                                 <option value="long">Long</option>
                             </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <strong>Preference:</strong>
+                            <span title="Execution preference: Auto (balanced), Capability (high quality)" style={{ marginLeft: '0.25rem', cursor: 'help', color: '#0070f3' }}>?</span>
+                            <select
+                                value={options.preference}
+                                onChange={(e) => setOptions({ ...options, preference: e.target.value as UseAISummarizeOptions['preference'] })}
+                                style={{ marginLeft: '0.5rem' }}
+                            >
+                                <option value="auto" disabled={!summarize.supportedPreferences.includes('auto')}>Auto</option>
+                                <option value="capability" disabled={!summarize.supportedPreferences.includes('capability')}>Capability</option>
+                            </select>
+                            {!summarize.supportedPreferences.includes(options.preference || 'auto') && (
+                                <span style={{ color: 'orange', marginLeft: '0.5rem', fontSize: '0.75rem' }}>
+                                    (not supported)
+                                </span>
+                            )}
                         </label>
                     </div>
                     <div>
