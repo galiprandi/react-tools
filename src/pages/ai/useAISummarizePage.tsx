@@ -74,14 +74,14 @@ In the self-attention mechanism, queries (Q), keys (K), and values (V) are dynam
 Since the Transformer does not rely on recurrence or convolution of the text in order to perform encoding and decoding, the paper relied on the use of sine and cosine wave functions to encode the position of the token into the embedding. The paper specifically comments on why this method was chosen: &apos;We chose the sinusoidal version because it may allow the model to extrapolate to sequence lengths longer than the ones encountered during training.&apos;`
 
     return (
-        <main className="container">
+        <main>
             <article>
                 <header>
                     <h1>AI Summarizer</h1>
                 </header>
 
                 {/* API Availability Status */}
-                <article className={ai.isAvailable ? 'success' : 'error'} role="alert">
+                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI Summarizer API is available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -93,7 +93,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                         <li>
                             <a 
                                 href="#"
-                                className={activeTab === 'options' ? 'secondary' : ''}
+                                style={{ background: activeTab === 'options' ? '#1e3a5f' : 'transparent', color: activeTab === 'options' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('options')
@@ -105,7 +105,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                         <li>
                             <a 
                                 href="#"
-                                className={activeTab === 'input' ? 'secondary' : ''}
+                                style={{ background: activeTab === 'input' ? '#1e3a5f' : 'transparent', color: activeTab === 'input' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('input')
@@ -121,7 +121,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 {activeTab === 'options' && (
                     <section>
                         <h3>Configuration</h3>
-                        <div className="grid">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                             <div>
                                 <label htmlFor="type" data-tooltip="Type of summary: TL;DR (concise), Key Points (bullet list), Teaser (preview), Headline (one-line)">
                                     Type
@@ -202,7 +202,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                             </div>
                         </div>
 
-                        <div className="grid">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
@@ -227,7 +227,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 {/* Text Input */}
                 {activeTab === 'input' && (
                     <section>
-                        <div className="grid">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                             <label htmlFor="text">Text to Summarize</label>
                             <button onClick={() => setText(sampleText)}>Load Sample</button>
                         </div>
@@ -273,21 +273,21 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
 
                 {/* Progress */}
                 {summarize.progress && (
-                    <article className="secondary" role="status">
+                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <strong>Downloading Model:</strong> {summarize.progress.loaded} / {summarize.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {summarize.error && (
-                    <article className="error" role="alert">
+                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
                         <strong>Error:</strong> {summarize.error.message}
                     </article>
                 )}
 
                 {/* Result */}
                 {(summarize.data || displayedText) && (
-                    <article className="secondary">
+                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <h3>Summary</h3>
                         <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>{displayedText || summarize.data}</p>
                     </article>

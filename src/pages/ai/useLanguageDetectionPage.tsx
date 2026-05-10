@@ -22,14 +22,14 @@ export const UseLanguageDetectionPage = () => {
     const sampleText = `Hallo und herzlich willkommen! This is a mixed language text. Bonjour le monde!`
 
     return (
-        <main className="container">
+        <main>
             <article>
                 <header>
                     <h1>Language Detection</h1>
                 </header>
 
                 {/* API Availability Status */}
-                <article className={ai.isAvailable ? 'success' : 'error'} role="alert">
+                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI APIs are available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -38,7 +38,7 @@ export const UseLanguageDetectionPage = () => {
                 {/* Documentation */}
                 <section>
                     <h3>Documentation</h3>
-                    <article className="secondary">
+                    <article style={{ padding: '1rem', background: '#f5f5f5', borderRadius: '4px', color: '#000' }}>
                         <p>The <code>useLanguageDetection</code> hook provides access to Chrome's native Language Detection API.</p>
                         <p><strong>Features:</strong></p>
                         <ul>
@@ -62,7 +62,7 @@ export const UseLanguageDetectionPage = () => {
 
                 {/* Text Input */}
                 <section>
-                    <div className="grid">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '1rem' }}>
                         <label htmlFor="text">Text to Analyze</label>
                         <button onClick={() => setText(sampleText)}>Load Sample</button>
                     </div>
@@ -79,7 +79,7 @@ export const UseLanguageDetectionPage = () => {
                 </section>
 
                 {/* Action Buttons */}
-                <div className="grid">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <button
                         onClick={handleDetect}
                         disabled={!ai.isAvailable || detector.status === 'detecting' || detector.status === 'initializing' || detector.status === 'downloading' || !text.trim()}
@@ -96,14 +96,14 @@ export const UseLanguageDetectionPage = () => {
 
                 {/* Progress */}
                 {detector.progress && (
-                    <article className="secondary" role="status">
+                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <strong>Downloading Model:</strong> {detector.progress.loaded} / {detector.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {detector.error && (
-                    <article className="error" role="alert">
+                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
                         <strong>Error:</strong> {detector.error.message}
                     </article>
                 )}

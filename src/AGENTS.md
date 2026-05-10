@@ -29,6 +29,11 @@ This playground uses **Pico CSS** (class-less CSS framework) loaded via CDN:
 
 This is **only for the playground** and is **not** required or bundled with the library.
 
+**IMPORTANT:** Pico CSS is designed to be classless, meaning it styles HTML elements directly without requiring classes. **DO NOT use Pico CSS classes** like `className="container"`, `className="grid"`, `className="secondary"`, `className="success"`, `className="error"`, etc. in playground pages or examples. Instead:
+- Use inline styles for custom colors and layouts
+- Let Pico CSS style elements by their semantic HTML tags (main, article, section, header, nav, etc.)
+- Use inline styles for dark backgrounds to ensure proper contrast
+
 ## Library vs Playground
 
 - **Library (`lib/`)**: Contains the actual hooks and components that are published. No external dependencies.
@@ -47,17 +52,19 @@ When adding inline styles to example components or playground pages:
 - Always ensure WCAG AA compliance (minimum 4.5:1 contrast ratio)
 
 **Pico CSS Classes:**
-- **DO NOT** use Pico CSS classes like `className="secondary"` when adding custom inline styles with dark backgrounds
-- Pico CSS classes have predefined styles that may conflict with your inline styles
-- Use inline styles exclusively when you need custom colors for better contrast control
-- If you must use Pico CSS classes, ensure the entire component uses the framework's styling consistently
+- **NEVER use Pico CSS classes** like `className="container"`, `className="grid"`, `className="secondary"`, `className="success"`, `className="error"`, etc.
+- Pico CSS is designed to be classless - it styles HTML elements directly without classes
+- Use semantic HTML tags (main, article, section, header, nav, etc.) and let Pico CSS style them
+- Use inline styles for custom colors, layouts, and dark backgrounds to ensure proper contrast
+- Do not mix Pico CSS classes with inline styles - use one approach consistently
 
 **Common Mistakes to Avoid:**
 - Using `background: '#e3f2fd'` (light blue) with `color: '#000'` (black) - OK
 - Using `background: '#e3f2fd'` (light blue) with `color: '#fff'` (white) - WRONG (poor contrast)
 - Using `background: '#1e3a5f'` (dark blue) with `color: '#000'` (black) - WRONG (poor contrast)
 - Using `background: '#1e3a5f'` (dark blue) with `color: '#fff'` (white) - OK
-- Mixing Pico CSS classes with custom dark background styles - WRONG (conflicting styles)
+- Using `className="secondary"` or any Pico CSS class - WRONG (classless framework)
+- Mixing Pico CSS classes with inline styles - WRONG (conflicting styles)
 
 **Safe Color Combinations:**
 - Light backgrounds (#fff, #f5f5f5, #e3f2fd) + Dark text (#000, #333, #1a1a1a)

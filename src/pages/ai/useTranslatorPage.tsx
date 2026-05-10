@@ -50,14 +50,14 @@ export const UseTranslatorPage = () => {
     }
 
     return (
-        <main className="container">
+        <main>
             <article>
                 <header>
                     <h1>Translator</h1>
                 </header>
 
                 {/* API Availability Status */}
-                <article className={ai.isAvailable ? 'success' : 'error'} role="alert">
+                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI APIs are available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -69,7 +69,7 @@ export const UseTranslatorPage = () => {
                         <li>
                             <a
                                 href="#"
-                                className={activeTab === 'options' ? 'secondary' : ''}
+                                style={{ background: activeTab === 'options' ? '#1e3a5f' : 'transparent', color: activeTab === 'options' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('options')
@@ -81,7 +81,7 @@ export const UseTranslatorPage = () => {
                         <li>
                             <a
                                 href="#"
-                                className={activeTab === 'input' ? 'secondary' : ''}
+                                style={{ background: activeTab === 'input' ? '#1e3a5f' : 'transparent', color: activeTab === 'input' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('input')
@@ -97,7 +97,7 @@ export const UseTranslatorPage = () => {
                 {activeTab === 'options' && (
                     <section>
                         <h3>Configuration</h3>
-                        <div className="grid">
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <div>
                                 <label htmlFor="sourceLanguage">Source Language</label>
                                 <select
@@ -125,7 +125,7 @@ export const UseTranslatorPage = () => {
                             </div>
                         </div>
 
-                        <div className="grid">
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
@@ -182,21 +182,21 @@ export const UseTranslatorPage = () => {
 
                 {/* Progress */}
                 {translator.progress && (
-                    <article className="secondary" role="status">
+                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <strong>Downloading Model:</strong> {translator.progress.loaded} / {translator.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {translator.error && (
-                    <article className="error" role="alert">
+                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
                         <strong>Error:</strong> {translator.error.message}
                     </article>
                 )}
 
                 {/* Result */}
                 {translator.data && (
-                    <article className="secondary">
+                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <h3>Translation</h3>
                         <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>{translator.data}</p>
                     </article>
