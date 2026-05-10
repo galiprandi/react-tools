@@ -36,6 +36,17 @@ yarn add @galiprandi/react-tools
 # or
 pnpm add @galiprandi/react-tools
 ```
+
+### AI Agent Skill
+
+Install this library as an AI agent skill for Claude Code, Cursor, Windsurf, and other AI coding agents:
+
+```bash
+npx skills add https://github.com/galiprandi/react-tools --skill react-tools
+```
+
+This provides comprehensive guidance for using @galiprandi/react-tools with AI agents.
+
 ***
 
 ## ✨ What's New
