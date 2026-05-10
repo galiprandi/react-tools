@@ -33,6 +33,10 @@
   * [Observer](#observer)
   * [LazyRender](#lazyrender)
 * [Hooks](#hooks)
+  * [useAI](#useai)
+  * [useAISummarize](#useaisummarize)
+  * [useLanguageDetection](#uselanguagedetection)
+  * [useTranslator](#usetranslator)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -47,6 +51,14 @@
 **@galiprandi/react-tools** is a lightweight, dependency-free utility library for React. It provides reusable components and hooks to simplify development and improve accessibility — no configuration needed.
 
 👉 [Live Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
+
+### ✨ What's New
+
+**AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
+- [`useAI`](#useai) - Check AI Summarizer availability
+- [`useAISummarize`](#useaisummarize) - Generate text summaries with streaming support
+- [`useLanguageDetection`](#uselanguagedetection) - Detect language from text with confidence scores
+- [`useTranslator`](#usetranslator) - Translate text between languages with streaming support
 
 ***
 
