@@ -8,11 +8,13 @@ import { UseInputPage } from './pages/input/useInputPage'
 import { UseObserverPage } from './pages/observer/useObserverPage'
 import { UseLazyRenderPage } from './pages/lazyRender/useLazyRenderPage'
 import { UseAsyncBlockPage } from './pages/asyncBlock/useAsyncBlockPage'
-import { UseAISummarizePage } from './pages/ai/useAISummarizePage'
 import { UseAIPage } from './pages/ai/useAIPage'
+import { UseAISummarizePage } from './pages/ai/useAISummarizePage'
+import { UseLanguageDetectionPage } from './pages/ai/useLanguageDetectionPage'
+import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'debounce'>('asyncblock')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'debounce'>('asyncblock')
 
     return (
         <main className="container">
@@ -129,6 +131,30 @@ function App() {
                     <li>
                         <a
                             href="#"
+                            className={currentPage === 'ai-language-detection' ? 'secondary' : ''}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                setCurrentPage('ai-language-detection')
+                            }}
+                        >
+                            useLanguageDetection
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            className={currentPage === 'ai-translator' ? 'secondary' : ''}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                setCurrentPage('ai-translator')
+                            }}
+                        >
+                            useTranslator
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
                             className={currentPage === 'debounce' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
@@ -158,6 +184,10 @@ function App() {
             {currentPage === 'ai-status' && <UseAIPage />}
 
             {currentPage === 'ai-summarizer' && <UseAISummarizePage />}
+
+            {currentPage === 'ai-language-detection' && <UseLanguageDetectionPage />}
+
+            {currentPage === 'ai-translator' && <UseTranslatorPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
         </main>
