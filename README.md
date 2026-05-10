@@ -18,6 +18,24 @@
   </a>
 </p>
 
+
+## 🧠 Overview
+
+**@galiprandi/react-tools** is a lightweight, dependency-free utility library for React. It provides reusable components and hooks to simplify development and improve accessibility — no configuration needed.
+
+👉 [Live Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
+
+***
+
+## 🚀 Installation
+
+```bash
+npm install @galiprandi/react-tools
+# or
+yarn add @galiprandi/react-tools
+# or
+pnpm add @galiprandi/react-tools
+```
 ***
 
 ## ✨ What's New
@@ -55,39 +73,8 @@
 * [FAQ](#faq)
 * [License](#license)
 
-***
-
-## 🧠 Overview
-
-**@galiprandi/react-tools** is a lightweight, dependency-free utility library for React. It provides reusable components and hooks to simplify development and improve accessibility — no configuration needed.
-
-👉 [Live Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
-
-### ✨ What's New
-
-**AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
-- [`useAI`](#useai) - Check and manage availability of browser's AI APIs
-- [`useAISummarize`](#useaisummarize) - Generate text summaries with streaming support
-- [`useLanguageDetection`](#uselanguagedetection) - Detect language from text with confidence scores
-- [`useTranslator`](#usetranslator) - Translate text between languages with streaming support
-
-***
-
-## 🚀 Installation
-
-```bash
-npm install @galiprandi/react-tools
-# or
-yarn add @galiprandi/react-tools
-# or
-pnpm add @galiprandi/react-tools
-```
-
-***
 
 ## 📦 Components
-
-***
 
 ### AsyncBlock
 
@@ -304,7 +291,7 @@ function MyComponent() {
 
   // Show download progress
   if (apis.translator.availability === 'downloading') {
-    const progress = getApiProgress('translator');
+    const progress = apis.translator.progress;
     return <LoadingBar {...progress} />;
   }
 }
@@ -560,9 +547,7 @@ Debounced version of the value (`T`).
 ### useTimer
 
 **Description**
-Managing timers like `setTimeout` and `setInterval` directly in React components can be complex, often leading to issues like memory leaks, unexpected behavior during re-renders, or difficulties in cancellation when components unmount.
-
-The `useTimer` hook abstracts this complexity, providing a safe, declarative, and easy-to-use way to work with various types of timers. It ensures automatic cleanup, integrates with component lifecycles, and offers event callbacks for monitoring timer status, including progress for longer durations.
+A React hook that abstracts the complexity of managing `setTimeout` and `setInterval` directly in React components. It provides automatic cleanup, lifecycle events, flexible scheduling, and simplified control to prevent memory leaks and unexpected behavior.
 
 **Features**
 
@@ -571,33 +556,7 @@ The `useTimer` hook abstracts this complexity, providing a safe, declarative, an
 * **Flexible Scheduling:** Set timers by milliseconds, a future `Date` object, or as limited intervals.
 * **Simplified Control:** Clear any active timer with a single method call.
 
-**Parameters (options)**
-
-| Parameter         | Type                               | Description                                                     |
-|-------------------|------------------------------------|-----------------------------------------------------------------|
-| `onSetTimer`      | `(timerId: number) => void`        | Callback fired when a new timer is successfully set.            |
-| `onCancelTimer`   | `(timerId: number) => void`        | Callback fired when an active timer is cleared/cancelled.       |
-| `onTimerComplete` | `(timerId: number) => void`        | Callback fired when a timer completes naturally (timeout) or for each interval execution (interval/limited interval). |
-| `onProgress`      | `(progress: number, elapsedMs: number, totalMs: number) => void` | Callback fired periodically during long timers (`setTimeout`) and limited intervals to report progress (0 to 1). |
-
-**Returns**
-An object containing control methods and status/info getters.
-
-| Property               | Type                                                     | Description                                                              |
-|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------|
-| `setTimeout`           | `(callback: () => void, delay: number \| Date) => number \| null` | Sets a timeout with event callbacks. Accepts milliseconds or a future `Date`. Returns the timer ID. |
-| `setInterval`          | `(callback: () => void, delay: number) => number \| null`       | Sets an interval with event callbacks. Accepts milliseconds. Returns the timer ID. |
-| `setTimeoutDate`       | `(callback: () => void, targetDate: Date) => number \| null`    | Sets a timeout to execute at a specific future `Date`. Returns the timer ID. |
-| `setLimitedInterval`   | `(callback: () => void, delay: number, iterations: number) => number \| null` | Sets an interval that executes a fixed number of times. Returns the timer ID. |
-| `clearTimer`           | `() => void`                                             | Clears any currently active timer set by this hook instance.             |
-| `isActive`             | `() => boolean`                                          | Returns `true` if a timer is currently active, `false` otherwise.        |
-| `getCurrentTimerId`    | `() => number \| null`                                   | Returns the ID of the currently active timer, or `null`.                 |
-| `getRemainingIterations`| `() => number \| null`                                   | For `setLimitedInterval`, returns remaining executions.                  |
-| `getRemainingTime`     | `() => number`                                           | For an active `setTimeout`, returns estimated remaining time in ms, otherwise `-1`. |
-
 **Example**
-
-This example demonstrates how `useTimer` simplifies scheduling an action for a specific future `targetDate` and automatically handles cleanup, while utilizing event callbacks to monitor its state.
 
 ```tsx
 import { useEffect } from 'react';
@@ -635,12 +594,36 @@ function FutureExecution({ targetDate }: { targetDate: Date }) {
 }
 ```
 
+**Parameters (options)**
+
+| Parameter         | Type                               | Description                                                     |
+|-------------------|------------------------------------|-----------------------------------------------------------------|
+| `onSetTimer`      | `(timerId: number) => void`        | Callback fired when a new timer is successfully set.            |
+| `onCancelTimer`   | `(timerId: number) => void`        | Callback fired when an active timer is cleared/cancelled.       |
+| `onTimerComplete` | `(timerId: number) => void`        | Callback fired when a timer completes naturally (timeout) or for each interval execution (interval/limited interval). |
+| `onProgress`      | `(progress: number, elapsedMs: number, totalMs: number) => void` | Callback fired periodically during long timers (`setTimeout`) and limited intervals to report progress (0 to 1). |
+
+**Returns**
+An object containing control methods and status/info getters.
+
+| Property               | Type                                                     | Description                                                              |
+|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------|
+| `setTimeout`           | `(callback: () => void, delay: number \| Date) => number \| null` | Sets a timeout with event callbacks. Accepts milliseconds or a future `Date`. Returns the timer ID. |
+| `setInterval`          | `(callback: () => void, delay: number) => number \| null`       | Sets an interval with event callbacks. Accepts milliseconds. Returns the timer ID. |
+| `setTimeoutDate`       | `(callback: () => void, targetDate: Date) => number \| null`    | Sets a timeout to execute at a specific future `Date`. Returns the timer ID. |
+| `setLimitedInterval`   | `(callback: () => void, delay: number, iterations: number) => number \| null` | Sets an interval that executes a fixed number of times. Returns the timer ID. |
+| `clearTimer`           | `() => void`                                             | Clears any currently active timer set by this hook instance.             |
+| `isActive`             | `() => boolean`                                          | Returns `true` if a timer is currently active, `false` otherwise.        |
+| `getCurrentTimerId`    | `() => number \| null`                                   | Returns the ID of the currently active timer, or `null`.                 |
+| `getRemainingIterations`| `() => number \| null`                                   | For `setLimitedInterval`, returns remaining executions.                  |
+| `getRemainingTime`     | `() => number`                                           | For an active `setTimeout`, returns estimated remaining time in ms, otherwise `-1`. |
+
 ***
 
 ### useList
 
 **Description**
-A React hook to simplify managing array state in components. It provides immutable helper methods for common operations like adding, inserting, removing, updating, finding, and counting items based on index or item properties, reducing boilerplate compared to manual state updates.
+A React hook that simplifies managing array state in components. It provides immutable helper methods for common operations like adding, inserting, removing, updating, finding, and counting items based on index or item properties.
 
 **Parameters**
 
@@ -657,7 +640,7 @@ An object containing the current array state (`list`) and helper functions to mo
 | `addItem`        | `(item: T) => void`                                         | Adds an `item` to the end of the array.                                                                                                   |
 | `insert`         | `(index: number, item: T) => void`                          | Inserts an `item` at the specified `index`. If the index is out of bounds, the item is added to the beginning (index < 0) or end (index > length). |
 | `insertMany`     | `(items: T[]) => void`                                      | Adds multiple `items` to the end of the array. Does nothing if input is not an array or is empty.                                       |
-| `removeByIdx`    | `(index: number) => void`                                   | Removes the item at the specified `index`. If the index is out of bounds, the list remains unchanged.                                   |
+| `removeByIdx`    | `(index: number) => void`                                   | Removes the item at the specified `index`. If the index is out of bounds, the list remains unchanged. |
 | `removeBy`       | `(key: string \| undefined \| null, value: any) => void`    | Removes the **first** item where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, removes the first item where `item` strictly equals `value` (useful for primitives). If no match is found, the list remains unchanged. |
 | `removeManyBy`   | `(key: string \| undefined \| null, value: any) => void`    | Removes **all** items where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, removes all items where `item` strictly equals `value` (useful for primitives). If no match is found, the list remains unchanged. |
 | `updateByIdx`    | `(index: number, updateFn: (item: T) => T) => void`         | Updates the item at the specified `index` using an immutable `updateFn`. If the index is out of bounds, the list remains unchanged.    |
