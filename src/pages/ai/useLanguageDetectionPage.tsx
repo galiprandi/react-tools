@@ -29,7 +29,7 @@ export const UseLanguageDetectionPage = () => {
                 </header>
 
                 {/* API Availability Status */}
-                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                <article>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI APIs are available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -38,7 +38,7 @@ export const UseLanguageDetectionPage = () => {
                 {/* Documentation */}
                 <section>
                     <h3>Documentation</h3>
-                    <article style={{ padding: '1rem', background: '#f5f5f5', borderRadius: '4px', color: '#000' }}>
+                    <article>
                         <p>The <code>useLanguageDetection</code> hook provides access to Chrome's native Language Detection API.</p>
                         <p><strong>Features:</strong></p>
                         <ul>
@@ -96,26 +96,26 @@ export const UseLanguageDetectionPage = () => {
 
                 {/* Progress */}
                 {detector.progress && (
-                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Downloading Model:</strong> {detector.progress.loaded} / {detector.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {detector.error && (
-                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Error:</strong> {detector.error.message}
                     </article>
                 )}
 
                 {/* Results */}
                 {detector.results.length > 0 && (
-                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <h3>Detection Results</h3>
                         {detector.results.map((result, index) => (
-                            <div key={index} style={{ marginBottom: '0.5rem', padding: '0.5rem', background: index === 0 ? '#2d4a3e' : '#3d3d3d', borderRadius: '4px', color: '#fff' }}>
-                                <strong>#{index + 1}</strong> - Language: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{result.detectedLanguage}</code> | 
-                                Confidence: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{(result.confidence * 100).toFixed(2)}%</code>
+                            <div key={index}>
+                                <strong>#{index + 1}</strong> - Language: <code>{result.detectedLanguage}</code> | 
+                                <code>{(result.confidence * 100).toFixed(2)}%</code>
                             </div>
                         ))}
                     </article>

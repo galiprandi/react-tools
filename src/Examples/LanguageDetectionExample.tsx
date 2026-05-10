@@ -94,7 +94,7 @@ export const LanguageDetectionExample = () => {
 
             {/* Progress */}
             {detector.progress && (
-                <div style={{ marginBottom: '1rem', padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                <div>
                     <strong>Downloading Model:</strong> {detector.progress.loaded} / {detector.progress.total}
                 </div>
             )}
@@ -113,12 +113,12 @@ export const LanguageDetectionExample = () => {
 
             {/* Results */}
             {detector.results.length > 0 && (
-                <div style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                <div>
                     <h3>Detection Results</h3>
                     {detector.results.map((result, index) => (
-                        <div key={index} style={{ marginBottom: '0.5rem', padding: '0.5rem', background: index === 0 ? '#2d4a3e' : '#3d3d3d', borderRadius: '4px', color: '#fff' }}>
-                            <strong>#{index + 1}</strong> - Language: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{result.detectedLanguage}</code> | 
-                            Confidence: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{(result.confidence * 100).toFixed(2)}%</code>
+                        <div key={index}>
+                            <strong>#{index + 1}</strong> - Language: <code>{result.detectedLanguage}</code> | 
+                            Confidence: <code>{(result.confidence * 100).toFixed(2)}%</code>
                         </div>
                     ))}
                 </div>

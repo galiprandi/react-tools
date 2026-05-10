@@ -57,7 +57,7 @@ export const UseTranslatorPage = () => {
                 </header>
 
                 {/* API Availability Status */}
-                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                <article>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI APIs are available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -69,7 +69,6 @@ export const UseTranslatorPage = () => {
                         <li>
                             <a
                                 href="#"
-                                style={{ background: activeTab === 'options' ? '#1e3a5f' : 'transparent', color: activeTab === 'options' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('options')
@@ -81,7 +80,6 @@ export const UseTranslatorPage = () => {
                         <li>
                             <a
                                 href="#"
-                                style={{ background: activeTab === 'input' ? '#1e3a5f' : 'transparent', color: activeTab === 'input' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('input')
@@ -182,21 +180,21 @@ export const UseTranslatorPage = () => {
 
                 {/* Progress */}
                 {translator.progress && (
-                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Downloading Model:</strong> {translator.progress.loaded} / {translator.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {translator.error && (
-                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Error:</strong> {translator.error.message}
                     </article>
                 )}
 
                 {/* Result */}
                 {translator.data && (
-                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <h3>Translation</h3>
                         <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>{translator.data}</p>
                     </article>

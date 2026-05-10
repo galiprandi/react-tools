@@ -30,9 +30,10 @@ This playground uses **Pico CSS** (class-less CSS framework) loaded via CDN:
 This is **only for the playground** and is **not** required or bundled with the library.
 
 **IMPORTANT:** Pico CSS is designed to be classless, meaning it styles HTML elements directly without requiring classes. **DO NOT use Pico CSS classes** like `className="container"`, `className="grid"`, `className="secondary"`, `className="success"`, `className="error"`, etc. in playground pages or examples. Instead:
-- Use inline styles for custom colors and layouts
 - Let Pico CSS style elements by their semantic HTML tags (main, article, section, header, nav, etc.)
-- Use inline styles for dark backgrounds to ensure proper contrast
+- Use inline styles ONLY for layouts (grid, gap, padding, etc.)
+- **DO NOT add custom background colors unless explicitly requested**
+- Let Pico CSS handle all colors and styling by default
 
 ## Library vs Playground
 
@@ -46,26 +47,19 @@ When using `@galiprandi/react-tools` in your own project, you will only get the 
 ### Color Contrast and Accessibility
 **CRITICAL: Never use light backgrounds with light text or dark backgrounds with dark text.**
 
-When adding inline styles to example components or playground pages:
-- **Light backgrounds** (#fff, #e3f2fd, #e8f5e9, #f5f5f5, etc.) MUST have **dark text** (#000 or #333)
-- **Dark backgrounds** (#1e3a5f, #2d4a3e, #3d3d3d, etc.) MUST have **light text** (#fff or #f0f0f0)
-- Always ensure WCAG AA compliance (minimum 4.5:1 contrast ratio)
+**DO NOT add custom background colors unless explicitly requested by the user.**
+- Let Pico CSS handle all colors and styling by default
+- Only add custom colors when the user explicitly asks for them
+- If custom colors are requested, ensure WCAG AA compliance (minimum 4.5:1 contrast ratio)
 
 **Pico CSS Classes:**
 - **NEVER use Pico CSS classes** like `className="container"`, `className="grid"`, `className="secondary"`, `className="success"`, `className="error"`, etc.
 - Pico CSS is designed to be classless - it styles HTML elements directly without classes
 - Use semantic HTML tags (main, article, section, header, nav, etc.) and let Pico CSS style them
-- Use inline styles for custom colors, layouts, and dark backgrounds to ensure proper contrast
+- Use inline styles ONLY for layouts (grid, gap, padding, etc.)
 - Do not mix Pico CSS classes with inline styles - use one approach consistently
 
 **Common Mistakes to Avoid:**
-- Using `background: '#e3f2fd'` (light blue) with `color: '#000'` (black) - OK
-- Using `background: '#e3f2fd'` (light blue) with `color: '#fff'` (white) - WRONG (poor contrast)
-- Using `background: '#1e3a5f'` (dark blue) with `color: '#000'` (black) - WRONG (poor contrast)
-- Using `background: '#1e3a5f'` (dark blue) with `color: '#fff'` (white) - OK
 - Using `className="secondary"` or any Pico CSS class - WRONG (classless framework)
+- Adding custom background colors without user request - WRONG
 - Mixing Pico CSS classes with inline styles - WRONG (conflicting styles)
-
-**Safe Color Combinations:**
-- Light backgrounds (#fff, #f5f5f5, #e3f2fd) + Dark text (#000, #333, #1a1a1a)
-- Dark backgrounds (#1e3a5f, #2d4a3e, #3d3d3d, #1a1a1a) + Light text (#fff, #f0f0f0, #e0e0e0)

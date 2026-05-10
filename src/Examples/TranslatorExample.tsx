@@ -175,7 +175,7 @@ export const TranslatorExample = () => {
 
             {/* Progress */}
             {translator.progress && (
-                <div style={{ marginBottom: '1rem', padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                <div>
                     <strong>Downloading Model:</strong> {translator.progress.loaded} / {translator.progress.total}
                 </div>
             )}
@@ -194,9 +194,9 @@ export const TranslatorExample = () => {
 
             {/* Result */}
             {translator.data && (
-                <div style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                <div>
                     <h3>Translation</h3>
-                    <p style={{ whiteSpace: 'pre-wrap' }}>{translator.data}</p>
+                    <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>{translator.data}</p>
                 </div>
             )}
         </section>

@@ -81,7 +81,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 </header>
 
                 {/* API Availability Status */}
-                <article style={{ padding: '0.5rem', background: ai.isAvailable ? '#2d4a3e' : '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                <article>
                     <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI Summarizer API is available">
                         {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
                     </small>
@@ -93,7 +93,6 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                         <li>
                             <a 
                                 href="#"
-                                style={{ background: activeTab === 'options' ? '#1e3a5f' : 'transparent', color: activeTab === 'options' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('options')
@@ -105,7 +104,6 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                         <li>
                             <a 
                                 href="#"
-                                style={{ background: activeTab === 'input' ? '#1e3a5f' : 'transparent', color: activeTab === 'input' ? '#fff' : 'inherit', padding: '0.5rem', borderRadius: '4px' }}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     setActiveTab('input')
@@ -273,21 +271,21 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
 
                 {/* Progress */}
                 {summarize.progress && (
-                    <article style={{ padding: '0.5rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Downloading Model:</strong> {summarize.progress.loaded} / {summarize.progress.total}
                     </article>
                 )}
 
                 {/* Error */}
                 {summarize.error && (
-                    <article style={{ padding: '0.5rem', background: '#8b0000', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <strong>Error:</strong> {summarize.error.message}
                     </article>
                 )}
 
                 {/* Result */}
                 {(summarize.data || displayedText) && (
-                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
+                    <article>
                         <h3>Summary</h3>
                         <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>{displayedText || summarize.data}</p>
                     </article>
