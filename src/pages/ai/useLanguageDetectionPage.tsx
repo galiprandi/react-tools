@@ -110,7 +110,7 @@ export const UseLanguageDetectionPage = () => {
 
                 {/* Results */}
                 {detector.results.length > 0 && (
-                    <article className="secondary">
+                    <article style={{ padding: '1rem', background: '#1e3a5f', borderRadius: '4px', color: '#fff' }}>
                         <h3>Detection Results</h3>
                         {detector.results.map((result, index) => (
                             <div key={index} style={{ marginBottom: '0.5rem', padding: '0.5rem', background: index === 0 ? '#2d4a3e' : '#3d3d3d', borderRadius: '4px', color: '#fff' }}>
