@@ -5,7 +5,7 @@ import { useTranslator, type UseTranslatorOptions, type SupportedLanguage } from
 export const UseTranslatorPage = () => {
     const ai = useAI()
     const [activeTab, setActiveTab] = useState<'options' | 'input'>('options')
-    const [text, setText] = useState<string>('')
+    const [text, setText] = useState<string>('Where is the next bus stop, please?')
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const [options, setOptions] = useState<UseTranslatorOptions>({
         sourceLanguage: 'auto',
@@ -24,13 +24,8 @@ export const UseTranslatorPage = () => {
 
     const handleReset = () => {
         translator.reset()
-        setText('')
-    }
-
-    // Load sample text on mount
-    useState(() => {
         setText('Where is the next bus stop, please?')
-    })
+    }
 
     const supportedLanguages: SupportedLanguage[] = [
         'ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr',
