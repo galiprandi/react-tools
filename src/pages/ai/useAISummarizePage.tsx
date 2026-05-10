@@ -8,18 +8,21 @@ export const UseAISummarizePage = () => {
     const [text, setText] = useState<string>('')
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const [options, setOptions] = useState<UseAISummarizeOptions>({
-        type: 'tl;dr',
+        type: 'tldr',
         format: 'plain-text',
         length: 'short',
+        outputLanguage: 'en',
+        preference: 'auto',
         streaming: true,
         warmup: false,
     })
     const summarize = useAISummarize(options)
     const [displayedText, setDisplayedText] = useState('')
+    const [context, setContext] = useState<string>('End the summary with: Powered by react-tools')
 
     const handleSummarize = () => {
         if (text.trim()) {
-            summarize.summarize(text)
+            summarize.summarize(text, context || undefined)
         }
     }
 
@@ -163,6 +166,20 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                                 </select>
                             </div>
 
+                            <div>
+                                <label htmlFor="preference" data-tooltip="Preference: auto (balances speed and quality) or capability (prioritizes quality over speed)">
+                                    Preference
+                                </label>
+                                <select
+                                    id="preference"
+                                    value={options.preference}
+                                    onChange={(e) => setOptions({ ...options, preference: e.target.value as UseAISummarizeOptions['preference'] })}
+                                >
+                                    <option value="auto">Auto</option>
+                                    <option value="capability">Capability</option>
+                                </select>
+                            </div>
+
                         </div>
 
                         <div>
@@ -204,6 +221,19 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                         <button onClick={() => setIsExpanded(!isExpanded)}>
                             {isExpanded ? '▼ Collapse' : '▲ Expand'}
                         </button>
+
+                        <div>
+                            <label htmlFor="context" data-tooltip="Instruction for the summary (e.g., 'End with: Powered by react-tools')">
+                                Context Instruction
+                            </label>
+                            <input
+                                id="context"
+                                type="text"
+                                value={context}
+                                onChange={(e) => setContext(e.target.value)}
+                                placeholder="End the summary with: Powered by react-tools"
+                            />
+                        </div>
 
                     </section>
                 )}

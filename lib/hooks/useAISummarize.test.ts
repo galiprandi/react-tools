@@ -10,19 +10,17 @@ describe('useAISummarize', () => {
   };
 
   const mockSummarizerCreate = vi.fn();
-  const mockCapabilities = vi.fn();
+  const mockAvailability = vi.fn();
 
   beforeEach(() => {
-    vi.stubGlobal('ai', {
-      summarizer: {
-        capabilities: mockCapabilities,
-        create: mockSummarizerCreate,
-      },
+    vi.stubGlobal('Summarizer', {
+      availability: mockAvailability,
+      create: mockSummarizerCreate,
     });
     if (typeof window !== 'undefined') {
-        (window as any).ai = (global as any).ai;
+        (window as unknown as { Summarizer?: unknown }).Summarizer = (global as unknown as { Summarizer?: unknown }).Summarizer;
     }
-    mockCapabilities.mockResolvedValue({ available: 'readily' });
+    mockAvailability.mockResolvedValue('readily');
     mockSummarizerCreate.mockResolvedValue(mockSummarizer);
   });
 
@@ -30,7 +28,7 @@ describe('useAISummarize', () => {
     vi.unstubAllGlobals();
     vi.clearAllMocks();
     if (typeof window !== 'undefined') {
-        delete (window as any).ai;
+        delete (window as unknown as { Summarizer?: unknown }).Summarizer;
     }
   });
 
@@ -125,10 +123,10 @@ describe('useAISummarize', () => {
   });
 
   it('should handle download progress', async () => {
-    mockCapabilities.mockResolvedValue({ available: 'after-download' });
+    mockAvailability.mockResolvedValue('downloading');
 
-    let monitorCallback: any;
-    mockSummarizerCreate.mockImplementation(({ monitor }) => {
+    let monitorCallback: ((monitor: { addEventListener: (event: string, callback: (e: Event) => void) => void }) => void) | undefined;
+    mockSummarizerCreate.mockImplementation(({ monitor }: { monitor?: (m: { addEventListener: (event: string, callback: (e: Event) => void) => void }) => void }) => {
       monitorCallback = monitor;
       return new Promise((resolve) => {
           // Delay resolution to simulate download
@@ -144,11 +142,18 @@ describe('useAISummarize', () => {
 
     await waitFor(() => expect(result.current.status).toBe('downloading'));
 
-    const mockMonitor = { onprogress: null as any };
-    monitorCallback(mockMonitor);
+    const eventListeners = new Map<string, (e: Event) => void>();
+    const mockMonitor = {
+      addEventListener: (event: string, callback: (e: Event) => void) => {
+        eventListeners.set(event, callback);
+      },
+    };
+    monitorCallback?.(mockMonitor);
 
     act(() => {
-      mockMonitor.onprogress({ loaded: 50, total: 100 });
+      const progressEvent = { loaded: 50, total: 100 } as ProgressEvent;
+      const callback = eventListeners.get('downloadprogress');
+      callback?.(progressEvent);
     });
 
     expect(result.current.progress).toEqual({ loaded: 50, total: 100 });

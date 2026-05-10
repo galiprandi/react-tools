@@ -312,11 +312,12 @@ function MyComponent() {
     type: 'tldr',
     format: 'markdown',
     length: 'short',
+    outputLanguage: 'en',
     streaming: true
   });
 
   const handleSummarize = async () => {
-    await summarize.summarize(longText);
+    await summarize.summarize(longText, 'End the summary with: Powered by my app');
     console.log(summarize.data);
   };
 
@@ -337,11 +338,11 @@ function MyComponent() {
 | `type`                    | `'tldr' \| 'key-points' \| 'teaser' \| 'headline'` | `undefined`  | Type of summary to generate                   |
 | `format`                  | `'plain-text' \| 'markdown'`                  | `undefined`  | Output format of the summary                  |
 | `length`                  | `'short' \| 'medium' \| 'long'`               | `undefined`  | Length of the summary                         |
-| `sharedContext`           | `string`                                      | `undefined`  | Additional context to guide summarization     |
+| `sharedContext`           | `string`                                      | `undefined`  | Shared context for all summaries               |
 | `expectedInputLanguages`  | `string[]`                                    | `undefined`  | Expected input languages (BCP 47 format)      |
-| `outputLanguage`          | `string`                                      | `undefined`  | Output language (BCP 47 format)               |
+| `outputLanguage`          | `'en' \| 'es' \| 'ja'`                        | `'en'`       | Output language (BCP 47 format)               |
 | `expectedContextLanguages`| `string[]`                                    | `undefined`  | Expected context languages (BCP 47 format)    |
-| `preference`              | `'auto' \| 'capability'`                       | `undefined`  | Performance preference                        |
+| `preference`              | `'auto' \| 'capability'`                       | `undefined`  | Performance preference (auto or capability)   |
 | `streaming`               | `boolean`                                     | `false`      | Enable streaming output for real-time results |
 | `warmup`                  | `boolean`                                     | `false`      | Preload model on mount for faster first summary |
 
@@ -354,7 +355,7 @@ function MyComponent() {
 | `progress`            | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
 | `error`               | `Error \| null`                             | Error object if summarization failed                        |
 | `supportedPreferences` | `('auto' \| 'capability')[]`                 | Supported preference values based on browser capabilities    |
-| `summarize`           | `(text: string) => Promise<void>`           | Function to summarize text                                  |
+| `summarize`           | `(text: string, context?: string) => Promise<void>` | Function to summarize text with optional context instruction |
 | `reset`               | `() => void`                                | Function to reset the hook state                            |
 
 **Note**: This hook requires Chrome's AI Summarizer API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.

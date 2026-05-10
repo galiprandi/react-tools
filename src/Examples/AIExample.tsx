@@ -12,6 +12,7 @@ const AIExample = () => {
         summarize,
         reset
     } = useAISummarize({
+        outputLanguage: 'en',
         streaming: true,
         warmup: true,
     });
