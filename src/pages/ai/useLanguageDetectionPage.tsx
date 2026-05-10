@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { useAI } from '../../../lib/hooks/useAI'
 import { useLanguageDetection } from '../../../lib/hooks/useLanguageDetection'
 
+const sampleText = `Hallo und herzlich willkommen! This is a mixed language text. Bonjour le monde!`
+
 export const UseLanguageDetectionPage = () => {
     const ai = useAI()
-    const [text, setText] = useState<string>('')
+    const [text, setText] = useState<string>(sampleText)
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const detector = useLanguageDetection({ text, warmup: false })
 
     const handleReset = () => {
         detector.reset()
-        setText('')
+        setText(sampleText)
     }
-
-    const sampleText = `Hallo und herzlich willkommen! This is a mixed language text. Bonjour le monde!`
 
     return (
         <main>
@@ -61,7 +61,6 @@ export const UseLanguageDetectionPage = () => {
                 <section>
                     <div>
                         <label htmlFor="text">Text to Analyze</label>
-                        <button onClick={() => setText(sampleText)}>Load Sample</button>
                     </div>
                     <textarea
                         id="text"
