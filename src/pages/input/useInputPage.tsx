@@ -11,7 +11,6 @@ export const UseInputPage = () => {
             <article>
                 <header>
                     <h1>Input</h1>
-                    <p>Accessible input component with transformations and debouncing</p>
                 </header>
 
                 {/* Documentation */}

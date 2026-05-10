@@ -19,7 +19,7 @@ export const UseLanguageDetectionPage = () => {
         <main>
             <article>
                 <header>
-                    <h1>Language Detection</h1>
+                    <h1>useLanguageDetection</h1>
                 </header>
 
                 {/* API Availability Status */}

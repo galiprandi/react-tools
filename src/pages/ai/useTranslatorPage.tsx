@@ -48,7 +48,7 @@ export const UseTranslatorPage = () => {
         <main>
             <article>
                 <header>
-                    <h1>Translator</h1>
+                    <h1>useTranslator</h1>
                 </header>
 
                 {/* API Availability Status */}
@@ -124,6 +124,7 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
+                                    role="switch"
                                     checked={streaming}
                                     onChange={(e) => setStreaming(e.target.checked)}
                                 />
@@ -133,6 +134,7 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Preload the model on component mount (faster first translation)">
                                 <input
                                     type="checkbox"
+                                    role="switch"
                                     checked={warmup}
                                     onChange={(e) => setWarmup(e.target.checked)}
                                 />
@@ -142,6 +144,7 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Enable auto-translation when text changes">
                                 <input
                                     type="checkbox"
+                                    role="switch"
                                     checked={enable ?? true}
                                     onChange={(e) => setEnable(e.target.checked)}
                                 />

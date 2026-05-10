@@ -10,7 +10,6 @@ export const UseObserverPage = () => {
             <article>
                 <header>
                     <h1>Observer</h1>
-                    <p>Intersection Observer component for tracking element visibility</p>
                 </header>
 
                 {/* Documentation */}

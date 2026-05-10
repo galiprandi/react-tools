@@ -10,7 +10,6 @@ export const UseDateTimePage = () => {
             <article>
                 <header>
                     <h1>DateTime</h1>
-                    <p>Accessible date and time input component</p>
                 </header>
 
                 {/* Documentation */}

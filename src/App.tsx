@@ -20,149 +20,166 @@ function App() {
         <main>
             <nav>
                 <ul>
+                    <li><strong>react-tools</strong></li>
+                </ul>
+                <ul>
                     <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'asyncblock' ? '' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('asyncblock')
-                            }}
-                        >
-                            AsyncBlock
-                        </a>
+                        <details className="dropdown">
+                            <summary>Components</summary>
+                            <ul dir="rtl">
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'asyncblock' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('asyncblock')
+                                        }}
+                                    >
+                                        AsyncBlock
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'form' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('form')
+                                        }}
+                                    >
+                                        Form
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'input' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('input')
+                                        }}
+                                    >
+                                        Input
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'datetime' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('datetime')
+                                        }}
+                                    >
+                                        DateTime
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'dialog' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('dialog')
+                                        }}
+                                    >
+                                        Dialog
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'observer' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('observer')
+                                        }}
+                                    >
+                                        Observer
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'lazyrender' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('lazyrender')
+                                        }}
+                                    >
+                                        LazyRender
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'form' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('form')
-                            }}
-                        >
-                            Form
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'input' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('input')
-                            }}
-                        >
-                            Input
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'datetime' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('datetime')
-                            }}
-                        >
-                            DateTime
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'dialog' ? '' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('dialog')
-                            }}
-                        >
-                            Dialog
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'observer' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('observer')
-                            }}
-                        >
-                            Observer
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'lazyrender' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('lazyrender')
-                            }}
-                        >
-                            LazyRender
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'ai-status' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('ai-status')
-                            }}
-                        >
-                            useAI
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'ai-summarizer' ? '' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('ai-summarizer')
-                            }}
-                        >
-                            useAISummarize
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'ai-language-detection' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('ai-language-detection')
-                            }}
-                        >
-                            useLanguageDetection
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'ai-translator' ? 'secondary' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('ai-translator')
-                            }}
-                        >
-                            useTranslator
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            className={currentPage === 'debounce' ? '' : ''}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setCurrentPage('debounce')
-                            }}
-                        >
-                            useDebounce
-                        </a>
+                        <details className="dropdown">
+                            <summary>Hooks</summary>
+                            <ul dir="rtl">
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'debounce' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('debounce')
+                                        }}
+                                    >
+                                        useDebounce
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-status' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-status')
+                                        }}
+                                    >
+                                        useAI
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-summarizer' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-summarizer')
+                                        }}
+                                    >
+                                        useAISummarize
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-language-detection' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-language-detection')
+                                        }}
+                                    >
+                                        useLanguageDetection
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-translator' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-translator')
+                                        }}
+                                    >
+                                        useTranslator
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
                     </li>
                 </ul>
             </nav>

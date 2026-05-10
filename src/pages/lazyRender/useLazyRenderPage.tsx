@@ -6,7 +6,6 @@ export const UseLazyRenderPage = () => {
             <article>
                 <header>
                     <h1>LazyRender</h1>
-                    <p>Lazy render component for viewport-based rendering</p>
                 </header>
 
                 {/* Documentation */}

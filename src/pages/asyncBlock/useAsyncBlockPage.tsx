@@ -18,7 +18,6 @@ export const UseAsyncBlockPage = () => {
             <article>
                 <header>
                     <h1>AsyncBlock</h1>
-                    <p>Async data fetching component with automatic loading states</p>
                 </header>
 
                 {/* Documentation */}

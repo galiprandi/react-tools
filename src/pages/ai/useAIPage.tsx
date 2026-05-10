@@ -7,8 +7,7 @@ export const UseAIPage = () => {
         <main>
             <article>
                 <header>
-                    <h1>AI Status</h1>
-                    <p>Chrome&apos;s Native AI API Availability</p>
+                    <h1>useAI</h1>
                 </header>
 
                 {/* AI Status */}
@@ -28,7 +27,7 @@ export const UseAIPage = () => {
                 {/* Detailed Status */}
                 <section>
                     <h3>Detailed Status</h3>
-                    <div>
+                    <div className="grid">
                         <div>
                             <label>Status</label>
                             <p>{ai.status}</p>
@@ -54,9 +53,11 @@ export const UseAIPage = () => {
                     )}
                 </section>
 
+                <hr />
+
                 {/* Hook Information */}
                 <section>
-                    <h3>useAI Hook</h3>
+                    <h3>Documentation</h3>
                     <article>
                         <p>The <code>useAI</code> hook checks the availability of Chrome&apos;s Native AI APIs.</p>
                         <p><strong>Returns:</strong></p>

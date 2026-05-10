@@ -10,7 +10,6 @@ export const UseFormPage = () => {
             <article>
                 <header>
                     <h1>Form</h1>
-                    <p>Accessible form component with automatic value extraction</p>
                 </header>
 
                 {/* Documentation */}

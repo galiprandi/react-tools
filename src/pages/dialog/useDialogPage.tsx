@@ -6,7 +6,6 @@ export const UseDialogPage = () => {
             <article>
                 <header>
                     <h1>Dialog</h1>
-                    <p>Accessible dialog component using HTML dialog element</p>
                 </header>
 
                 {/* Documentation */}

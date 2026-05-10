@@ -76,7 +76,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
         <main className="container">
             <article>
                 <header>
-                    <h1>AI Summarizer</h1>
+                    <h1>useAISummarize</h1>
                 </header>
 
                 {/* API Availability Status */}
@@ -183,6 +183,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                             <label data-tooltip="Preload the model on component mount (faster first summarization)">
                                 <input
                                     type="checkbox"
+                                    role="switch"
                                     checked={options.warmup ?? false}
                                     onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
                                 />
@@ -192,6 +193,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
+                                    role="switch"
                                     checked={options.streaming}
                                     onChange={(e) => setOptions({ ...options, streaming: e.target.checked })}
                                 />

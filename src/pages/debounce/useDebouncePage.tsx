@@ -10,7 +10,6 @@ export const UseDebouncePage = () => {
             <article>
                 <header>
                     <h1>useDebounce</h1>
-                    <p>Debounce hook for delaying function execution</p>
                 </header>
 
                 {/* Documentation */}
