@@ -87,6 +87,15 @@ export interface UseAISummarizeOptions {
 
 export type AISummarizeStatus = 'idle' | 'initializing' | 'downloading' | 'summarizing' | 'success' | 'error';
 
+export interface UseAISummarizeReturn {
+  data: string;
+  status: AISummarizeStatus;
+  progress: { loaded: number; total: number } | null;
+  error: Error | null;
+  summarize: (text: string, context?: string) => Promise<void>;
+  reset: () => void;
+}
+
 // Type definitions for Chrome's Summarizer API
 // These are not yet in TypeScript's lib.dom.d.ts
 
@@ -140,7 +149,7 @@ interface AISummarizer {
  * @param options.warmup - Preload model on mount for faster first summary (default: false)
  * @returns An object with data, status, progress, error, and functions to summarize or reset
  */
-export function useAISummarize(options: UseAISummarizeOptions = {}) {
+export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummarizeReturn {
   const { type, format, length, sharedContext, outputLanguage = 'auto', expectedInputLanguages, expectedContextLanguages, preference = 'auto', streaming = false, warmup = false } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AISummarizeStatus>('idle');
