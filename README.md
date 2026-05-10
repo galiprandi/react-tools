@@ -311,7 +311,7 @@ function MyComponent() {
 
 | Property        | Type                          | Description                                 |
 |-----------------|-------------------------------|---------------------------------------------|
-| `isAvailable`   | `boolean`                     | Whether all requested APIs are available     |
+| `isAvailable`   | `boolean`                     | Whether any of the requested APIs are available     |
 | `status`        | `'idle' \| 'loading' \| 'ready' \| 'error'` | The current status of the availability check |
 | `error`         | `Error \| null`               | Error object if the check failed           |
 | `apis`          | `Record<AIApiType, AIApiStatus>` | Status of each API                          |

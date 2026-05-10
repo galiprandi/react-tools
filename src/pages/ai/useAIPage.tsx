@@ -62,7 +62,7 @@ export const UseAIPage = () => {
                         <p>The <code>useAI</code> hook checks the availability of Chrome&apos;s Native AI APIs.</p>
                         <p><strong>Returns:</strong></p>
                         <ul>
-                            <li><code>isAvailable</code>: boolean - Whether all requested APIs are available</li>
+                            <li><code>isAvailable</code>: boolean - Whether any of the requested APIs are available</li>
                             <li><code>status</code>: &apos;idle&apos; | &apos;loading&apos; | &apos;ready&apos; | &apos;error&apos;</li>
                             <li><code>apis</code>: Object with availability status for each API</li>
                             <li><code>error</code>: Error | null</li>

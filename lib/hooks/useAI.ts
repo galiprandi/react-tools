@@ -50,7 +50,7 @@ export interface UseAIOptions {
  * Result object returned by the useAI hook.
  */
 export interface UseAIResult {
-  /** Whether all requested APIs are available */
+  /** Whether any of the requested APIs are available */
   isAvailable: boolean;
   /** The current status of the availability check */
   status: AIAvailabilityStatus;
