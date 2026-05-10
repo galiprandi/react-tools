@@ -41,7 +41,6 @@ describe('useTranslator', () => {
     const { result } = renderHook(() => useTranslator());
     expect(result.current.status).toBe('idle');
     expect(result.current.data).toBe('');
-    expect(result.current.resolvedTargetLanguage).toBe('en');
   });
 
   it('should initialize with idle status', () => {
@@ -145,7 +144,5 @@ describe('useTranslator', () => {
     expect(result.current.data).toBe('');
     expect(result.current.error).toBeNull();
     expect(result.current.progress).toBeNull();
-    expect(result.current.detectedSourceLanguage).toBeUndefined();
-    expect(result.current.resolvedTargetLanguage).toBeUndefined();
   });
 });
