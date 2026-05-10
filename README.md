@@ -20,7 +20,21 @@
 
 ***
 
-## 📚 Table of Contents
+## � What's New
+
+### [2026-05-10] AI Agent Skill Integration
+
+Now available as an AI agent skill through [skills.sh](https://skills.sh)! Install with:
+
+```bash
+npx skills add galiprandi/react-tools
+```
+
+This skill provides comprehensive guidance for using @galiprandi/react-tools library with Claude Code, Cursor, Windsurf, and other AI coding agents.
+
+***
+
+## �📚 Table of Contents
 
 * [Overview](#overview)
 * [Installation](#installation)
