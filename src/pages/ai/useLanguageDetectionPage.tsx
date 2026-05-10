@@ -113,9 +113,9 @@ export const UseLanguageDetectionPage = () => {
                     <article className="secondary">
                         <h3>Detection Results</h3>
                         {detector.results.map((result, index) => (
-                            <div key={index} style={{ marginBottom: '0.5rem', padding: '0.5rem', background: index === 0 ? '#e8f5e9' : '#f5f5f5', borderRadius: '4px' }}>
-                                <strong>#{index + 1}</strong> - Language: <code>{result.detectedLanguage}</code> | 
-                                Confidence: <code>{(result.confidence * 100).toFixed(2)}%</code>
+                            <div key={index} style={{ marginBottom: '0.5rem', padding: '0.5rem', background: index === 0 ? '#2d4a3e' : '#3d3d3d', borderRadius: '4px', color: '#fff' }}>
+                                <strong>#{index + 1}</strong> - Language: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{result.detectedLanguage}</code> | 
+                                Confidence: <code style={{ background: '#000', color: '#fff', padding: '0.1rem 0.3rem', borderRadius: '2px' }}>{(result.confidence * 100).toFixed(2)}%</code>
                             </div>
                         ))}
                     </article>
