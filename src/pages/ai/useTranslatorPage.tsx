@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import { useAI } from '../../../lib/hooks/useAI'
-import { useTranslator, type UseTranslatorOptions, type SupportedLanguage } from '../../../lib/hooks/useTranslator'
+import { useTranslator, type SupportedLanguage } from '../../../lib/hooks/useTranslator'
 
 export const UseTranslatorPage = () => {
     const ai = useAI()
     const [activeTab, setActiveTab] = useState<'options' | 'input'>('options')
     const [text, setText] = useState<string>('Where is the next bus stop, please?')
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const [options, setOptions] = useState<UseTranslatorOptions>({
-        sourceLanguage: 'auto',
-        targetLanguage: 'user',
-        streaming: false,
-        warmup: false,
-        enable: true,
-    })
-    const translator = useTranslator({ ...options, text })
+    const [sourceLanguage, setSourceLanguage] = useState<'auto' | SupportedLanguage>('auto')
+    const [targetLanguage, setTargetLanguage] = useState<'user' | SupportedLanguage>('user')
+    const [streaming, setStreaming] = useState<boolean>(false)
+    const [warmup, setWarmup] = useState<boolean>(false)
+    const [enable, setEnable] = useState<boolean>(true)
+    
+    const translator = useTranslator({ text, sourceLanguage, targetLanguage, streaming, warmup, enable })
 
     const handleTranslate = () => {
         if (text.trim()) {
@@ -98,8 +97,8 @@ export const UseTranslatorPage = () => {
                                 <label htmlFor="sourceLanguage">Source Language</label>
                                 <select
                                     id="sourceLanguage"
-                                    value={options.sourceLanguage}
-                                    onChange={(e) => setOptions({ ...options, sourceLanguage: e.target.value as 'auto' | SupportedLanguage })}
+                                    value={sourceLanguage}
+                                    onChange={(e) => setSourceLanguage(e.target.value as 'auto' | SupportedLanguage)}
                                 >
                                     <option value="auto">Auto-detect</option>
                                     {supportedLanguages.map(lang => (
@@ -112,8 +111,8 @@ export const UseTranslatorPage = () => {
                                 <label htmlFor="targetLanguage">Target Language</label>
                                 <select
                                     id="targetLanguage"
-                                    value={options.targetLanguage}
-                                    onChange={(e) => setOptions({ ...options, targetLanguage: e.target.value as 'user' | SupportedLanguage })}
+                                    value={targetLanguage}
+                                    onChange={(e) => setTargetLanguage(e.target.value as 'user' | SupportedLanguage)}
                                 >
                                     <option value="user">User&apos;s Browser Language</option>
                                     {supportedLanguages.map(lang => (
@@ -127,8 +126,8 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
-                                    checked={options.streaming}
-                                    onChange={(e) => setOptions({ ...options, streaming: e.target.checked })}
+                                    checked={streaming}
+                                    onChange={(e) => setStreaming(e.target.checked)}
                                 />
                                 Streaming
                             </label>
@@ -136,8 +135,8 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Preload the model on component mount (faster first translation)">
                                 <input
                                     type="checkbox"
-                                    checked={options.warmup}
-                                    onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
+                                    checked={warmup}
+                                    onChange={(e) => setWarmup(e.target.checked)}
                                 />
                                 Warmup
                             </label>
@@ -145,8 +144,8 @@ export const UseTranslatorPage = () => {
                             <label data-tooltip="Enable auto-translation when text changes">
                                 <input
                                     type="checkbox"
-                                    checked={options.enable ?? true}
-                                    onChange={(e) => setOptions({ ...options, enable: e.target.checked })}
+                                    checked={enable ?? true}
+                                    onChange={(e) => setEnable(e.target.checked)}
                                 />
                                 Auto-translate
                             </label>
