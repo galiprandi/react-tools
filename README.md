@@ -20,21 +20,18 @@
 
 ***
 
-## � What's New
+## ✨ What's New
 
-### [2026-05-10] AI Agent Skill Integration
+**AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
 
-Now available as an AI agent skill through [skills.sh](https://skills.sh)! Install with:
-
-```bash
-npx skills add galiprandi/react-tools
-```
-
-This skill provides comprehensive guidance for using @galiprandi/react-tools library with Claude Code, Cursor, Windsurf, and other AI coding agents.
+- **useAI** - Check and manage availability of browser's AI APIs
+- **useAISummarize** - Generate text summaries with streaming support
+- **useLanguageDetection** - Detect language from text with confidence scores
+- **useTranslator** - Translate text between languages with streaming support
 
 ***
 
-## �📚 Table of Contents
+## 📚 Table of Contents
 
 * [Overview](#overview)
 * [Installation](#installation)
