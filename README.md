@@ -55,7 +55,7 @@
 ### ✨ What's New
 
 **AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
-- [`useAI`](#useai) - Check AI Summarizer availability
+- [`useAI`](#useai) - Check and manage availability of browser's AI APIs
 - [`useAISummarize`](#useaisummarize) - Generate text summaries with streaming support
 - [`useLanguageDetection`](#uselanguagedetection) - Detect language from text with confidence scores
 - [`useTranslator`](#usetranslator) - Translate text between languages with streaming support
@@ -270,7 +270,7 @@ Only renders children when they become visible in the viewport.
 ### useAI
 
 **Description**\
-Hook for checking the availability of the browser's AI Summarizer API. This hook automatically checks if the Chrome native Summarizer API is available and provides real-time status updates. It's useful for feature detection before attempting to use AI summarization features.
+Hook for checking and managing the availability of browser's AI APIs. This hook provides a centralized way to detect which AI APIs are available, track model download progress, and preload models for faster initial use. Supports current APIs (Summarizer, Translator, LanguageDetector) and experimental APIs (Prompt, Writer, Rewriter, Proofreader).
 
 **Example**
 
@@ -278,22 +278,53 @@ Hook for checking the availability of the browser's AI Summarizer API. This hook
 import { useAI } from '@galiprandi/react-tools';
 
 function MyComponent() {
-  const { isAvailable, availability, status, error } = useAI();
+  // Check all APIs
+  const { isAvailable, apis, status } = useAI();
 
-  if (status === 'loading') return <p>Checking AI availability...</p>;
-  if (!isAvailable) return <p>AI not available in this browser</p>;
-  return <AISummarizerComponent />;
+  // Check specific APIs
+  const { isAvailable, apis, preload } = useAI({ apis: ['translator', 'summarizer'] });
+
+  // Preload models
+  useEffect(() => {
+    if (isAvailable) {
+      preload('translator');
+    }
+  }, [isAvailable, preload]);
+
+  // Show download progress
+  if (apis.translator.availability === 'downloading') {
+    const progress = getApiProgress('translator');
+    return <LoadingBar {...progress} />;
+  }
 }
 ```
 
+**Options**
+
+| Option      | Type      | Default | Description                                   |
+|-------------|-----------|---------|-----------------------------------------------|
+| `apis`      | `AIApiType[]` | All APIs | Specific APIs to check. If not provided, checks all APIs |
+| `onProgress` | `(api: AIApiType, progress: { loaded: number; total: number }) => void` | - | Callback when an API's download progress updates |
+| `onReady`    | `(api: AIApiType) => void` | - | Callback when an API becomes ready |
+
 **Returns**
 
-| Property      | Type                          | Description                                 |
-|---------------|-------------------------------|---------------------------------------------|
-| `isAvailable` | `boolean`                     | Whether the AI Summarizer API is available  |
-| `availability`| `'unavailable' \| 'downloadable' \| 'downloading' \| 'available'` | The availability state of the API |
-| `status`      | `'idle' \| 'loading' \| 'ready' \| 'error'` | The current status of the availability check |
-| `error`       | `Error \| null`               | Error object if the check failed           |
+| Property        | Type                          | Description                                 |
+|-----------------|-------------------------------|---------------------------------------------|
+| `isAvailable`   | `boolean`                     | Whether all requested APIs are available     |
+| `status`        | `'idle' \| 'loading' \| 'ready' \| 'error'` | The current status of the availability check |
+| `error`         | `Error \| null`               | Error object if the check failed           |
+| `apis`          | `Record<AIApiType, AIApiStatus>` | Status of each API                          |
+| `isApiAvailable`| `(api: AIApiType) => boolean` | Check if a specific API is available        |
+| `getApiProgress`| `(api: AIApiType) => { loaded: number; total: number } \| null` | Get download progress for a specific API   |
+| `preload`       | `(api: AIApiType) => Promise<void>` | Preload a specific API's model             |
+| `preloadAll`    | `() => Promise<void>`          | Preload all APIs' models                    |
+
+**Supported APIs**
+
+`summarizer`, `translator`, `languageDetector`, `prompt` (Experimental), `writer` (Experimental), `rewriter` (Experimental), `proofreader` (Experimental)
+
+**Note**: This hook requires Chrome's Native AI APIs, which are currently experimental and may not be available in all browsers.
 
 ***
 
