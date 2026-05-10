@@ -27,16 +27,17 @@ describe('useAI', () => {
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
     expect(result.current.isAvailable).toBe(false);
-    expect(result.current.availability).toBe('no');
+    expect(result.current.availability).toBe('unavailable');
   });
 
   it('should return availability: "available" if Summarizer.availability() returns "available"', async () => {
-    const SummarizerMock = {
-      availability: vi.fn().mockResolvedValue('available'),
-    };
-    vi.stubGlobal('Summarizer', SummarizerMock);
+    const mockAvailability = vi.fn().mockResolvedValue('available');
+    const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
+    SummarizerConstructor.availability = mockAvailability;
+    
+    vi.stubGlobal('Summarizer', SummarizerConstructor);
     if (typeof window !== 'undefined') {
-        (window as any).Summarizer = SummarizerMock;
+        (window as any).Summarizer = SummarizerConstructor;
     }
     const { result } = renderHook(() => useAI());
 
@@ -46,12 +47,13 @@ describe('useAI', () => {
   });
 
   it('should return availability: "downloadable" if Summarizer.availability() returns "downloadable"', async () => {
-    const SummarizerMock = {
-      availability: vi.fn().mockResolvedValue('downloadable'),
-    };
-    vi.stubGlobal('Summarizer', SummarizerMock);
+    const mockAvailability = vi.fn().mockResolvedValue('downloadable');
+    const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
+    SummarizerConstructor.availability = mockAvailability;
+    
+    vi.stubGlobal('Summarizer', SummarizerConstructor);
     if (typeof window !== 'undefined') {
-        (window as any).Summarizer = SummarizerMock;
+        (window as any).Summarizer = SummarizerConstructor;
     }
     const { result } = renderHook(() => useAI());
 
@@ -62,12 +64,13 @@ describe('useAI', () => {
 
   it('should handle errors in availability()', async () => {
     const error = new Error('Test Error');
-    const SummarizerMock = {
-      availability: vi.fn().mockRejectedValue(error),
-    };
-    vi.stubGlobal('Summarizer', SummarizerMock);
+    const mockAvailability = vi.fn().mockRejectedValue(error);
+    const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
+    SummarizerConstructor.availability = mockAvailability;
+    
+    vi.stubGlobal('Summarizer', SummarizerConstructor);
     if (typeof window !== 'undefined') {
-        (window as any).Summarizer = SummarizerMock;
+        (window as any).Summarizer = SummarizerConstructor;
     }
     const { result } = renderHook(() => useAI());
 

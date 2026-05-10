@@ -340,9 +340,9 @@ function MyComponent() {
 | `length`                  | `'short' \| 'medium' \| 'long'`               | `undefined`  | Length of the summary                         |
 | `sharedContext`           | `string`                                      | `undefined`  | Shared context for all summaries               |
 | `expectedInputLanguages`  | `string[]`                                    | `undefined`  | Expected input languages (BCP 47 format)      |
-| `outputLanguage`          | `'en' \| 'es' \| 'ja'`                        | `'en'`       | Output language (BCP 47 format)               |
+| `outputLanguage`          | `'en' \| 'es' \| 'ja' \| 'auto' \| 'user'`    | `'auto'`     | Output language. Use `'auto'` to detect from text (default), `'user'` for browser language, or specify a language code |
 | `expectedContextLanguages`| `string[]`                                    | `undefined`  | Expected context languages (BCP 47 format)    |
-| `preference`              | `'auto' \| 'capability'`                       | `undefined`  | Performance preference (auto or capability)   |
+| `preference`              | `'auto' \| 'capability'`                       | `'auto'`     | Performance preference (auto or capability)   |
 | `streaming`               | `boolean`                                     | `false`      | Enable streaming output for real-time results |
 | `warmup`                  | `boolean`                                     | `false`      | Preload model on mount for faster first summary |
 

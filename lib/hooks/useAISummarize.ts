@@ -1,12 +1,92 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Availability } from './useAI';
 
+/**
+ * Result object returned by the language detection.
+ */
+interface DetectionResult {
+  /** The detected language code (BCP 47 format, e.g., 'en', 'es', 'fr') */
+  detectedLanguage: string;
+  /** Confidence level between 0.0 (lowest) and 1.0 (highest) */
+  confidence: number;
+}
+
+/**
+ * Monitor for tracking LanguageDetector creation progress.
+ */
+interface CreateMonitor {
+  addEventListener(event: 'downloadprogress', callback: (e: ProgressEvent) => void): void;
+}
+
+/**
+ * Chrome's LanguageDetector interface.
+ */
+interface LanguageDetector {
+  detect(text: string): Promise<DetectionResult[]>;
+  destroy(): void;
+}
+
+/**
+ * Options for creating a LanguageDetector instance.
+ */
+interface LanguageDetectorCreateOptions {
+  monitor?(m: CreateMonitor): void;
+}
+
+/**
+ * Helper function to get the user's browser language and normalize it to BCP 47 format.
+ * @returns The user's language code (e.g., 'en', 'es', 'ja')
+ */
+function getUserLanguage(): string {
+  if (typeof navigator === 'undefined') return 'en';
+  const lang = navigator.language || navigator.languages?.[0] || 'en';
+  // Normalize BCP 47 language code (e.g., 'en-US' -> 'en')
+  return lang.split('-')[0];
+}
+
+/**
+ * Helper function to detect language from text using Chrome's LanguageDetector API.
+ * @param text - Text to detect language from
+ * @returns The detected language code (e.g., 'en', 'es', 'ja')
+ */
+async function detectLanguageFromText(text: string): Promise<string> {
+  if (typeof window === 'undefined' || typeof (window as unknown as { LanguageDetector?: unknown }).LanguageDetector !== 'function') {
+    return 'en';
+  }
+
+  const LanguageDetector = (window as unknown as { LanguageDetector: { availability?: () => Promise<Availability>; create?: (options?: LanguageDetectorCreateOptions) => Promise<LanguageDetector> } }).LanguageDetector;
+
+  // Check availability
+  if (typeof LanguageDetector.availability === 'function') {
+    const avail = await LanguageDetector.availability();
+    if (avail === 'unavailable') {
+      return 'en';
+    }
+  }
+
+  if (typeof LanguageDetector.create !== 'function') {
+    return 'en';
+  }
+
+  const detector = await LanguageDetector.create();
+  const results = await detector.detect(text);
+  detector.destroy();
+
+  // Return the most likely language with highest confidence
+  if (results.length > 0) {
+    const detected = results[0].detectedLanguage.split('-')[0];
+    return detected;
+  }
+
+  return 'en';
+}
+
 export interface UseAISummarizeOptions {
   type?: 'tldr' | 'key-points' | 'teaser' | 'headline';
   format?: 'plain-text' | 'markdown';
   length?: 'short' | 'medium' | 'long';
   sharedContext?: string;
-  outputLanguage?: 'en' | 'es' | 'ja';
+  outputLanguage?: 'en' | 'es' | 'ja' | 'auto' | 'user';
   expectedInputLanguages?: string[];
   expectedContextLanguages?: string[];
   preference?: 'auto' | 'capability';
@@ -61,7 +141,7 @@ interface AISummarizer {
  * @param options.format - Output format: 'plain-text' or 'markdown'
  * @param options.length - Length of the summary: 'short', 'medium', or 'long'
  * @param options.sharedContext - Shared context for all summaries
- * @param options.outputLanguage - Output language: 'en', 'es', or 'ja' (default: 'en')
+ * @param options.outputLanguage - Output language: 'en', 'es', 'ja', 'auto' (detect from text, default), or 'user' (browser language)
  * @param options.expectedInputLanguages - Expected input languages (BCP 47 format)
  * @param options.expectedContextLanguages - Expected context languages (BCP 47 format)
  * @param options.preference - Performance preference: 'auto' or 'capability' (default: 'auto')
@@ -70,7 +150,7 @@ interface AISummarizer {
  * @returns An object with data, status, progress, error, and functions to summarize or reset
  */
 export function useAISummarize(options: UseAISummarizeOptions = {}) {
-  const { type, format, length, sharedContext, outputLanguage = 'en', expectedInputLanguages, expectedContextLanguages, preference = 'auto', streaming = false, warmup = false } = options;
+  const { type, format, length, sharedContext, outputLanguage = 'auto', expectedInputLanguages, expectedContextLanguages, preference = 'auto', streaming = false, warmup = false } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AISummarizeStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
@@ -90,7 +170,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
     }
   }, []);
 
-  const createSummarizer = useCallback(async () => {
+  const createSummarizer = useCallback(async (overrideOutputLanguage?: string) => {
     if (summarizerRef.current) return summarizerRef.current;
 
     // Chrome native API: Summarizer is a global constructor
@@ -122,12 +202,14 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
       throw new Error('Summarizer.create is not available');
     }
 
+    const resolvedOutputLanguage = overrideOutputLanguage || outputLanguage;
+
     const instance = await Summarizer.create({
       type,
       format,
       length,
       sharedContext,
-      outputLanguage,
+      outputLanguage: resolvedOutputLanguage,
       expectedInputLanguages,
       expectedContextLanguages,
       preference,
@@ -153,7 +235,17 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
       setData('');
 
       try {
-        const summarizer = await createSummarizer();
+        // Resolve outputLanguage based on 'auto' or 'user' settings
+        let resolvedLanguage: string;
+        if (outputLanguage === 'auto') {
+          resolvedLanguage = await detectLanguageFromText(text);
+        } else if (outputLanguage === 'user') {
+          resolvedLanguage = getUserLanguage();
+        } else {
+          resolvedLanguage = outputLanguage;
+        }
+
+        const summarizer = await createSummarizer(resolvedLanguage);
         setStatus('summarizing');
 
         abortControllerRef.current = new AbortController();
@@ -185,7 +277,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
         setStatus('error');
       }
     },
-    [status, streaming, createSummarizer]
+    [status, streaming, createSummarizer, outputLanguage]
   );
 
   useEffect(() => {
