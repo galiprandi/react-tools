@@ -17,13 +17,12 @@ function App() {
     const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'debounce'>('asyncblock')
 
     return (
-        <main className="container">
-            <nav>
+        <main>
+            <nav style={{ overflowX: 'auto' }}>
                 <ul>
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'asyncblock' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('asyncblock')
@@ -35,7 +34,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'form' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('form')
@@ -47,7 +45,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'input' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('input')
@@ -59,7 +56,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'datetime' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('datetime')
@@ -71,7 +67,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'dialog' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('dialog')
@@ -83,7 +78,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'observer' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('observer')
@@ -95,7 +89,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'lazyrender' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('lazyrender')
@@ -107,7 +100,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'ai-status' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('ai-status')
@@ -119,7 +111,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'ai-summarizer' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('ai-summarizer')
@@ -131,7 +122,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'ai-language-detection' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('ai-language-detection')
@@ -143,7 +133,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'ai-translator' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('ai-translator')
@@ -155,7 +144,6 @@ function App() {
                     <li>
                         <a
                             href="#"
-                            className={currentPage === 'debounce' ? 'secondary' : ''}
                             onClick={(e) => {
                                 e.preventDefault()
                                 setCurrentPage('debounce')
