@@ -92,7 +92,7 @@ export const UseTranslatorPage = () => {
                 {activeTab === 'options' && (
                     <section>
                         <h3>Configuration</h3>
-                        <div>
+                        <div className="grid">
                             <div>
                                 <label htmlFor="sourceLanguage">Source Language</label>
                                 <select
@@ -120,9 +120,7 @@ export const UseTranslatorPage = () => {
                                     ))}
                                 </select>
                             </div>
-                        </div>
 
-                        <div>
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
@@ -189,7 +187,8 @@ export const UseTranslatorPage = () => {
                 {/* Progress */}
                 {translator.progress && (
                     <article role="status">
-                        <strong>Downloading Model:</strong> {translator.progress.loaded} / {translator.progress.total}
+                        <strong>Downloading Model:</strong>
+                        <progress value={translator.progress.loaded} max={translator.progress.total} />
                     </article>
                 )}
 

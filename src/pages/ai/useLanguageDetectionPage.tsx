@@ -87,7 +87,8 @@ export const UseLanguageDetectionPage = () => {
                 {/* Progress */}
                 {detector.progress && (
                     <article role="status">
-                        <strong>Downloading Model:</strong> {detector.progress.loaded} / {detector.progress.total}
+                        <strong>Downloading Model:</strong>
+                        <progress value={detector.progress.loaded} max={detector.progress.total} />
                     </article>
                 )}
 

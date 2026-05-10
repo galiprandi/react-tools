@@ -288,7 +288,8 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
 
   const translate = useCallback(
     async (textToTranslate: string) => {
-      if (status === 'translating' || status === 'initializing' || status === 'downloading') {
+      const currentStatus = translatorRef.current ? 'translating' : status;
+      if (currentStatus === 'translating' || currentStatus === 'initializing' || currentStatus === 'downloading') {
         return;
       }
 
@@ -297,14 +298,14 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
 
       try {
         const { source, target } = await resolveLanguages(textToTranslate);
-        
+
         // Optimization: if source and target are the same, skip translation
         if (source === target) {
           setData(textToTranslate);
           setStatus('success');
           return;
         }
-        
+
         const translator = await createTranslator(source, target);
         setStatus('translating');
 
@@ -332,7 +333,7 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
         setStatus('error');
       }
     },
-    [status, streaming, resolveLanguages]
+    [streaming, resolveLanguages]
   );
 
   // Auto-translate when text changes and enable is true

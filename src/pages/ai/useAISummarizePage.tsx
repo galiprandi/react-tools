@@ -120,7 +120,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 {activeTab === 'options' && (
                     <section>
                         <h3>Configuration</h3>
-                        <div>
+                        <div className="grid">
                             <div>
                                 <label htmlFor="type" data-tooltip="Type of summary: TL;DR (concise), Key Points (bullet list), Teaser (preview), Headline (one-line)">
                                     Type
@@ -180,9 +180,15 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                                 </select>
                             </div>
 
-                        </div>
+                            <label data-tooltip="Preload the model on component mount (faster first summarization)">
+                                <input
+                                    type="checkbox"
+                                    checked={options.warmup ?? false}
+                                    onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
+                                />
+                                Warmup
+                            </label>
 
-                        <div>
                             <label data-tooltip="Enable streaming output (real-time text generation)">
                                 <input
                                     type="checkbox"
@@ -190,15 +196,6 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                                     onChange={(e) => setOptions({ ...options, streaming: e.target.checked })}
                                 />
                                 Streaming
-                            </label>
-
-                            <label data-tooltip="Preload the model on component mount (faster first summary)">
-                                <input
-                                    type="checkbox"
-                                    checked={options.warmup}
-                                    onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
-                                />
-                                Warmup
                             </label>
                         </div>
                     </section>
@@ -257,7 +254,8 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 {/* Progress */}
                 {summarize.progress && (
                     <article role="status">
-                        <strong>Downloading Model:</strong> {summarize.progress.loaded} / {summarize.progress.total}
+                        <strong>Downloading Model:</strong>
+                        <progress value={summarize.progress.loaded} max={summarize.progress.total} />
                     </article>
                 )}
 
