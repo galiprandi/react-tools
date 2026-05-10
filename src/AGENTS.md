@@ -46,11 +46,18 @@ When adding inline styles to example components or playground pages:
 - **Dark backgrounds** (#1e3a5f, #2d4a3e, #3d3d3d, etc.) MUST have **light text** (#fff or #f0f0f0)
 - Always ensure WCAG AA compliance (minimum 4.5:1 contrast ratio)
 
+**Pico CSS Classes:**
+- **DO NOT** use Pico CSS classes like `className="secondary"` when adding custom inline styles with dark backgrounds
+- Pico CSS classes have predefined styles that may conflict with your inline styles
+- Use inline styles exclusively when you need custom colors for better contrast control
+- If you must use Pico CSS classes, ensure the entire component uses the framework's styling consistently
+
 **Common Mistakes to Avoid:**
 - Using `background: '#e3f2fd'` (light blue) with `color: '#000'` (black) - OK
 - Using `background: '#e3f2fd'` (light blue) with `color: '#fff'` (white) - WRONG (poor contrast)
 - Using `background: '#1e3a5f'` (dark blue) with `color: '#000'` (black) - WRONG (poor contrast)
 - Using `background: '#1e3a5f'` (dark blue) with `color: '#fff'` (white) - OK
+- Mixing Pico CSS classes with custom dark background styles - WRONG (conflicting styles)
 
 **Safe Color Combinations:**
 - Light backgrounds (#fff, #f5f5f5, #e3f2fd) + Dark text (#000, #333, #1a1a1a)
