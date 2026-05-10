@@ -6,13 +6,7 @@ export const UseLanguageDetectionPage = () => {
     const ai = useAI()
     const [text, setText] = useState<string>('')
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const detector = useLanguageDetection({ warmup: false })
-
-    const handleDetect = () => {
-        if (text.trim()) {
-            detector.detect(text)
-        }
-    }
+    const detector = useLanguageDetection({ text, warmup: false })
 
     const handleReset = () => {
         detector.reset()
@@ -50,11 +44,14 @@ export const UseLanguageDetectionPage = () => {
                         </ul>
                         <p><strong>Returns:</strong></p>
                         <ul>
-                            <li><code>results</code>: Array of {`{detectedLanguage, confidence}`} objects</li>
+                            <li><code>lang</code>: Most likely detected language code</li>
+                            <li><code>confidence</code>: Confidence of the most likely detection</li>
+                            <li><code>allLangs</code>: All detected languages with confidence scores</li>
+                            <li><code>userLang</code>: User&apos;s browser language code</li>
+                            <li><code>isUserLang</code>: Whether detected language matches user&apos;s language</li>
                             <li><code>status</code>: Current detection status</li>
                             <li><code>progress</code>: Download progress if model is downloading</li>
                             <li><code>error</code>: Error object if detection failed</li>
-                            <li><code>detect</code>: Function to detect language from text</li>
                             <li><code>reset</code>: Function to reset state</li>
                         </ul>
                     </article>
@@ -81,12 +78,6 @@ export const UseLanguageDetectionPage = () => {
                 {/* Action Buttons */}
                 <div className="grid">
                     <button
-                        onClick={handleDetect}
-                        disabled={!ai.isAvailable || detector.status === 'detecting' || detector.status === 'initializing' || detector.status === 'downloading' || !text.trim()}
-                    >
-                        {detector.status === 'detecting' ? 'Detecting...' : detector.status === 'initializing' ? 'Initializing...' : detector.status === 'downloading' ? 'Downloading...' : 'Detect Language'}
-                    </button>
-                    <button
                         onClick={handleReset}
                         disabled={detector.status === 'idle'}
                     >
@@ -109,12 +100,12 @@ export const UseLanguageDetectionPage = () => {
                 )}
 
                 {/* Results */}
-                {detector.results.length > 0 && (
+                {detector.allLangs && detector.allLangs.length > 0 && (
                     <article>
                         <h3>Detection Results</h3>
-                        {detector.results.map((result, index) => (
+                        {detector.allLangs.map((result, index) => (
                             <div key={index}>
-                                <strong>#{index + 1}</strong> - Language: <code>{result.detectedLanguage}</code> | 
+                                <strong>#{index + 1}</strong> - Language: <code>{result.lang}</code> | 
                                 Confidence: <code>{(result.confidence * 100).toFixed(2)}%</code>
                             </div>
                         ))}
