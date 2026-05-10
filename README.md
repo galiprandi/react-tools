@@ -365,7 +365,7 @@ function MyComponent() {
 ### useLanguageDetection
 
 **Description**\
-Hook for using the browser's Language Detection API. This hook provides a React interface to Chrome's native Language Detection API. It handles model initialization, download progress, and automatic cleanup on unmount. Returns a ranked list of detected languages with confidence scores.
+Hook for using the browser's Language Detection API. This hook provides a React interface to Chrome's native Language Detection API. It handles model initialization, download progress, and automatic cleanup on unmount. Returns the most likely detected language, confidence score, all results, and user language comparison.
 
 **Example**
 
@@ -373,20 +373,29 @@ Hook for using the browser's Language Detection API. This hook provides a React 
 import { useLanguageDetection } from '@galiprandi/react-tools';
 
 function MyComponent() {
-  const detector = useLanguageDetection({ warmup: true });
-
-  const handleDetect = async () => {
-    await detector.detect('Hallo und herzlich willkommen!');
-    console.log(detector.results);
-    // [{ detectedLanguage: 'de', confidence: 0.999 }, ...]
-  };
+  const { lang, confidence, allLangs, userLang, isUserLang, status } = useLanguageDetection({
+    text: 'Hallo und herzlich willkommen!',
+    minConfidence: 0.8
+  });
 
   return (
     <div>
-      <button onClick={handleDetect}>Detect Language</button>
-      {detector.status === 'detecting' && <p>Detecting...</p>}
-      {detector.results.length > 0 && (
-        <p>Detected: {detector.results[0].detectedLanguage}</p>
+      {status === 'detecting' && <p>Detecting...</p>}
+      {lang && (
+        <p>
+          Detected: {lang} ({Math.round(confidence! * 100)}% confidence)
+          {isUserLang && <span> (matches your language)</span>}
+        </p>
+      )}
+      {allLangs.length > 1 && (
+        <details>
+          <summary>All detected languages</summary>
+          <ul>
+            {allLangs.map(({ lang, confidence }) => (
+              <li key={lang}>{lang}: {Math.round(confidence * 100)}%</li>
+            ))}
+          </ul>
+        </details>
       )}
     </div>
   );
@@ -395,22 +404,29 @@ function MyComponent() {
 
 **Options**
 
-| Option   | Type      | Default | Description                                   |
-|----------|-----------|---------|-----------------------------------------------|
-| `warmup` | `boolean` | `false` | Preload model on mount for faster first detection |
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `text` | `string` | - | Text to detect language from. Re-detects automatically when changed |
+| `enable` | `boolean` | `true` | Enable/disable auto-detection |
+| `warmup` | `boolean` | `false` | Preload the model on component mount for faster first detection |
+| `minConfidence` | `number` | `0` | Minimum confidence to include in allLangs (0.0 - 1.0) |
+| `maxResults` | `number` | - | Maximum number of results to return in allLangs |
 
 **Returns**
 
-| Property   | Type                                        | Description                                                  |
-|------------|---------------------------------------------|--------------------------------------------------------------|
-| `results`  | `{ detectedLanguage: string; confidence: number }[]` | Array of detected languages with confidence scores, ranked from most to least likely |
-| `status`   | `'idle' \| 'initializing' \| 'downloading' \| 'detecting' \| 'success' \| 'error'` | Current status of the detection process |
-| `progress` | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
-| `error`    | `Error \| null`                             | Error object if detection failed                            |
-| `detect`   | `(text: string) => Promise<void>`           | Function to detect language from text                       |
-| `reset`    | `() => void`                                | Function to reset the hook state                            |
+| Property | Type | Description |
+|----------|------|-------------|
+| `lang` | `string \| undefined` | The most likely detected language code (e.g., 'en', 'es') |
+| `confidence` | `number \| undefined` | Confidence of the most likely detection (0.0 - 1.0) |
+| `allLangs` | `DetectionResult[]` | All detected languages with confidence scores, ranked from most to least likely |
+| `userLang` | `string` | User's browser language code (e.g., 'en', 'es') |
+| `isUserLang` | `boolean` | Whether the detected language matches the user's browser language |
+| `status` | `'idle' \| 'initializing' \| 'downloading' \| 'detecting' \| 'success' \| 'error'` | Current status of the detection process |
+| `progress` | `{ loaded: number, total: number } \| null` | Download progress if model is being downloaded |
+| `error` | `Error \| null` | Error object if detection failed |
+| `reset` | `() => void` | Function to reset the hook state |
 
-**Note**: This hook requires Chrome's Language Detection API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+**Note**: This hook requires Chrome's Language Detection API, which is currently experimental and may not be available in all browsers.
 
 ***
 

@@ -13,6 +13,10 @@ describe('useAISummarize', () => {
   const mockAvailability = vi.fn();
 
   beforeEach(() => {
+    vi.mock('../utilities/userLanguage', () => ({
+      getUserLanguage: vi.fn(() => 'en'),
+    }));
+
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability; create: typeof mockSummarizerCreate };
     SummarizerConstructor.availability = mockAvailability;
     SummarizerConstructor.create = mockSummarizerCreate;
@@ -166,11 +170,8 @@ describe('useAISummarize', () => {
   });
 
   it('should handle outputLanguage "user" by using browser language', async () => {
-    const mockNavigator = { language: 'es-ES', languages: ['es-ES', 'en-US'] };
-    Object.defineProperty(global, 'navigator', {
-      value: mockNavigator,
-      writable: true,
-    });
+    const { getUserLanguage } = await import('../utilities/userLanguage');
+    vi.mocked(getUserLanguage).mockReturnValue('es');
 
     const { result } = renderHook(() => useAISummarize({ outputLanguage: 'user' }));
 

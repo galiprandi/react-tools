@@ -1,12 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Availability } from './useAI';
+import { getUserLanguage } from '../utilities/userLanguage';
 
 /**
  * Result object returned by the language detection.
  */
 export interface DetectionResult {
   /** The detected language code (BCP 47 format, e.g., 'en', 'es', 'fr') */
-  detectedLanguage: string;
+  lang: string;
   /** Confidence level between 0.0 (lowest) and 1.0 (highest) */
   confidence: number;
 }
@@ -15,8 +16,16 @@ export interface DetectionResult {
  * Configuration options for the Language Detection hook.
  */
 export interface UseLanguageDetectionOptions {
+  /** Text to detect language from. Re-detects automatically when changed */
+  text?: string;
+  /** Enable/disable auto-detection (default: true) */
+  enable?: boolean;
   /** Preload the model on component mount for faster first detection */
   warmup?: boolean;
+  /** Minimum confidence to include in allLangs (default: 0) */
+  minConfidence?: number;
+  /** Maximum number of results to return in allLangs (default: all) */
+  maxResults?: number;
 }
 
 /**
@@ -38,16 +47,22 @@ export interface DownloadProgress {
  * Result object returned by the useLanguageDetection hook.
  */
 export interface UseLanguageDetectionResult {
-  /** Array of detected languages with confidence scores, ranked from most to least likely */
-  results: DetectionResult[];
+  /** The most likely detected language code (e.g., 'en', 'es') */
+  lang?: string;
+  /** Confidence of the most likely detection */
+  confidence?: number;
+  /** All detected languages with confidence scores, ranked from most to least likely */
+  allLangs: DetectionResult[];
+  /** User's browser language code (e.g., 'en', 'es') */
+  userLang: string;
+  /** Whether the detected language matches the user's browser language */
+  isUserLang: boolean;
   /** Current status of the detection process */
   status: LanguageDetectionStatus;
   /** Download progress if model is being downloaded */
   progress: DownloadProgress | null;
   /** Error object if detection failed */
   error: Error | null;
-  /** Function to detect language from text */
-  detect: (text: string) => Promise<void>;
   /** Function to reset the hook state */
   reset: () => void;
 }
@@ -85,27 +100,44 @@ interface LanguageDetector {
  *
  * @example
  * ```tsx
- * const detector = useLanguageDetection({ warmup: true });
+ * // Auto-detect from text
+ * const { lang, confidence, allLangs, userLang, isUserLang } = useLanguageDetection({
+ *   text: 'Hello world'
+ * });
+ * console.log(lang); // 'en'
+ * console.log(confidence); // 0.99
+ * console.log(isUserLang); // true if user's browser is also 'en'
  *
- * await detector.detect('Hello world');
- * console.log(detector.results);
- * // [{ detectedLanguage: 'en', confidence: 0.999 }]
+ * // With filters
+ * const { lang, allLangs } = useLanguageDetection({
+ *   text: 'Hello world',
+ *   minConfidence: 0.8,
+ *   maxResults: 3
+ * });
+ *
+ * // Disabled auto-detection
+ * const { status } = useLanguageDetection({
+ *   text: 'Hello world',
+ *   enable: false
+ * });
+ * // status: 'idle' (no detection)
  * ```
  *
  * @param options - Configuration for the detector
- * @returns An object with results, status, progress, error, and functions to detect or reset
+ * @returns An object with detected language, confidence, all results, user language info, status, progress, error, and reset function
  */
 export function useLanguageDetection(options: UseLanguageDetectionOptions = {}): UseLanguageDetectionResult {
-  const { warmup = false } = options;
-  const [results, setResults] = useState<DetectionResult[]>([]);
+  const { text, enable = true, warmup = false, minConfidence = 0, maxResults } = options;
+  const [allLangs, setAllLangs] = useState<DetectionResult[]>([]);
   const [status, setStatus] = useState<LanguageDetectionStatus>('idle');
   const [progress, setProgress] = useState<DownloadProgress | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const detectorRef = useRef<LanguageDetector | null>(null);
+  const userLang = getUserLanguage();
 
   const reset = useCallback(() => {
-    setResults([]);
+    setAllLangs([]);
     setStatus('idle');
     setProgress(null);
     setError(null);
@@ -156,28 +188,42 @@ export function useLanguageDetection(options: UseLanguageDetectionOptions = {}):
   }, []);
 
   const detect = useCallback(
-    async (text: string) => {
+    async (textToDetect: string) => {
       if (status === 'detecting' || status === 'initializing' || status === 'downloading') {
         return;
       }
 
       setError(null);
-      setResults([]);
+      setAllLangs([]);
 
       try {
         const detector = await createDetector();
         setStatus('detecting');
 
-        const detectionResults = await detector.detect(text);
-        setResults(detectionResults);
+        const detectionResults = await detector.detect(textToDetect);
+        
+        // Filter by minConfidence
+        const filtered = detectionResults.filter(r => r.confidence >= minConfidence);
+        
+        // Limit by maxResults
+        const limited = maxResults ? filtered.slice(0, maxResults) : filtered;
+        
+        setAllLangs(limited);
         setStatus('success');
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error during language detection'));
         setStatus('error');
       }
     },
-    [status, createDetector]
+    [status, createDetector, minConfidence, maxResults]
   );
+
+  // Auto-detect when text changes and enable is true
+  useEffect(() => {
+    if (enable && text && text.trim().length > 0) {
+      detect(text);
+    }
+  }, [text, enable, detect]);
 
   useEffect(() => {
     if (warmup) {
@@ -192,12 +238,20 @@ export function useLanguageDetection(options: UseLanguageDetectionOptions = {}):
     };
   }, [warmup, createDetector]);
 
+  // Calculate derived values
+  const lang = allLangs[0]?.lang;
+  const confidence = allLangs[0]?.confidence;
+  const isUserLang = lang === userLang;
+
   return {
-    results,
+    lang,
+    confidence,
+    allLangs,
+    userLang,
+    isUserLang,
     status,
     progress,
     error,
-    detect,
     reset,
   };
 }
