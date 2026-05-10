@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "react-tools": {
+      "source": "galiprandi/react-tools",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "8873a578b3e46a761fd47962c60328e95b209c52429d399d8a656e350ff728d5"
+    }
+  }
+}
