@@ -1,0 +1,221 @@
+import { useState } from 'react'
+import { useAI } from '../../../lib/hooks/useAI'
+import { useTranslator, type SupportedLanguage } from '../../../lib/hooks/useTranslator'
+
+export const UseTranslatorPage = () => {
+    const ai = useAI()
+    const [activeTab, setActiveTab] = useState<'options' | 'input'>('options')
+    const [text, setText] = useState<string>('Where is the next bus stop, please?')
+    const [isExpanded, setIsExpanded] = useState<boolean>(false)
+    const [sourceLanguage, setSourceLanguage] = useState<'auto' | SupportedLanguage>('auto')
+    const [targetLanguage, setTargetLanguage] = useState<'user' | SupportedLanguage>('user')
+    const [streaming, setStreaming] = useState<boolean>(false)
+    const [warmup, setWarmup] = useState<boolean>(false)
+    const [enable, setEnable] = useState<boolean>(true)
+    
+    const translator = useTranslator({ text, sourceLanguage, targetLanguage, streaming, warmup, enable })
+
+    const handleTranslate = () => {
+        if (text.trim()) {
+            translator.translate(text)
+        }
+    }
+
+    const handleReset = () => {
+        translator.reset()
+        setText('Where is the next bus stop, please?')
+    }
+
+    const supportedLanguages: SupportedLanguage[] = [
+        'ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr',
+        'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl',
+        'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr',
+        'uk', 'vi', 'zh', 'zh-Hant'
+    ]
+
+    const languageNames: Record<SupportedLanguage, string> = {
+        'ar': 'Arabic', 'bg': 'Bulgarian', 'bn': 'Bengali', 'cs': 'Czech', 'da': 'Danish',
+        'de': 'German', 'el': 'Greek', 'en': 'English', 'es': 'Spanish', 'fi': 'Finnish',
+        'fr': 'French', 'hi': 'Hindi', 'hr': 'Croatian', 'hu': 'Hungarian', 'id': 'Indonesian',
+        'it': 'Italian', 'iw': 'Hebrew', 'ja': 'Japanese', 'kn': 'Kannada', 'ko': 'Korean',
+        'lt': 'Lithuanian', 'mr': 'Marathi', 'nl': 'Dutch', 'no': 'Norwegian', 'pl': 'Polish',
+        'pt': 'Portuguese', 'ro': 'Romanian', 'ru': 'Russian', 'sk': 'Slovak', 'sl': 'Slovenian',
+        'sv': 'Swedish', 'ta': 'Tamil', 'te': 'Telugu', 'th': 'Thai', 'tr': 'Turkish',
+        'uk': 'Ukrainian', 'vi': 'Vietnamese', 'zh': 'Chinese (Simplified)', 'zh-Hant': 'Chinese (Traditional)'
+    }
+
+    return (
+        <main>
+            <article>
+                <header>
+                    <h1>useTranslator</h1>
+                </header>
+
+                {/* API Availability Status */}
+                <article className={ai.isAvailable ? 'success' : 'error'} role="alert">
+                    <small data-tooltip="Status from useAI hook: Checks if Chrome's Native AI APIs are available">
+                        {ai.isAvailable ? '✓ AI Available' : '✗ AI Not Available'}
+                    </small>
+                </article>
+
+                {/* Configuration Tabs */}
+                <nav>
+                    <ul>
+                        <li>
+                            <a
+                                href="#"
+                                className={activeTab === 'options' ? 'secondary' : ''}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    setActiveTab('options')
+                                }}
+                            >
+                                Configuration
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                className={activeTab === 'input' ? '' : ''}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    setActiveTab('input')
+                                }}
+                            >
+                                Text Input
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                {/* Options Grid */}
+                {activeTab === 'options' && (
+                    <section>
+                        <h3>Configuration</h3>
+                        <div className="grid">
+                            <div>
+                                <label htmlFor="sourceLanguage">Source Language</label>
+                                <select
+                                    id="sourceLanguage"
+                                    value={sourceLanguage}
+                                    onChange={(e) => setSourceLanguage(e.target.value as 'auto' | SupportedLanguage)}
+                                >
+                                    <option value="auto">Auto-detect</option>
+                                    {supportedLanguages.map(lang => (
+                                        <option key={lang} value={lang}>{languageNames[lang]}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label htmlFor="targetLanguage">Target Language</label>
+                                <select
+                                    id="targetLanguage"
+                                    value={targetLanguage}
+                                    onChange={(e) => setTargetLanguage(e.target.value as 'user' | SupportedLanguage)}
+                                >
+                                    <option value="user">User&apos;s Browser Language</option>
+                                    {supportedLanguages.map(lang => (
+                                        <option key={lang} value={lang}>{languageNames[lang]}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <label data-tooltip="Enable streaming output (real-time text generation)">
+                                <input
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={streaming}
+                                    onChange={(e) => setStreaming(e.target.checked)}
+                                />
+                                Streaming
+                            </label>
+
+                            <label data-tooltip="Preload the model on component mount (faster first translation)">
+                                <input
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={warmup}
+                                    onChange={(e) => setWarmup(e.target.checked)}
+                                />
+                                Warmup
+                            </label>
+
+                            <label data-tooltip="Enable auto-translation when text changes">
+                                <input
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={enable ?? true}
+                                    onChange={(e) => setEnable(e.target.checked)}
+                                />
+                                Auto-translate
+                            </label>
+                        </div>
+                    </section>
+                )}
+
+                {/* Text Input */}
+                {activeTab === 'input' && (
+                    <section>
+                        <label htmlFor="text">Text to Translate</label>
+                        <textarea
+                            id="text"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            placeholder="Enter text to translate..."
+                            rows={isExpanded ? 20 : 1}
+                        />
+                        <button onClick={() => setIsExpanded(!isExpanded)}>
+                            {isExpanded ? '▼ Collapse' : '▲ Expand'}
+                        </button>
+                    </section>
+                )}
+
+                {/* Action Buttons */}
+                <div className="grid">
+                    <button
+                        onClick={handleTranslate}
+                        disabled={!ai.isAvailable || translator.status === 'translating' || translator.status === 'initializing' || translator.status === 'downloading' || !text.trim()}
+                    >
+                        {translator.status === 'translating' ? 'Translating...' : translator.status === 'initializing' ? 'Initializing...' : translator.status === 'downloading' ? 'Downloading...' : 'Translate'}
+                    </button>
+                    <button
+                        onClick={handleReset}
+                        disabled={translator.status === 'idle'}
+                    >
+                        Reset
+                    </button>
+                </div>
+
+                {/* Progress */}
+                {translator.progress && (
+                    <article role="status">
+                        <strong>Downloading Model:</strong>
+                        <progress value={translator.progress.loaded} max={translator.progress.total} />
+                    </article>
+                )}
+
+                {/* Error */}
+                {translator.error && (
+                    <article role="alert">
+                        <strong>Error:</strong> {translator.error.message}
+                    </article>
+                )}
+
+                {/* Result */}
+                {translator.data && (
+                    <article>
+                        <h3>Translation</h3>
+                        <p>{translator.data}</p>
+                        {translator.detectedSourceLanguage && (
+                            <small>Detected source: {translator.detectedSourceLanguage}</small>
+                        )}
+                        {translator.resolvedTargetLanguage && (
+                            <small>Target: {translator.resolvedTargetLanguage}</small>
+                        )}
+                    </article>
+                )}
+            </article>
+        </main>
+    )
+}

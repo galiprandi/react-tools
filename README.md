@@ -33,6 +33,10 @@
   * [Observer](#observer)
   * [LazyRender](#lazyrender)
 * [Hooks](#hooks)
+  * [useAI](#useai)
+  * [useAISummarize](#useaisummarize)
+  * [useLanguageDetection](#uselanguagedetection)
+  * [useTranslator](#usetranslator)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -47,6 +51,14 @@
 **@galiprandi/react-tools** is a lightweight, dependency-free utility library for React. It provides reusable components and hooks to simplify development and improve accessibility — no configuration needed.
 
 👉 [Live Playground](https://stackblitz.com/edit/ga-react-tools?file=index.html)
+
+### ✨ What's New
+
+**AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
+- [`useAI`](#useai) - Check and manage availability of browser's AI APIs
+- [`useAISummarize`](#useaisummarize) - Generate text summaries with streaming support
+- [`useLanguageDetection`](#uselanguagedetection) - Detect language from text with confidence scores
+- [`useTranslator`](#usetranslator) - Translate text between languages with streaming support
 
 ***
 
@@ -254,6 +266,262 @@ Only renders children when they become visible in the viewport.
 ***
 
 ## 🪝 Hooks
+
+### useAI
+
+**Description**\
+Hook for checking and managing the availability of browser's AI APIs. This hook provides a centralized way to detect which AI APIs are available, track model download progress, and preload models for faster initial use. Supports current APIs (Summarizer, Translator, LanguageDetector) and experimental APIs (Prompt, Writer, Rewriter, Proofreader).
+
+**Example**
+
+```tsx
+import { useAI } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  // Check all APIs
+  const { isAvailable, apis, status } = useAI();
+
+  // Check specific APIs
+  const { isAvailable, apis, preload } = useAI({ apis: ['translator', 'summarizer'] });
+
+  // Preload models
+  useEffect(() => {
+    if (isAvailable) {
+      preload('translator');
+    }
+  }, [isAvailable, preload]);
+
+  // Show download progress
+  if (apis.translator.availability === 'downloading') {
+    const progress = getApiProgress('translator');
+    return <LoadingBar {...progress} />;
+  }
+}
+```
+
+**Options**
+
+| Option      | Type      | Default | Description                                   |
+|-------------|-----------|---------|-----------------------------------------------|
+| `apis`      | `AIApiType[]` | All APIs | Specific APIs to check. If not provided, checks all APIs |
+| `onProgress` | `(api: AIApiType, progress: { loaded: number; total: number }) => void` | - | Callback when an API's download progress updates |
+| `onReady`    | `(api: AIApiType) => void` | - | Callback when an API becomes ready |
+
+**Returns**
+
+| Property        | Type                          | Description                                 |
+|-----------------|-------------------------------|---------------------------------------------|
+| `isAvailable`   | `boolean`                     | Whether any of the requested APIs are available     |
+| `status`        | `'idle' \| 'loading' \| 'ready' \| 'error'` | The current status of the availability check |
+| `error`         | `Error \| null`               | Error object if the check failed           |
+| `apis`          | `Record<AIApiType, AIApiStatus>` | Status of each API                          |
+| `isApiAvailable`| `(api: AIApiType) => boolean` | Check if a specific API is available        |
+| `getApiProgress`| `(api: AIApiType) => { loaded: number; total: number } \| null` | Get download progress for a specific API   |
+| `preload`       | `(api: AIApiType) => Promise<void>` | Preload a specific API's model             |
+| `preloadAll`    | `() => Promise<void>`          | Preload all APIs' models                    |
+
+**Supported APIs**
+
+`summarizer`, `translator`, `languageDetector`, `prompt` (Experimental), `writer` (Experimental), `rewriter` (Experimental), `proofreader` (Experimental)
+
+**Note**: This hook requires Chrome's Native AI APIs, which are currently experimental and may not be available in all browsers.
+
+***
+
+### useAISummarize
+
+**Description**\
+Hook for using the browser's AI Summarizer API. This hook provides a React interface to Chrome's native AI Summarizer API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount.
+
+**Example**
+
+```tsx
+import { useAISummarize } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const summarize = useAISummarize({
+    type: 'tldr',
+    format: 'markdown',
+    length: 'short',
+    outputLanguage: 'en',
+    streaming: true
+  });
+
+  const handleSummarize = async () => {
+    await summarize.summarize(longText, 'End the summary with: Powered by my app');
+    console.log(summarize.data);
+  };
+
+  return (
+    <div>
+      <button onClick={handleSummarize}>Summarize</button>
+      {summarize.status === 'summarizing' && <p>Summarizing...</p>}
+      {summarize.data && <p>{summarize.data}</p>}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option                    | Type                                          | Default      | Description                                   |
+|---------------------------|-----------------------------------------------|--------------|-----------------------------------------------|
+| `type`                    | `'tldr' \| 'key-points' \| 'teaser' \| 'headline'` | `undefined`  | Type of summary to generate                   |
+| `format`                  | `'plain-text' \| 'markdown'`                  | `undefined`  | Output format of the summary                  |
+| `length`                  | `'short' \| 'medium' \| 'long'`               | `undefined`  | Length of the summary                         |
+| `sharedContext`           | `string`                                      | `undefined`  | Shared context for all summaries               |
+| `expectedInputLanguages`  | `string[]`                                    | `undefined`  | Expected input languages (BCP 47 format)      |
+| `outputLanguage`          | `'en' \| 'es' \| 'ja' \| 'auto' \| 'user'`    | `'auto'`     | Output language. Use `'auto'` to detect from text (default), `'user'` for browser language, or specify a language code |
+| `expectedContextLanguages`| `string[]`                                    | `undefined`  | Expected context languages (BCP 47 format)    |
+| `preference`              | `'auto' \| 'capability'`                       | `'auto'`     | Performance preference (auto or capability)   |
+| `streaming`               | `boolean`                                     | `false`      | Enable streaming output for real-time results |
+| `warmup`                  | `boolean`                                     | `false`      | Preload model on mount for faster first summary |
+
+**Returns**
+
+| Property              | Type                                        | Description                                                  |
+|-----------------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`                | `string`                                    | The generated summary text                                  |
+| `status`              | `'idle' \| 'initializing' \| 'downloading' \| 'summarizing' \| 'success' \| 'error'` | Current status of the summarization process |
+| `progress`            | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`               | `Error \| null`                             | Error object if summarization failed                        |
+| `supportedPreferences` | `('auto' \| 'capability')[]`                 | Supported preference values based on browser capabilities    |
+| `summarize`           | `(text: string, context?: string) => Promise<void>` | Function to summarize text with optional context instruction |
+| `reset`               | `() => void`                                | Function to reset the hook state                            |
+
+**Note**: This hook requires Chrome's AI Summarizer API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
+
+### useLanguageDetection
+
+**Description**\
+Hook for using the browser's Language Detection API. This hook provides a React interface to Chrome's native Language Detection API. It handles model initialization, download progress, and automatic cleanup on unmount. Returns the most likely detected language, confidence score, all results, and user language comparison.
+
+**Example**
+
+```tsx
+import { useLanguageDetection } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const { lang, confidence, allLangs, userLang, isUserLang, status } = useLanguageDetection({
+    text: 'Hallo und herzlich willkommen!',
+    minConfidence: 0.8
+  });
+
+  return (
+    <div>
+      {status === 'detecting' && <p>Detecting...</p>}
+      {lang && (
+        <p>
+          Detected: {lang} ({Math.round(confidence! * 100)}% confidence)
+          {isUserLang && <span> (matches your language)</span>}
+        </p>
+      )}
+      {allLangs.length > 1 && (
+        <details>
+          <summary>All detected languages</summary>
+          <ul>
+            {allLangs.map(({ lang, confidence }) => (
+              <li key={lang}>{lang}: {Math.round(confidence * 100)}%</li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `text` | `string` | - | Text to detect language from. Re-detects automatically when changed |
+| `enable` | `boolean` | `true` | Enable/disable auto-detection |
+| `warmup` | `boolean` | `false` | Preload the model on component mount for faster first detection |
+| `minConfidence` | `number` | `0` | Minimum confidence to include in allLangs (0.0 - 1.0) |
+| `maxResults` | `number` | - | Maximum number of results to return in allLangs |
+
+**Returns**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `lang` | `string \| undefined` | The most likely detected language code (e.g., 'en', 'es') |
+| `confidence` | `number \| undefined` | Confidence of the most likely detection (0.0 - 1.0) |
+| `allLangs` | `DetectionResult[]` | All detected languages with confidence scores, ranked from most to least likely |
+| `userLang` | `string` | User's browser language code (e.g., 'en', 'es') |
+| `isUserLang` | `boolean` | Whether the detected language matches the user's browser language |
+| `status` | `'idle' \| 'initializing' \| 'downloading' \| 'detecting' \| 'success' \| 'error'` | Current status of the detection process |
+| `progress` | `{ loaded: number, total: number } \| null` | Download progress if model is being downloaded |
+| `error` | `Error \| null` | Error object if detection failed |
+| `reset` | `() => void` | Function to reset the hook state |
+
+**Note**: This hook requires Chrome's Language Detection API, which is currently experimental and may not be available in all browsers.
+
+***
+
+### useTranslator
+
+**Description**\
+Hook for using the browser's Translator API. This hook provides a React interface to Chrome's native Translator API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount. Supports 38+ languages. Automatically detects source language and uses browser language by default. **Optimization**: When the detected source language matches the target language, the hook returns the original text without loading the translation model.
+
+**Example**
+
+```tsx
+import { useTranslator } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  // Auto-detect source language and translate to browser language
+  const { data, detectedSourceLanguage, resolvedTargetLanguage, status } = useTranslator({
+    text: 'Hello world, how are you?'
+  });
+
+  return (
+    <div>
+      {status === 'translating' && <p>Translating...</p>}
+      {data && (
+        <p>
+          {data}
+          {detectedSourceLanguage && <small> (from {detectedSourceLanguage} to {resolvedTargetLanguage})</small>}
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option          | Type      | Default | Description                                   |
+|-----------------|-----------|---------|-----------------------------------------------|
+| `text`          | `string`  | - | Text to translate. Auto-translates when changed |
+| `sourceLanguage`| `'auto' \| SupportedLanguage` | `'auto'` | Source language code. Use `'auto'` to detect from text automatically |
+| `targetLanguage`| `'user' \| SupportedLanguage` | `'user'` | Target language code. Use `'user'` for browser language |
+| `streaming`     | `boolean` | `false` | Enable streaming output for real-time results |
+| `warmup`        | `boolean` | `false` | Preload model on mount for faster first translation |
+| `enable`        | `boolean` | `true` | Enable/disable auto-translation |
+
+**Returns**
+
+| Property   | Type                                        | Description                                                  |
+|------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`     | `string`                                    | The translated text                                         |
+| `detectedSourceLanguage` | `string \| undefined` | Detected source language (when sourceLanguage is 'auto') |
+| `resolvedTargetLanguage` | `string \| undefined` | Resolved target language (when targetLanguage is 'user') |
+| `status`   | `'idle' \| 'initializing' \| 'downloading' \| 'translating' \| 'success' \| 'error'` | Current status of the translation process |
+| `progress` | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`    | `Error \| null`                             | Error object if translation failed                          |
+| `translate` | `(text: string) => Promise<void>`           | Function to translate text manually                        |
+| `reset`    | `() => void`                                | Function to reset the hook state                            |
+
+**Supported Languages**
+
+`ar`, `bg`, `bn`, `cs`, `da`, `de`, `el`, `en`, `es`, `fi`, `fr`, `hi`, `hr`, `hu`, `id`, `it`, `iw`, `ja`, `kn`, `ko`, `lt`, `mr`, `nl`, `no`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `ta`, `te`, `th`, `tr`, `uk`, `vi`, `zh`, `zh-Hant`
+
+**Note**: This hook requires Chrome's Translator API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
 
 ### useDebounce
 
