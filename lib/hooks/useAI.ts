@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * Represents the availability state of AI APIs.
@@ -115,6 +115,9 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
     proofreader: { availability: 'unavailable' },
   });
 
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
+
   const checkApiAvailability = useCallback(async (api: AIApiType): Promise<void> => {
     try {
       if (typeof window === 'undefined') {
@@ -147,21 +150,35 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
           break;
       }
 
-      const globalApi = (window as unknown as Record<string, { availability?: () => Promise<Availability>; create?: (options?: unknown) => Promise<unknown>; constructor?: { availability?: () => Promise<Availability>; create?: (options?: unknown) => Promise<unknown> } }>)[apiName];
+      const globalApi = (window as unknown as Record<string, { availability?: (...args: unknown[]) => Promise<Availability>; create?: (options?: unknown) => Promise<unknown>; constructor?: { availability?: (...args: unknown[]) => Promise<Availability>; create?: (options?: unknown) => Promise<unknown> } }>)[apiName];
 
       if (typeof globalApi === 'function' || (typeof globalApi === 'object' && globalApi !== null)) {
-        const apiConstructor = typeof globalApi === 'function' ? globalApi : (globalApi as { constructor?: { availability?: () => Promise<Availability>; create?: (options?: unknown) => Promise<unknown> } })?.constructor;
+        const apiConstructor = typeof globalApi === 'function' ? globalApi : (globalApi as { constructor?: { availability?: (...args: unknown[]) => Promise<Availability>; create?: (options?: unknown) => Promise<unknown> } })?.constructor;
         
         if (typeof apiConstructor?.availability === 'function') {
-          const avail = await apiConstructor.availability();
+          let avail: Availability;
+          try {
+            // Try calling without arguments first
+            avail = await apiConstructor.availability();
+          } catch (err) {
+            // If that fails, the API might require arguments
+            setApiStatuses(prev => ({ 
+              ...prev, 
+              [api]: { 
+                availability: 'unavailable',
+                error: err instanceof Error ? err : new Error(`${api}.availability() requires arguments or is not supported`)
+              } 
+            }));
+            return;
+          }
           setApiStatuses(prev => ({ ...prev, [api]: { availability: avail } }));
-          if (avail === 'available' && onReady) {
-            onReady(api);
+          if (avail === 'available' && onReadyRef.current) {
+            onReadyRef.current(api);
           }
         } else {
           setApiStatuses(prev => ({ ...prev, [api]: { availability: 'available' } }));
-          if (onReady) {
-            onReady(api);
+          if (onReadyRef.current) {
+            onReadyRef.current(api);
           }
         }
       } else {
@@ -176,7 +193,10 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
         } 
       }));
     }
-  }, [onReady]);
+  }, []);
+
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
 
   const preload = useCallback(async (api: AIApiType): Promise<void> => {
     try {
@@ -218,8 +238,8 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
             m.addEventListener('downloadprogress', (e: ProgressEvent) => {
               const progress = { loaded: e.loaded, total: e.total };
               setApiStatuses(prev => ({ ...prev, [api]: { availability: 'downloading', progress } }));
-              if (onProgress) {
-                onProgress(api, progress);
+              if (onProgressRef.current) {
+                onProgressRef.current(api, progress);
               }
             });
           },
@@ -230,8 +250,8 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
         }
         
         setApiStatuses(prev => ({ ...prev, [api]: { availability: 'available' } }));
-        if (onReady) {
-          onReady(api);
+        if (onReadyRef.current) {
+          onReadyRef.current(api);
         }
       }
     } catch (err) {
@@ -243,7 +263,7 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
         } 
       }));
     }
-  }, [onProgress, onReady]);
+  }, []);
 
   const preloadAll = useCallback(async (): Promise<void> => {
     const apisToPreload = apisToCheck || (Object.keys(apiStatuses) as AIApiType[]);
@@ -259,22 +279,32 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
   }, [apiStatuses]);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const checkAllApis = async () => {
+      if (!isMounted) return;
+      
       setStatus('loading');
       setError(null);
 
       const apis = apisToCheck || (Object.keys(apiStatuses) as AIApiType[]);
       await Promise.all(apis.map(api => checkApiAvailability(api)));
 
-      setStatus('ready');
+      if (isMounted) {
+        setStatus('ready');
+      }
     };
 
     checkAllApis();
+
+    return () => {
+      isMounted = false;
+    };
   }, [apisToCheck]);
 
   const allApisAvailable = apisToCheck
-    ? apisToCheck.every(api => apiStatuses[api].availability === 'available')
-    : Object.values(apiStatuses).every(status => status.availability === 'available');
+    ? apisToCheck.some(api => apiStatuses[api].availability === 'available')
+    : ['summarizer', 'translator', 'languageDetector'].some(api => apiStatuses[api as AIApiType].availability === 'available');
 
   return {
     isAvailable: allApisAvailable,

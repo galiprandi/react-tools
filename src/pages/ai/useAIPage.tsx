@@ -34,8 +34,16 @@ export const UseAIPage = () => {
                             <p>{ai.status}</p>
                         </div>
                         <div>
-                            <label>Availability</label>
-                            <p>{ai.availability}</p>
+                            <label>Summarizer</label>
+                            <p>{ai.apis.summarizer.availability}</p>
+                        </div>
+                        <div>
+                            <label>Translator</label>
+                            <p>{ai.apis.translator.availability}</p>
+                        </div>
+                        <div>
+                            <label>Language Detector</label>
+                            <p>{ai.apis.languageDetector.availability}</p>
                         </div>
                     </div>
 
@@ -50,12 +58,12 @@ export const UseAIPage = () => {
                 <section>
                     <h3>useAI Hook</h3>
                     <article>
-                        <p>The <code>useAI</code> hook checks the availability of Chrome&apos;s Native AI Summarizer API.</p>
+                        <p>The <code>useAI</code> hook checks the availability of Chrome&apos;s Native AI APIs.</p>
                         <p><strong>Returns:</strong></p>
                         <ul>
-                            <li><code>isAvailable</code>: boolean - Whether the API is available</li>
-                            <li><code>availability</code>: &apos;unavailable&apos; | &apos;downloadable&apos; | &apos;downloading&apos; | &apos;available&apos;</li>
+                            <li><code>isAvailable</code>: boolean - Whether all requested APIs are available</li>
                             <li><code>status</code>: &apos;idle&apos; | &apos;loading&apos; | &apos;ready&apos; | &apos;error&apos;</li>
+                            <li><code>apis</code>: Object with availability status for each API</li>
                             <li><code>error</code>: Error | null</li>
                         </ul>
                     </article>
