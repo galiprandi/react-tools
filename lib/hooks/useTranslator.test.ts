@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useTranslator } from './useTranslator';
 
 describe('useTranslator', () => {
@@ -13,6 +13,10 @@ describe('useTranslator', () => {
   const mockAvailability = vi.fn();
 
   beforeEach(() => {
+    vi.mock('../utilities/userLanguage', () => ({
+      getUserLanguage: vi.fn(() => 'en'),
+    }));
+
     const TranslatorConstructor = function () {} as unknown as { availability: typeof mockAvailability; create: typeof mockTranslatorCreate };
     TranslatorConstructor.availability = mockAvailability;
     TranslatorConstructor.create = mockTranslatorCreate;
@@ -33,6 +37,13 @@ describe('useTranslator', () => {
     }
   });
 
+  it('should initialize with idle status and default options', () => {
+    const { result } = renderHook(() => useTranslator());
+    expect(result.current.status).toBe('idle');
+    expect(result.current.data).toBe('');
+    expect(result.current.resolvedTargetLanguage).toBe('en');
+  });
+
   it('should initialize with idle status', () => {
     const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es' }));
     expect(result.current.status).toBe('idle');
@@ -50,6 +61,40 @@ describe('useTranslator', () => {
 
     expect(result.current.status).toBe('success');
     expect(result.current.data).toBe('Hola mundo');
+  });
+
+  it('should auto-translate when text is provided', async () => {
+    mockTranslator.translate.mockResolvedValue('Hola mundo');
+
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', text: 'Hello world' }));
+
+    await waitFor(() => expect(result.current.status).toBe('success'));
+    expect(result.current.data).toBe('Hola mundo');
+  });
+
+  it('should use user language when targetLanguage is user', async () => {
+    const { getUserLanguage } = await import('../utilities/userLanguage');
+    vi.mocked(getUserLanguage).mockReturnValue('es');
+
+    mockTranslator.translate.mockResolvedValue('Hola mundo');
+
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'user' }));
+
+    await act(async () => {
+      await result.current.translate('Hello world');
+    });
+
+    expect(result.current.status).toBe('success');
+    expect(result.current.resolvedTargetLanguage).toBe('es');
+  });
+
+  it('should not auto-translate when enable is false', async () => {
+    mockTranslator.translate.mockResolvedValue('Hola mundo');
+
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', text: 'Hello world', enable: false }));
+
+    expect(result.current.status).toBe('idle');
+    expect(mockTranslator.translate).not.toHaveBeenCalled();
   });
 
   it('should handle errors', async () => {
@@ -86,5 +131,7 @@ describe('useTranslator', () => {
     expect(result.current.data).toBe('');
     expect(result.current.error).toBeNull();
     expect(result.current.progress).toBeNull();
+    expect(result.current.detectedSourceLanguage).toBeUndefined();
+    expect(result.current.resolvedTargetLanguage).toBeUndefined();
   });
 });

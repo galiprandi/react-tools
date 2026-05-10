@@ -433,7 +433,7 @@ function MyComponent() {
 ### useTranslator
 
 **Description**\
-Hook for using the browser's Translator API. This hook provides a React interface to Chrome's native Translator API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount. Supports 38+ languages.
+Hook for using the browser's Translator API. This hook provides a React interface to Chrome's native Translator API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount. Supports 38+ languages. Automatically detects source language and uses browser language by default.
 
 **Example**
 
@@ -441,23 +441,20 @@ Hook for using the browser's Translator API. This hook provides a React interfac
 import { useTranslator } from '@galiprandi/react-tools';
 
 function MyComponent() {
-  const translator = useTranslator({
-    sourceLanguage: 'en',
-    targetLanguage: 'es',
-    streaming: true
+  // Auto-detect source language and translate to browser language
+  const { data, detectedSourceLanguage, resolvedTargetLanguage, status } = useTranslator({
+    text: 'Hello world, how are you?'
   });
-
-  const handleTranslate = async () => {
-    await translator.translate('Hello world');
-    console.log(translator.data);
-    // 'Hola mundo'
-  };
 
   return (
     <div>
-      <button onClick={handleTranslate}>Translate</button>
-      {translator.status === 'translating' && <p>Translating...</p>}
-      {translator.data && <p>{translator.data}</p>}
+      {status === 'translating' && <p>Translating...</p>}
+      {data && (
+        <p>
+          {data}
+          {detectedSourceLanguage && <small> (from {detectedSourceLanguage} to {resolvedTargetLanguage})</small>}
+        </p>
+      )}
     </div>
   );
 }
@@ -467,20 +464,24 @@ function MyComponent() {
 
 | Option          | Type      | Default | Description                                   |
 |-----------------|-----------|---------|-----------------------------------------------|
-| `sourceLanguage`| `SupportedLanguage` | Required | Source language code (BCP 47 format, e.g., 'en', 'es') |
-| `targetLanguage`| `SupportedLanguage` | Required | Target language code (BCP 47 format, e.g., 'en', 'es') |
+| `text`          | `string`  | - | Text to translate. Auto-translates when changed |
+| `sourceLanguage`| `'auto' \| SupportedLanguage` | `'auto'` | Source language code. Use `'auto'` to detect from text automatically |
+| `targetLanguage`| `'user' \| SupportedLanguage` | `'user'` | Target language code. Use `'user'` for browser language |
 | `streaming`     | `boolean` | `false` | Enable streaming output for real-time results |
 | `warmup`        | `boolean` | `false` | Preload model on mount for faster first translation |
+| `enable`        | `boolean` | `true` | Enable/disable auto-translation |
 
 **Returns**
 
 | Property   | Type                                        | Description                                                  |
 |------------|---------------------------------------------|--------------------------------------------------------------|
 | `data`     | `string`                                    | The translated text                                         |
+| `detectedSourceLanguage` | `string \| undefined` | Detected source language (when sourceLanguage is 'auto') |
+| `resolvedTargetLanguage` | `string \| undefined` | Resolved target language (when targetLanguage is 'user') |
 | `status`   | `'idle' \| 'initializing' \| 'downloading' \| 'translating' \| 'success' \| 'error'` | Current status of the translation process |
 | `progress` | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
 | `error`    | `Error \| null`                             | Error object if translation failed                          |
-| `translate`| `(text: string) => Promise<void>`           | Function to translate text                                  |
+| `translate` | `(text: string) => Promise<void>`           | Function to translate text manually                        |
 | `reset`    | `() => void`                                | Function to reset the hook state                            |
 
 **Supported Languages**

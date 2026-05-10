@@ -8,12 +8,13 @@ export const UseTranslatorPage = () => {
     const [text, setText] = useState<string>('')
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const [options, setOptions] = useState<UseTranslatorOptions>({
-        sourceLanguage: 'en',
-        targetLanguage: 'es',
+        sourceLanguage: 'auto',
+        targetLanguage: 'user',
         streaming: false,
         warmup: false,
+        enable: true,
     })
-    const translator = useTranslator(options)
+    const translator = useTranslator({ ...options, text })
 
     const handleTranslate = () => {
         if (text.trim()) {
@@ -103,8 +104,9 @@ export const UseTranslatorPage = () => {
                                 <select
                                     id="sourceLanguage"
                                     value={options.sourceLanguage}
-                                    onChange={(e) => setOptions({ ...options, sourceLanguage: e.target.value as SupportedLanguage })}
+                                    onChange={(e) => setOptions({ ...options, sourceLanguage: e.target.value as 'auto' | SupportedLanguage })}
                                 >
+                                    <option value="auto">Auto-detect</option>
                                     {supportedLanguages.map(lang => (
                                         <option key={lang} value={lang}>{languageNames[lang]}</option>
                                     ))}
@@ -116,8 +118,9 @@ export const UseTranslatorPage = () => {
                                 <select
                                     id="targetLanguage"
                                     value={options.targetLanguage}
-                                    onChange={(e) => setOptions({ ...options, targetLanguage: e.target.value as SupportedLanguage })}
+                                    onChange={(e) => setOptions({ ...options, targetLanguage: e.target.value as 'user' | SupportedLanguage })}
                                 >
+                                    <option value="user">User&apos;s Browser Language</option>
                                     {supportedLanguages.map(lang => (
                                         <option key={lang} value={lang}>{languageNames[lang]}</option>
                                     ))}
@@ -142,6 +145,15 @@ export const UseTranslatorPage = () => {
                                     onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
                                 />
                                 Warmup
+                            </label>
+
+                            <label data-tooltip="Enable auto-translation when text changes">
+                                <input
+                                    type="checkbox"
+                                    checked={options.enable ?? true}
+                                    onChange={(e) => setOptions({ ...options, enable: e.target.checked })}
+                                />
+                                Auto-translate
                             </label>
                         </div>
                     </section>
@@ -199,6 +211,12 @@ export const UseTranslatorPage = () => {
                     <article>
                         <h3>Translation</h3>
                         <p>{translator.data}</p>
+                        {translator.detectedSourceLanguage && (
+                            <small>Detected source: {translator.detectedSourceLanguage}</small>
+                        )}
+                        {translator.resolvedTargetLanguage && (
+                            <small>Target: {translator.resolvedTargetLanguage}</small>
+                        )}
                     </article>
                 )}
             </article>

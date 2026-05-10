@@ -7,12 +7,13 @@ export const TranslatorExample = () => {
     const [text, setText] = useState('Where is the next bus stop, please?')
     const [isTextareaExpanded, setIsTextareaExpanded] = useState(false)
     const [options, setOptions] = useState<UseTranslatorOptions>({
-        sourceLanguage: 'en',
-        targetLanguage: 'es',
+        sourceLanguage: 'auto',
+        targetLanguage: 'user',
         streaming: false,
         warmup: false,
+        enable: true,
     })
-    const translator = useTranslator(options)
+    const translator = useTranslator({ ...options, text: text })
 
     const handleTranslate = () => {
         if (text.trim()) {
@@ -65,9 +66,10 @@ export const TranslatorExample = () => {
                             <strong>Source Language:</strong>
                             <select
                                 value={options.sourceLanguage}
-                                onChange={(e) => setOptions({ ...options, sourceLanguage: e.target.value as SupportedLanguage })}
+                                onChange={(e) => setOptions({ ...options, sourceLanguage: e.target.value as 'auto' | SupportedLanguage })}
                                 style={{ marginLeft: '0.5rem' }}
                             >
+                                <option value="auto">Auto-detect</option>
                                 {supportedLanguages.map(lang => (
                                     <option key={lang} value={lang}>{languageNames[lang]}</option>
                                 ))}
@@ -79,9 +81,10 @@ export const TranslatorExample = () => {
                             <strong>Target Language:</strong>
                             <select
                                 value={options.targetLanguage}
-                                onChange={(e) => setOptions({ ...options, targetLanguage: e.target.value as SupportedLanguage })}
+                                onChange={(e) => setOptions({ ...options, targetLanguage: e.target.value as 'user' | SupportedLanguage })}
                                 style={{ marginLeft: '0.5rem' }}
                             >
+                                <option value="user">User&apos;s Browser Language</option>
                                 {supportedLanguages.map(lang => (
                                     <option key={lang} value={lang}>{languageNames[lang]}</option>
                                 ))}
@@ -108,6 +111,17 @@ export const TranslatorExample = () => {
                                 style={{ marginRight: '0.5rem' }}
                             />
                             <strong>Warmup</strong>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={options.enable ?? true}
+                                onChange={(e) => setOptions({ ...options, enable: e.target.checked })}
+                                style={{ marginRight: '0.5rem' }}
+                            />
+                            <strong>Auto-translate</strong>
                         </label>
                     </div>
                 </div>
@@ -197,6 +211,16 @@ export const TranslatorExample = () => {
                 <div style={{ padding: '1rem', background: '#e3f2fd', borderRadius: '4px', color: '#000' }}>
                     <h3>Translation</h3>
                     <p style={{ whiteSpace: 'pre-wrap' }}>{translator.data}</p>
+                    {translator.detectedSourceLanguage && (
+                        <p style={{ fontSize: '0.875rem', color: '#666' }}>
+                            <strong>Detected source:</strong> {translator.detectedSourceLanguage}
+                        </p>
+                    )}
+                    {translator.resolvedTargetLanguage && (
+                        <p style={{ fontSize: '0.875rem', color: '#666' }}>
+                            <strong>Target:</strong> {translator.resolvedTargetLanguage}
+                        </p>
+                    )}
                 </div>
             )}
         </section>
