@@ -4,22 +4,17 @@ import { useAI } from './useAI';
 
 describe('useAI', () => {
   beforeEach(() => {
-    vi.stubGlobal('ai', {
-      summarizer: {
-        capabilities: vi.fn(),
-      },
-    });
-    // In happy-dom, window.ai might be needed, let's try stubbing window.ai directly if possible
-    // or rely on global ai if it's mirrored
+    // Clear any previous stubs
+    vi.unstubAllGlobals();
     if (typeof window !== 'undefined') {
-        (window as any).ai = (global as any).ai;
+        delete (window as any).Summarizer;
     }
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
     if (typeof window !== 'undefined') {
-        delete (window as any).ai;
+        delete (window as any).Summarizer;
     }
   });
 
@@ -35,28 +30,45 @@ describe('useAI', () => {
     expect(result.current.availability).toBe('no');
   });
 
-  it('should return availability: "readily" if capabilities() returns "readily"', async () => {
-    ((global as any).ai.summarizer.capabilities as any).mockResolvedValue({ available: 'readily' });
+  it('should return availability: "available" if Summarizer.availability() returns "available"', async () => {
+    const SummarizerMock = {
+      availability: vi.fn().mockResolvedValue('available'),
+    };
+    vi.stubGlobal('Summarizer', SummarizerMock);
+    if (typeof window !== 'undefined') {
+        (window as any).Summarizer = SummarizerMock;
+    }
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
     expect(result.current.isAvailable).toBe(true);
-    expect(result.current.availability).toBe('readily');
-    expect(result.current.capabilities).toEqual({ available: 'readily' });
+    expect(result.current.availability).toBe('available');
   });
 
-  it('should return availability: "after-download" if capabilities() returns "after-download"', async () => {
-    ((global as any).ai.summarizer.capabilities as any).mockResolvedValue({ available: 'after-download' });
+  it('should return availability: "downloadable" if Summarizer.availability() returns "downloadable"', async () => {
+    const SummarizerMock = {
+      availability: vi.fn().mockResolvedValue('downloadable'),
+    };
+    vi.stubGlobal('Summarizer', SummarizerMock);
+    if (typeof window !== 'undefined') {
+        (window as any).Summarizer = SummarizerMock;
+    }
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
-    expect(result.current.isAvailable).toBe(true);
-    expect(result.current.availability).toBe('after-download');
+    expect(result.current.isAvailable).toBe(false);
+    expect(result.current.availability).toBe('downloadable');
   });
 
-  it('should handle errors in capabilities()', async () => {
+  it('should handle errors in availability()', async () => {
     const error = new Error('Test Error');
-    ((global as any).ai.summarizer.capabilities as any).mockRejectedValue(error);
+    const SummarizerMock = {
+      availability: vi.fn().mockRejectedValue(error),
+    };
+    vi.stubGlobal('Summarizer', SummarizerMock);
+    if (typeof window !== 'undefined') {
+        (window as any).Summarizer = SummarizerMock;
+    }
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('error'));
