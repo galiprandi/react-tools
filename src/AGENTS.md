@@ -32,7 +32,7 @@ This is **only for the playground** and is **not** required or bundled with the 
 **IMPORTANT:** Pico CSS is designed to be classless, meaning it styles HTML elements directly without requiring classes. **DO NOT use Pico CSS classes** like `className="container"`, `className="grid"`, `className="secondary"`, `className="success"`, `className="error"`, etc. in playground pages or examples. Instead:
 - Let Pico CSS style elements by their semantic HTML tags (main, article, section, header, nav, etc.)
 - Use inline styles ONLY for layouts (grid, gap, padding, etc.)
-- **DO NOT add custom background colors unless explicitly requested**
+- **DO NOT add custom colors unless explicitly requested**
 - Let Pico CSS handle all colors and styling by default
 
 ## Library vs Playground
