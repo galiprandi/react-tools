@@ -138,6 +138,11 @@ interface Translator {
  * // 'Hola mundo'
  * ```
  *
+ * **Optimization**: When the detected source language matches the target language,
+ * the hook returns the original text without loading the translation model.
+ * This is particularly useful for auto-translation scenarios where the text
+ * may already be in the user's language.
+ *
  * @param options - Configuration for the translator
  * @returns An object with data, detected languages, status, progress, error, and functions to translate or reset
  */
@@ -292,6 +297,14 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
 
       try {
         const { source, target } = await resolveLanguages(textToTranslate);
+        
+        // Optimization: if source and target are the same, skip translation
+        if (source === target) {
+          setData(textToTranslate);
+          setStatus('success');
+          return;
+        }
+        
         const translator = await createTranslator(source, target);
         setStatus('translating');
 

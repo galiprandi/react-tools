@@ -97,6 +97,20 @@ describe('useTranslator', () => {
     expect(mockTranslator.translate).not.toHaveBeenCalled();
   });
 
+  it('should skip translation when source and target are the same', async () => {
+    mockTranslator.translate.mockResolvedValue('Hola mundo');
+
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'en' }));
+
+    await act(async () => {
+      await result.current.translate('Hello world');
+    });
+
+    expect(result.current.status).toBe('success');
+    expect(result.current.data).toBe('Hello world');
+    expect(mockTranslator.translate).not.toHaveBeenCalled();
+  });
+
   it('should handle errors', async () => {
     const error = new Error('Translation failed');
     mockTranslator.translate.mockRejectedValue(error);

@@ -433,7 +433,7 @@ function MyComponent() {
 ### useTranslator
 
 **Description**\
-Hook for using the browser's Translator API. This hook provides a React interface to Chrome's native Translator API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount. Supports 38+ languages. Automatically detects source language and uses browser language by default.
+Hook for using the browser's Translator API. This hook provides a React interface to Chrome's native Translator API. It handles model initialization, download progress, streaming support, and automatic cleanup on unmount. Supports 38+ languages. Automatically detects source language and uses browser language by default. **Optimization**: When the detected source language matches the target language, the hook returns the original text without loading the translation model.
 
 **Example**
 
