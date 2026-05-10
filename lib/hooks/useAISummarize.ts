@@ -1,27 +1,124 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import type { Availability } from './useAI';
 
+/**
+ * Configuration options for the AI Summarizer hook.
+ */
 export interface UseAISummarizeOptions {
-  type?: 'tl;dr' | 'key-points' | 'teaser' | 'headline';
+  /** Type of summary to generate */
+  type?: 'tldr' | 'key-points' | 'teaser' | 'headline';
+  /** Output format of the summary */
   format?: 'plain-text' | 'markdown';
+  /** Length of the summary */
   length?: 'short' | 'medium' | 'long';
+  /** Additional context to guide the summarization */
   sharedContext?: string;
+  /** Expected input languages */
+  expectedInputLanguages?: string[];
+  /** Output language */
+  outputLanguage?: string;
+  /** Expected context languages */
+  expectedContextLanguages?: string[];
+  /** Enable streaming output for real-time results */
   streaming?: boolean;
+  /** Preload the model on component mount for faster first summary */
   warmup?: boolean;
 }
 
+/**
+ * Status of the AI summarization process.
+ */
 export type AISummarizeStatus = 'idle' | 'initializing' | 'downloading' | 'summarizing' | 'success' | 'error';
+
+/**
+ * Progress information for model download.
+ */
+export interface DownloadProgress {
+  /** Number of bytes downloaded */
+  loaded: number;
+  /** Total number of bytes to download */
+  total: number;
+}
+
+/**
+ * Result object returned by the useAISummarize hook.
+ */
+export interface UseAISummarizeResult {
+  /** The generated summary text */
+  data: string;
+  /** Current status of the summarization process */
+  status: AISummarizeStatus;
+  /** Download progress if model is being downloaded */
+  progress: DownloadProgress | null;
+  /** Error object if summarization failed */
+  error: Error | null;
+  /** Function to summarize text */
+  summarize: (text: string, context?: string) => Promise<void>;
+  /** Function to reset the hook state */
+  reset: () => void;
+}
+
+// Type definitions for Chrome's AI Summarizer API
+// These are not yet in TypeScript's lib.dom.d.ts
+
+/**
+ * Monitor for tracking Summarizer creation progress.
+ */
+interface CreateMonitor {
+  addEventListener(event: 'downloadprogress', callback: (e: ProgressEvent) => void): void;
+}
+
+/**
+ * Options for creating a Summarizer instance.
+ */
+interface SummarizerCreateOptions {
+  type?: UseAISummarizeOptions['type'];
+  format?: UseAISummarizeOptions['format'];
+  length?: UseAISummarizeOptions['length'];
+  sharedContext?: UseAISummarizeOptions['sharedContext'];
+  expectedInputLanguages?: UseAISummarizeOptions['expectedInputLanguages'];
+  outputLanguage?: UseAISummarizeOptions['outputLanguage'];
+  expectedContextLanguages?: UseAISummarizeOptions['expectedContextLanguages'];
+  monitor?(m: CreateMonitor): void;
+}
+
+/**
+ * Chrome's AISummarizer interface.
+ */
+interface AISummarizer {
+  summarize(text: string, options?: { signal?: AbortSignal; context?: string }): Promise<string>;
+  summarizeStreaming(text: string, options?: { signal?: AbortSignal; context?: string }): ReadableStream<string>;
+  destroy(): void;
+}
 
 /**
  * Hook for using the browser's AI Summarizer API.
  *
+ * This hook provides a React interface to Chrome's native AI Summarizer API.
+ * It handles model initialization, download progress, streaming support, and
+ * automatic cleanup on unmount.
+ *
+ * @example
+ * ```tsx
+ * const summarize = useAISummarize({
+ *   type: 'tldr',
+ *   format: 'markdown',
+ *   length: 'short',
+ *   streaming: true
+ * });
+ *
+ * await summarize.summarize(longText);
+ * console.log(summarize.data);
+ * ```
+ *
  * @param options - Configuration for the summarizer
- * @returns An object with data, status, progress, error, and functions to summarize or reset.
+ * @returns An object with data, status, progress, error, and functions to summarize or reset
  */
-export function useAISummarize(options: UseAISummarizeOptions = {}) {
-  const { type, format, length, sharedContext, streaming = false, warmup = false } = options;
+export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummarizeResult {
+  const { type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages, streaming = false, warmup = false } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AISummarizeStatus>('idle');
-  const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
+  const [progress, setProgress] = useState<DownloadProgress | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const summarizerRef = useRef<AISummarizer | null>(null);
@@ -41,41 +138,56 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
   const createSummarizer = useCallback(async () => {
     if (summarizerRef.current) return summarizerRef.current;
 
-    const ai = (typeof window !== 'undefined' && window.ai) || (typeof global !== 'undefined' && (global as any).ai);
-
-    if (!ai?.summarizer) {
-      throw new Error('AI API not supported in this browser');
+    // Chrome native API: Summarizer is a global constructor
+    if (typeof window === 'undefined' || typeof (window as unknown as { Summarizer?: unknown }).Summarizer !== 'function') {
+      throw new Error('Summarizer API not supported in this browser');
     }
 
-    const caps = await ai.summarizer.capabilities();
-    if (caps.available === 'no') {
-      throw new Error('Summarizer is not available');
+    const Summarizer = (window as unknown as { Summarizer: { availability?: () => Promise<Availability>; create?: (options?: SummarizerCreateOptions) => Promise<Summarizer> } }).Summarizer;
+
+    // Check availability
+    if (typeof Summarizer.availability === 'function') {
+      const avail = await Summarizer.availability();
+      if (avail === 'unavailable') {
+        throw new Error('Summarizer is not available');
+      }
+      if (avail === 'downloading' || avail === 'downloadable') {
+        setStatus('downloading');
+      } else {
+        setStatus('initializing');
+      }
     }
 
-    if (caps.available === 'after-download') {
-      setStatus('downloading');
-    } else {
-      setStatus('initializing');
+    // Check user activation (required by Chrome)
+    // Use optional chaining for environments where userActivation might not exist
+    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
+      throw new Error('User activation required. Please interact with the page first.');
     }
 
-    const instance = await ai.summarizer.create({
+    if (typeof Summarizer.create !== 'function') {
+      throw new Error('Summarizer.create is not available');
+    }
+    const instance = await Summarizer.create({
       type,
       format,
       length,
       sharedContext,
-      monitor(m: AICreateMonitor) {
-        m.onprogress = (e: AICreateMonitorProgressEvent) => {
+      expectedInputLanguages,
+      outputLanguage,
+      expectedContextLanguages,
+      monitor(m: CreateMonitor) {
+        m.addEventListener('downloadprogress', (e: ProgressEvent) => {
           setProgress({ loaded: e.loaded, total: e.total });
-        };
+        });
       },
     });
 
     summarizerRef.current = instance;
     return instance;
-  }, [type, format, length, sharedContext]);
+  }, [type, format, length, sharedContext, expectedInputLanguages, outputLanguage, expectedContextLanguages]);
 
   const summarize = useCallback(
-    async (text: string) => {
+    async (text: string, context?: string) => {
       if (status === 'summarizing' || status === 'initializing' || status === 'downloading') {
         return;
       }
@@ -90,16 +202,16 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
         abortControllerRef.current = new AbortController();
 
         if (streaming) {
-          const stream = summarizer.summarizeStreaming(text, { signal: abortControllerRef.current.signal });
+          const stream = summarizer.summarizeStreaming(text, { signal: abortControllerRef.current.signal, context });
           let fullText = '';
-          // @ts-ignore - ReadableStream is async iterable in many environments
+          // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            fullText = chunk;
+            fullText += chunk;
             setData(fullText);
           }
           setStatus('success');
         } else {
-          const result = await summarizer.summarize(text, { signal: abortControllerRef.current.signal });
+          const result = await summarizer.summarize(text, { signal: abortControllerRef.current.signal, context });
           setData(result);
           setStatus('success');
         }
@@ -116,9 +228,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}) {
 
   useEffect(() => {
     if (warmup) {
-      createSummarizer().then(() => setStatus('idle')).catch((err) => {
-        console.error('Failed to warmup summarizer:', err);
-      });
+      createSummarizer().then(() => setStatus('idle')).catch(() => {});
     }
 
     return () => {
