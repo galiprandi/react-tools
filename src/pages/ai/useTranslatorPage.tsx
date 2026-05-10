@@ -64,7 +64,7 @@ export const UseTranslatorPage = () => {
                 </article>
 
                 {/* Configuration Tabs */}
-                <nav>
+                <nav style={{ overflowX: 'auto' }}>
                     <ul>
                         <li>
                             <a

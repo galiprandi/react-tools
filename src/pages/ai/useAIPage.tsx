@@ -4,7 +4,7 @@ export const UseAIPage = () => {
     const ai = useAI()
 
     return (
-        <main className="container">
+        <main>
             <article>
                 <header>
                     <h1>AI Status</h1>
@@ -12,12 +12,11 @@ export const UseAIPage = () => {
                 </header>
 
                 {/* AI Status */}
-                <nav>
+                <nav style={{ overflowX: 'auto' }}>
                     <ul>
                         <li>
                             <a
                                 href="#"
-                                className={ai.isAvailable ? 'success' : 'error'}
                                 data-tooltip="Status from useAI hook: Checks if Chrome's Native AI Summarizer API is available"
                                 onClick={(e) => e.preventDefault()}
                             >
@@ -30,7 +29,7 @@ export const UseAIPage = () => {
                 {/* Detailed Status */}
                 <section>
                     <h3>Detailed Status</h3>
-                    <div className="grid">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div>
                             <label>Status</label>
                             <p>{ai.status}</p>
@@ -42,7 +41,7 @@ export const UseAIPage = () => {
                     </div>
 
                     {ai.error && (
-                        <article className="error" role="alert">
+                        <article>
                             <strong>Error:</strong> {ai.error.message}
                         </article>
                     )}
@@ -51,7 +50,7 @@ export const UseAIPage = () => {
                 {/* Hook Information */}
                 <section>
                     <h3>useAI Hook</h3>
-                    <article className="secondary">
+                    <article>
                         <p>The <code>useAI</code> hook checks the availability of Chrome&apos;s Native AI Summarizer API.</p>
                         <p><strong>Returns:</strong></p>
                         <ul>

@@ -88,7 +88,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                 </article>
 
                 {/* Configuration Tabs */}
-                <nav>
+                <nav style={{ overflowX: 'auto' }}>
                     <ul>
                         <li>
                             <a 
