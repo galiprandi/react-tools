@@ -36,6 +36,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.2.0",
+        "@picocss/pico": "^2.1.1",
         "@testing-library/react": "^16.0.0",
         "@testing-library/react-hooks": "^8.0.1",
         "@types/dom-chromium-ai": "^0.0.16",
@@ -54,8 +55,10 @@
         "happy-dom": "^14.12.0",
         "jsr": "^0.13.4",
         "prettier": "3.2.5",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-markdown": "^10.1.0",
+        "react-router-dom": "^7.15.0",
         "typescript": "^5.4.5",
         "typescript-eslint": "^7.8.0",
         "vite": "^4.5.5",
@@ -63,7 +66,5 @@
         "vite-plugin-lib-inject-css": "^2.0.1",
         "vitest": "^1.6.0"
     },
-    "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724",
-    "dependencies": {
-    }
+    "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724"
 }

@@ -3,72 +3,60 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useAI } from './useAI';
 
 describe('useAI', () => {
-  const mockAvailability = vi.fn();
-
   beforeEach(() => {
-    // Chrome native API: Summarizer is a global constructor (function)
-    // Create a function mock that also has static methods
-    const SummarizerMock = vi.fn() as unknown as { availability: typeof mockAvailability };
-    SummarizerMock.availability = mockAvailability;
-
-    // Mock window.Summarizer directly
+    vi.stubGlobal('ai', {
+      summarizer: {
+        capabilities: vi.fn(),
+      },
+    });
+    // In happy-dom, window.ai might be needed, let's try stubbing window.ai directly if possible
+    // or rely on global ai if it's mirrored
     if (typeof window !== 'undefined') {
-      Object.defineProperty(window, 'Summarizer', {
-        value: SummarizerMock,
-        writable: true,
-        configurable: true,
-      });
+        (window as any).ai = (global as any).ai;
     }
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.unstubAllGlobals();
     if (typeof window !== 'undefined') {
-      delete (window as unknown as { Summarizer?: unknown }).Summarizer;
+        delete (window as any).ai;
     }
   });
 
-  it('should return isAvailable: false if Summarizer does not exist', async () => {
+  it('should return isAvailable: false if window.ai does not exist', async () => {
+    vi.stubGlobal('ai', undefined);
     if (typeof window !== 'undefined') {
-      delete (window as unknown as { Summarizer?: unknown }).Summarizer;
+        delete (window as any).ai;
     }
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
     expect(result.current.isAvailable).toBe(false);
-    expect(result.current.availability).toBe('unavailable');
+    expect(result.current.availability).toBe('no');
   });
 
-  it('should return availability: "available" if availability() returns "available"', async () => {
-    mockAvailability.mockResolvedValue('available');
+  it('should return availability: "readily" if capabilities() returns "readily"', async () => {
+    ((global as any).ai.summarizer.capabilities as any).mockResolvedValue({ available: 'readily' });
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
     expect(result.current.isAvailable).toBe(true);
-    expect(result.current.availability).toBe('available');
+    expect(result.current.availability).toBe('readily');
+    expect(result.current.capabilities).toEqual({ available: 'readily' });
   });
 
-  it('should return availability: "downloadable" if availability() returns "downloadable"', async () => {
-    mockAvailability.mockResolvedValue('downloadable');
+  it('should return availability: "after-download" if capabilities() returns "after-download"', async () => {
+    ((global as any).ai.summarizer.capabilities as any).mockResolvedValue({ available: 'after-download' });
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
-    expect(result.current.isAvailable).toBe(false);
-    expect(result.current.availability).toBe('downloadable');
+    expect(result.current.isAvailable).toBe(true);
+    expect(result.current.availability).toBe('after-download');
   });
 
-  it('should return availability: "downloading" if availability() returns "downloading"', async () => {
-    mockAvailability.mockResolvedValue('downloading');
-    const { result } = renderHook(() => useAI());
-
-    await waitFor(() => expect(result.current.status).toBe('ready'));
-    expect(result.current.isAvailable).toBe(false);
-    expect(result.current.availability).toBe('downloading');
-  });
-
-  it('should handle errors in availability()', async () => {
+  it('should handle errors in capabilities()', async () => {
     const error = new Error('Test Error');
-    mockAvailability.mockRejectedValue(error);
+    ((global as any).ai.summarizer.capabilities as any).mockRejectedValue(error);
     const { result } = renderHook(() => useAI());
 
     await waitFor(() => expect(result.current.status).toBe('error'));

@@ -10,37 +10,27 @@ describe('useAISummarize', () => {
   };
 
   const mockSummarizerCreate = vi.fn();
-  const mockAvailability = vi.fn();
+  const mockCapabilities = vi.fn();
 
   beforeEach(() => {
-    // Chrome native API: Summarizer is a global constructor (function)
-    // Create a function mock that also has static methods
-    const SummarizerMock = vi.fn() as unknown as { availability: typeof mockAvailability; create: typeof mockSummarizerCreate };
-    SummarizerMock.availability = mockAvailability;
-    SummarizerMock.create = mockSummarizerCreate;
-    
-    // Mock window.Summarizer directly
+    vi.stubGlobal('ai', {
+      summarizer: {
+        capabilities: mockCapabilities,
+        create: mockSummarizerCreate,
+      },
+    });
     if (typeof window !== 'undefined') {
-      Object.defineProperty(window, 'Summarizer', {
-        value: SummarizerMock,
-        writable: true,
-        configurable: true,
-      });
+        (window as any).ai = (global as any).ai;
     }
-    
-    // The implementation now handles missing userActivation gracefully
-    // No need to mock it for tests
-    
-    mockAvailability.mockResolvedValue('available');
+    mockCapabilities.mockResolvedValue({ available: 'readily' });
     mockSummarizerCreate.mockResolvedValue(mockSummarizer);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.clearAllMocks();
-    
     if (typeof window !== 'undefined') {
-      delete (window as unknown as { Summarizer?: unknown }).Summarizer;
+        delete (window as any).ai;
     }
   });
 
@@ -80,8 +70,7 @@ describe('useAISummarize', () => {
       await result.current.summarize('input text');
     });
 
-    // Streaming accumulates all chunks
-    expect(result.current.data).toBe('part1part2full summary');
+    expect(result.current.data).toBe('full summary');
     expect(result.current.status).toBe('success');
   });
 
@@ -103,7 +92,7 @@ describe('useAISummarize', () => {
     });
 
     expect(result.current.status).toBe('error');
-    expect(result.current.error?.message).toBe('Summarization failed');
+    expect(result.current.error).toBe(error);
   });
 
   it('should prevent concurrent summarization', async () => {
@@ -136,9 +125,9 @@ describe('useAISummarize', () => {
   });
 
   it('should handle download progress', async () => {
-    mockAvailability.mockResolvedValue('downloadable');
+    mockCapabilities.mockResolvedValue({ available: 'after-download' });
 
-    let monitorCallback: ((m: { addEventListener: (event: string, callback: (e: ProgressEvent) => void) => void }) => void) | undefined;
+    let monitorCallback: any;
     mockSummarizerCreate.mockImplementation(({ monitor }) => {
       monitorCallback = monitor;
       return new Promise((resolve) => {
@@ -155,13 +144,11 @@ describe('useAISummarize', () => {
 
     await waitFor(() => expect(result.current.status).toBe('downloading'));
 
-    const mockMonitor = { addEventListener: vi.fn() };
-    monitorCallback!(mockMonitor);
+    const mockMonitor = { onprogress: null as any };
+    monitorCallback(mockMonitor);
 
     act(() => {
-      const progressEvent = { loaded: 50, total: 100 } as ProgressEvent;
-      const callback = mockMonitor.addEventListener.mock.calls.find((call: unknown[]) => call[0] === 'downloadprogress')?.[1];
-      if (callback) callback(progressEvent);
+      mockMonitor.onprogress({ loaded: 50, total: 100 });
     });
 
     expect(result.current.progress).toEqual({ loaded: 50, total: 100 });
