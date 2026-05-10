@@ -35,3 +35,23 @@ This is **only for the playground** and is **not** required or bundled with the 
 - **Playground (`src/`)**: Contains demo applications and examples that showcase the library. May use external dependencies for demonstration purposes.
 
 When using `@galiprandi/react-tools` in your own project, you will only get the dependency-free hooks and components from the library.
+
+## Development Guidelines
+
+### Color Contrast and Accessibility
+**CRITICAL: Never use light backgrounds with light text or dark backgrounds with dark text.**
+
+When adding inline styles to example components or playground pages:
+- **Light backgrounds** (#fff, #e3f2fd, #e8f5e9, #f5f5f5, etc.) MUST have **dark text** (#000 or #333)
+- **Dark backgrounds** (#1e3a5f, #2d4a3e, #3d3d3d, etc.) MUST have **light text** (#fff or #f0f0f0)
+- Always ensure WCAG AA compliance (minimum 4.5:1 contrast ratio)
+
+**Common Mistakes to Avoid:**
+- Using `background: '#e3f2fd'` (light blue) with `color: '#000'` (black) - OK
+- Using `background: '#e3f2fd'` (light blue) with `color: '#fff'` (white) - WRONG (poor contrast)
+- Using `background: '#1e3a5f'` (dark blue) with `color: '#000'` (black) - WRONG (poor contrast)
+- Using `background: '#1e3a5f'` (dark blue) with `color: '#fff'` (white) - OK
+
+**Safe Color Combinations:**
+- Light backgrounds (#fff, #f5f5f5, #e3f2fd) + Dark text (#000, #333, #1a1a1a)
+- Dark backgrounds (#1e3a5f, #2d4a3e, #3d3d3d, #1a1a1a) + Light text (#fff, #f0f0f0, #e0e0e0)
