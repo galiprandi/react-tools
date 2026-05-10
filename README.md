@@ -42,7 +42,7 @@ pnpm add @galiprandi/react-tools
 Install this library as an AI agent skill for Claude Code, Cursor, Windsurf, and other AI coding agents:
 
 ```bash
-npx skills add https://github.com/galiprandi/react-tools --skill react-tools
+npx skills add https://github.com/galiprandi/skills --skill react-tools
 ```
 
 This provides comprehensive guidance for using @galiprandi/react-tools with AI agents.
