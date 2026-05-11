@@ -57,7 +57,24 @@ describe('valueTransforms', () => {
     })
 
     it('should return the original value if an invalid transform is provided', () => {
-        // @ts-expect-error - testing invalid transform
+        // @ts-expect-error - Testing runtime behavior with invalid input
         expect(valueTransforms('hello', 'invalidTransform')).toBe('hello')
+    })
+
+    it('should handle empty strings', () => {
+        expect(valueTransforms('', 'toUpperCase')).toBe('')
+        expect(valueTransforms('', 'capitalize')).toBe('')
+        expect(valueTransforms('', 'titleCase')).toBe('')
+    })
+
+    it('should handle strings with multiple spaces', () => {
+        expect(valueTransforms('hello   world', 'snakeCase')).toBe(
+            'hello___world',
+        )
+        expect(valueTransforms('  hello  ', 'capitalize')).toBe('  hello  ')
+    })
+
+    it('should handle multiple words in capitalize (only first char of first word)', () => {
+        expect(valueTransforms('hello world', 'capitalize')).toBe('Hello world')
     })
 })

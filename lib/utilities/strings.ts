@@ -1,3 +1,22 @@
+/**
+ * Transforms a string based on the specified transformation type.
+ *
+ * @param value - The string to transform.
+ * @param transform - The type of transformation to apply.
+ * @returns The transformed string.
+ *
+ * @example
+ * ```ts
+ * const upper = valueTransforms('hello', 'toUpperCase');
+ * console.log(upper); // "HELLO"
+ *
+ * const capitalized = valueTransforms('hello world', 'capitalize');
+ * console.log(capitalized); // "Hello world"
+ *
+ * const title = valueTransforms('hello world', 'titleCase');
+ * console.log(title); // "Hello World"
+ * ```
+ */
 export const valueTransforms = (
   value: string,
   transform?:
