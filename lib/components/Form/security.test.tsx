@@ -2,7 +2,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, fireEvent } from '@testing-library/react'
 import { Form } from './index'
-import React from 'react'
 
 describe('Form Security', () => {
     it('should ignore dangerous keys to prevent prototype pollution', () => {
