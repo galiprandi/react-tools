@@ -45,6 +45,8 @@ export const InputExample = () => {
                         <option value="capitalize">Capitalize</option>
                         <option value="titleCase">Title Case</option>
                         <option value="snakeCase">Snake Case</option>
+                        <option value="camelCase">Camel Case</option>
+                        <option value="kebabCase">Kebab Case</option>
                         <option value="onlyNumbers">Only Numbers</option>
                         <option value="onlyLetters">Only Letters</option>
                         <option value="onlyEmail">Only Email</option>
