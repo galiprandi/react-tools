@@ -22,6 +22,18 @@ describe('valueTransforms', () => {
         expect(valueTransforms('hello world', 'snakeCase')).toBe('hello_world')
     })
 
+    it('should transform to camel case', () => {
+        expect(valueTransforms('hello world', 'camelCase')).toBe('helloWorld')
+        expect(valueTransforms('hello-world', 'camelCase')).toBe('helloWorld')
+        expect(valueTransforms('hello_world', 'camelCase')).toBe('helloWorld')
+    })
+
+    it('should transform to kebab case', () => {
+        expect(valueTransforms('hello world', 'kebabCase')).toBe('hello-world')
+        expect(valueTransforms('helloWorld', 'kebabCase')).toBe('hello-world')
+        expect(valueTransforms('hello_world', 'kebabCase')).toBe('hello-world')
+    })
+
     it('should remove all non-numeric characters', () => {
         expect(valueTransforms('a1b2c3', 'onlyNumbers')).toBe('123')
     })
@@ -45,7 +57,7 @@ describe('valueTransforms', () => {
     })
 
     it('should return the original value if an invalid transform is provided', () => {
-        // @ts-expect-error
+        // @ts-expect-error - testing invalid transform
         expect(valueTransforms('hello', 'invalidTransform')).toBe('hello')
     })
 })
