@@ -37,6 +37,8 @@ export const UseInputPage = () => {
                             <li><code>capitalize</code> - Capitalize first letter</li>
                             <li><code>titleCase</code> - Title case each word</li>
                             <li><code>snakeCase</code> - Convert to snake_case</li>
+                            <li><code>camelCase</code> - Convert to camelCase</li>
+                            <li><code>kebabCase</code> - Convert to kebab-case</li>
                             <li><code>onlyNumbers</code> - Keep only numbers</li>
                             <li><code>onlyLetters</code> - Keep only letters</li>
                             <li><code>onlyEmail</code> - Email format validation</li>
@@ -80,6 +82,8 @@ export const UseInputPage = () => {
                                     <option value="capitalize">Capitalize</option>
                                     <option value="titleCase">Title Case</option>
                                     <option value="snakeCase">Snake Case</option>
+                                    <option value="camelCase">Camel Case</option>
+                                    <option value="kebabCase">Kebab Case</option>
                                     <option value="onlyNumbers">Only Numbers</option>
                                     <option value="onlyLetters">Only Letters</option>
                                     <option value="onlyEmail">Only Email</option>
