@@ -44,10 +44,19 @@ export const Form = <T,>(props: FormProps<T>): JSX.Element => {
         if (onSubmitValues) {
             const formData = new FormData(event.currentTarget)
             const entries = formData.entries()
-            let values = {} as T
+            const values = {} as T
             for (const [key, value] of entries) {
+                // Security check: prevent prototype pollution
+                if (
+                    key === '__proto__' ||
+                    key === 'constructor' ||
+                    key === 'prototype'
+                ) {
+                    continue
+                }
+
                 if (filterEmptyValues && !value) continue
-                values = { ...values, [key]: value }
+                ;(values as Record<string, unknown>)[key] = value
             }
 
             onSubmitValues(values)
