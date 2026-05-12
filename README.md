@@ -166,7 +166,7 @@ Custom input component supporting transformations, debounce, datalist, and more.
 | Prop                | Type                                | Description                             |
 |---------------------|-------------------------------------|------------------------------------------|
 | `label`             | `string`                            | Optional label                          |
-| `transform`         | `string` (`"camelCase"`, `"kebabCase"`, `"titleCase"`, `"onlyEmail"`...) | Built-in value transforms         |
+| `transform`         | `string` (`"camelCase"`, `"pascalCase"`, `"kebabCase"`, `"titleCase"`, `"onlyEmail"`...) | Built-in value transforms         |
 | `transformFn`       | `(value: string) => string`         | Custom value transform                   |
 | `onChangeValue`     | `(value: string) => void`           | Fires on value change                    |
 | `onChangeDebounce`  | `(value: string) => void`           | Fires after debounce                     |

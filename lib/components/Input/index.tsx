@@ -27,7 +27,7 @@ import { valueTransforms } from '../../utilities/strings'
  *     onChangeValue={handleChangeValue}
  *     onChangeDebounce={handleChangeDebounce}
  *     debounceDelay={300}
- *     transform="uppercase"
+ *     transform="pascalCase"
  *     className="input-class"
  *     datalist={['john.doe', 'jane.doe', 'john.smith']}
  * />;
