@@ -42,7 +42,6 @@ export function Input(props: InputProps): JSX.Element {
         debounceDelay = 0,
         transform,
         transformFn,
-        id,
         ...restProps
     } = props
     const [value, setValue] = useState(props.value ?? '')

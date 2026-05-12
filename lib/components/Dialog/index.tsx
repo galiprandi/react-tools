@@ -45,6 +45,10 @@ export const Dialog = (props: DialogProps): JSX.Element => {
     const [open, setOpen] = useState(isOpen)
 
     useEffect(() => {
+        setOpen(isOpen)
+    }, [isOpen])
+
+    useEffect(() => {
         if (!dialog.current) return
         if (open) {
             behavior === 'dialog'
