@@ -28,6 +28,13 @@ describe('valueTransforms', () => {
         expect(valueTransforms('hello_world', 'camelCase')).toBe('helloWorld')
     })
 
+    it('should transform to pascal case', () => {
+        expect(valueTransforms('hello world', 'pascalCase')).toBe('HelloWorld')
+        expect(valueTransforms('hello-world', 'pascalCase')).toBe('HelloWorld')
+        expect(valueTransforms('hello_world', 'pascalCase')).toBe('HelloWorld')
+        expect(valueTransforms('helloWorld', 'pascalCase')).toBe('HelloWorld')
+    })
+
     it('should transform to kebab case', () => {
         expect(valueTransforms('hello world', 'kebabCase')).toBe('hello-world')
         expect(valueTransforms('helloWorld', 'kebabCase')).toBe('hello-world')
