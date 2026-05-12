@@ -37,7 +37,10 @@ export const DateTime = (props: DateTimeProps): JSX.Element => {
 
     useEffect(() => {
         if (!isoDateTime || !onChangeISOValue) return
-        onChangeISOValue(new Date(isoDateTime).toISOString())
+        const date = new Date(isoDateTime)
+        if (!isNaN(date.getTime())) {
+            onChangeISOValue(date.toISOString())
+        }
     }, [isoDateTime, onChangeISOValue])
 
     return (
