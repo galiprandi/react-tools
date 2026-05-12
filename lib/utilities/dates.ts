@@ -20,7 +20,7 @@ export const iso2LocalDateTime = (
 ): string | undefined => {
     if (!date || typeof date !== 'string') return date
     const d = new Date(date)
-    if (d instanceof Date && isNaN(d as any)) return date
+    if (d instanceof Date && isNaN(d.getTime())) return date
     const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
     return local.toISOString().slice(0, 16)
 }

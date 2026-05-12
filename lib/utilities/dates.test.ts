@@ -6,7 +6,8 @@ describe('iso2LocalDateTime', () => {
 
     invalidDates.forEach((invalidDate) => {
         it(`should return '${invalidDate}' for invalid input: ${invalidDate}`, () => {
-            expect(iso2LocalDateTime(invalidDate as any)).toBe(invalidDate)
+            // @ts-expect-error - Testing runtime behavior with invalid input types
+            expect(iso2LocalDateTime(invalidDate)).toBe(invalidDate)
         })
     })
 
