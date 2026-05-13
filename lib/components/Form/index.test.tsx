@@ -129,4 +129,50 @@ describe('Form Component', () => {
         expect(onSubmit).toHaveBeenCalledTimes(1)
         expect(onSubmit).toHaveBeenCalledWith({ name: 'John Does' })
     })
+
+    it('should filter out restricted keys to prevent prototype pollution and injection', () => {
+        const onSubmit = vi.fn()
+        const testId = 'test-security'
+
+        // Mock FormData to return restricted keys
+        const mockEntries = [
+            ['name', 'John'],
+            ['__proto__', 'malicious'],
+            ['constructor', 'malicious'],
+            ['toString', 'malicious'],
+            ['valueOf', 'malicious'],
+        ]
+
+        // We render a normal form without restricted keys to avoid happy-dom crashes
+        render(
+            <Form onSubmitValues={onSubmit} data-testid={testId}>
+                <input name="name" defaultValue="John" />
+                <button type="submit">Submit</button>
+            </Form>,
+        )
+
+        // Spy on FormData to return our mock entries including restricted ones
+        const formDataSpy = vi
+            .spyOn(window, 'FormData')
+            .mockImplementation(() => ({
+                entries: () => mockEntries[Symbol.iterator](),
+            } as unknown as FormData))
+
+        fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
+
+        expect(onSubmit).toHaveBeenCalledTimes(1)
+        const submittedValues = onSubmit.mock.calls[0][0]
+
+        // Check that restricted keys are not present
+        expect(submittedValues.name).toBe('John')
+        expect(submittedValues.__proto__).not.toBe('malicious')
+        expect(submittedValues.constructor).not.toBe('malicious')
+        expect(submittedValues.toString).toBeUndefined()
+        expect(submittedValues.valueOf).toBeUndefined()
+
+        // Verify it's a null-prototype object
+        expect(Object.getPrototypeOf(submittedValues)).toBeNull()
+
+        formDataSpy.mockRestore()
+    })
 })

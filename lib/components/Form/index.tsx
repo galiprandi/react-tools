@@ -44,14 +44,22 @@ export const Form = <T,>(props: FormProps<T>): JSX.Element => {
         if (onSubmitValues) {
             const formData = new FormData(event.currentTarget)
             const entries = formData.entries()
-            const values = {} as T
+            const values = Object.create(null) as T
+            const restrictedKeys = [
+                '__proto__',
+                'constructor',
+                'prototype',
+                'toString',
+                'valueOf',
+                'toLocaleString',
+                'hasOwnProperty',
+                'isPrototypeOf',
+                'propertyIsEnumerable',
+            ]
+
             for (const [key, value] of entries) {
-                // Security check: prevent prototype pollution
-                if (
-                    key === '__proto__' ||
-                    key === 'constructor' ||
-                    key === 'prototype'
-                ) {
+                // Security check: prevent prototype pollution and object property injection
+                if (restrictedKeys.includes(key)) {
                     continue
                 }
 
