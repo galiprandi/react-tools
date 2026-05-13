@@ -662,6 +662,7 @@ An object containing the current array state (`list`) and helper functions to mo
 | `findItemBy`     | `(key: string \| undefined \| null, value: any) => T \| undefined` | Finds and returns the **first** item where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, finds the first item where `item` strictly equals `value`. Does not modify the list. Returns `undefined` if not found. |
 | `findItemsBy`    | `(key: string \| undefined \| null, value: any) => T[]`       | Finds and returns **all** items where `item[key]` strictly equals `value`. If `key` is `undefined` or `null`, finds all items where `item` strictly equals `value`. Does not modify the list. Returns an empty array if no matches are found. |
 | `count`          | `(predicate?: (item: T) => boolean) => number`              | Returns the total number of items in the list, or the count of items matching an optional `predicate`. Does not modify the list.       |
+| `toggle`         | `(item: T, key?: string \| undefined \| null) => void`      | Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. |
 
 ***
 
