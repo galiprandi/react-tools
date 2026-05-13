@@ -724,4 +724,61 @@ describe('useList', () => {
             expect(result.current.count((item) => item.done)).toBe(0)
         })
     })
+
+    describe('toggle', () => {
+        it('should add a primitive item if it is not in the list', () => {
+            const { result } = renderHook(() => useList<string>(['a', 'b']))
+            act(() => {
+                result.current.toggle('c')
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should remove a primitive item if it is in the list', () => {
+            const { result } = renderHook(() => useList<string>(['a', 'b', 'c']))
+            act(() => {
+                result.current.toggle('b')
+            })
+            expect(result.current.list).toEqual(['a', 'c'])
+        })
+
+        it('should add an object if it is not in the list (by reference)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1]))
+            act(() => {
+                result.current.toggle(item2)
+            })
+            expect(result.current.list).toEqual([item1, item2])
+        })
+
+        it('should remove an object if it is in the list (by reference)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1, item2]))
+            act(() => {
+                result.current.toggle(item2)
+            })
+            expect(result.current.list).toEqual([item1])
+        })
+
+        it('should add an object if it is not in the list (by key)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const { result } = renderHook(() => useList([item1]))
+            act(() => {
+                result.current.toggle({ id: 2, name: 'other' }, 'id')
+            })
+            expect(result.current.list).toEqual([item1, { id: 2, name: 'other' }])
+        })
+
+        it('should remove an object if it is in the list (by key)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1, item2]))
+            act(() => {
+                result.current.toggle({ id: 2, name: 'anything' }, 'id')
+            })
+            expect(result.current.list).toEqual([item1])
+        })
+    })
 })

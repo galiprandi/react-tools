@@ -213,6 +213,22 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [list],
     )
 
+    const toggle = useCallback(
+        (item: T, key?: string | undefined | null) => {
+            const value = getValueToCompare(item, key)
+            const index = list.findIndex(
+                (i) => getValueToCompare(i, key) === value,
+            )
+
+            if (index === -1) {
+                addItem(item)
+            } else {
+                removeByIdx(index)
+            }
+        },
+        [list, addItem, removeByIdx],
+    )
+
     return {
         list,
         addItem,
@@ -230,6 +246,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         findItemBy,
         findItemsBy,
         count,
+        toggle,
     }
 }
 
@@ -278,4 +295,6 @@ interface UseListReturn<T> {
     findItemsBy: (key: string | undefined | null, value: any) => T[]
     /** Returns the total number of items, or count of items matching a predicate. */
     count: (predicate?: (item: T) => boolean) => number
+    /** Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. */
+    toggle: (item: T, key?: string | undefined | null) => void
 }
