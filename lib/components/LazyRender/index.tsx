@@ -10,8 +10,7 @@ import { Observer } from '../Observer'
  * @param {LazyRenderProps} props - The props for the LazyRender component.
  * @returns {JSX.Element} - Returns a React element with the specified wrapper and its children, or null when out of view.
  *
- * Example usage:
- *
+ * @example
  * ```tsx
  * const MyComponent = () => {
  *     return (

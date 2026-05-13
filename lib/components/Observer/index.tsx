@@ -12,8 +12,7 @@ import {
  * @param {ObserverProps} props - The props for the Observer component.
  * @returns {ObserverReturn} - Returns a React element with the specified wrapper.
  *
- * Example usage:
- *
+ * @example
  * ```tsx
  * const MyComponent = () => {
  *     const handleAppear = (entry: IntersectionObserverEntry) => {
