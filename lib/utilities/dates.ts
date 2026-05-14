@@ -22,5 +22,8 @@ export const iso2LocalDateTime = (
     const d = new Date(date)
     if (d instanceof Date && isNaN(d.getTime())) return date
     const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-    return local.toISOString().slice(0, 16)
+    if (!isNaN(local.getTime())) {
+        return local.toISOString().slice(0, 16)
+    }
+    return date
 }
