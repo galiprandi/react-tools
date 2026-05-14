@@ -229,6 +229,28 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [list, addItem, removeByIdx],
     )
 
+    const move = useCallback(
+        (fromIndex: number, toIndex: number) => {
+            setListCallback((currentList) => {
+                if (
+                    fromIndex < 0 ||
+                    fromIndex >= currentList.length ||
+                    toIndex < 0 ||
+                    toIndex >= currentList.length ||
+                    fromIndex === toIndex
+                ) {
+                    return currentList
+                }
+
+                const newList = [...currentList]
+                const [item] = newList.splice(fromIndex, 1)
+                newList.splice(toIndex, 0, item)
+                return newList
+            })
+        },
+        [setListCallback],
+    )
+
     return {
         list,
         addItem,
@@ -247,6 +269,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         findItemsBy,
         count,
         toggle,
+        move,
     }
 }
 
@@ -297,4 +320,6 @@ interface UseListReturn<T> {
     count: (predicate?: (item: T) => boolean) => number
     /** Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. */
     toggle: (item: T, key?: string | undefined | null) => void
+    /** Moves an item from one index to another immutably. */
+    move: (fromIndex: number, toIndex: number) => void
 }

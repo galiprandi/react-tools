@@ -5,3 +5,7 @@
 ## 2025-05-20 - [Unified Comparison Pattern in useList]
 **Learning:** Leveraging the internal `getValueToCompare` helper allows new list operations like `toggle` to seamlessly handle both primitive values and complex objects through an optional key parameter, maintaining consistency with existing operations like `removeBy` or `findItemsBy`.
 **Pattern:** Follow the repository's existing internal patterns for value comparison to ensure new features harmonize with the established API and behavior.
+
+## 2025-05-24 - [Stable Function References in useList]
+**Learning:** Using a stable `setListCallback` wrapper for the state setter in complex hooks like `useList` ensures that all returned API methods have stable references, preventing unnecessary re-renders in consuming components when these methods are passed as props.
+**Pattern:** Wrap the state setter in a `useCallback` (`setListCallback`) and use it as the dependency for all other hook methods.
