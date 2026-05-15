@@ -781,4 +781,61 @@ describe('useList', () => {
             expect(result.current.list).toEqual([item1])
         })
     })
+
+    describe('move', () => {
+        it('should move an item forward in the list', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.move(0, 1)
+            })
+            expect(result.current.list).toEqual(['b', 'a', 'c'])
+        })
+
+        it('should move an item backward in the list', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.move(2, 0)
+            })
+            expect(result.current.list).toEqual(['c', 'a', 'b'])
+        })
+
+        it('should move an item to the same position without change', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.move(1, 1)
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing if fromIndex is out of bounds', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.move(-1, 1)
+            })
+            expect(result.current.list).toBe(originalList)
+            act(() => {
+                result.current.move(3, 1)
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing if toIndex is out of bounds', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.move(1, -1)
+            })
+            expect(result.current.list).toBe(originalList)
+            act(() => {
+                result.current.move(1, 3)
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+    })
 })
