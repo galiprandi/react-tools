@@ -30,10 +30,62 @@ interface AISummarizer {
   destroy(): void;
 }
 
+interface AILanguageModelCapabilities {
+  readonly available: AIAvailability;
+  readonly defaultTopK?: number;
+  readonly maxTopK?: number;
+  readonly defaultTemperature?: number;
+  readonly maxTemperature?: number;
+}
+
+interface AILanguageModelPromptOptions {
+  signal?: AbortSignal;
+}
+
+interface AILanguageModelInitialPrompt {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+interface AILanguageModelPromptContentPart {
+  type: 'text' | 'image' | 'audio';
+  value: any;
+}
+
+interface AILanguageModelPrompt {
+  role: 'system' | 'user' | 'assistant';
+  content: string | AILanguageModelPromptContentPart[];
+  prefix?: boolean;
+}
+
+interface AILanguageModelCreateOptions {
+  signal?: AbortSignal;
+  monitor?: (m: AICreateMonitor) => void;
+  initialPrompts?: AILanguageModelInitialPrompt[];
+  topK?: number;
+  temperature?: number;
+  expectedInputs?: { type: string; languages?: string[] }[];
+  expectedOutputs?: { type: string; languages?: string[] }[];
+}
+
+interface AILanguageModel extends EventTarget {
+  prompt(input: string | AILanguageModelPrompt[], options?: AILanguageModelPromptOptions): Promise<string>;
+  promptStreaming(input: string | AILanguageModelPrompt[], options?: AILanguageModelPromptOptions): ReadableStream<string>;
+  clone(options?: { signal?: AbortSignal }): Promise<AILanguageModel>;
+  destroy(): void;
+  readonly contextWindow: number;
+  readonly contextUsage: number;
+}
+
 interface WindowAI {
   readonly summarizer: {
     capabilities(): Promise<AISummarizerCapabilities>;
     create(options?: AISummarizerCreateOptions): Promise<AISummarizer>;
+  };
+  readonly languageModel: {
+    capabilities(): Promise<AILanguageModelCapabilities>;
+    availability(options?: any): Promise<AIAvailability>;
+    create(options?: AILanguageModelCreateOptions): Promise<AILanguageModel>;
   };
 }
 
