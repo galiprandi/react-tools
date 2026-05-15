@@ -9,3 +9,7 @@
 ## 2025-05-24 - [Stable Function References in useList]
 **Learning:** Using a stable `setListCallback` wrapper for the state setter in complex hooks like `useList` ensures that all returned API methods have stable references, preventing unnecessary re-renders in consuming components when these methods are passed as props.
 **Pattern:** Wrap the state setter in a `useCallback` (`setListCallback`) and use it as the dependency for all other hook methods.
+
+## 2025-05-25 - [Full Circle Features: Implementation to Documentation]
+**Learning:** A micro-feature is only complete when it is reflected in the `README.md`. Always update the component/hook documentation table when adding new public API methods to ensure users can discover and use the new functionality immediately.
+**Pattern:** Every change to `UseListReturn` or similar public interfaces must be accompanied by a corresponding update in the project's primary `README.md`.
