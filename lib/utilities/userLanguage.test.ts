@@ -44,4 +44,9 @@ describe('getUserLanguage', () => {
     vi.stubGlobal('navigator', { language: 'de-DE', languages: ['en-US'] });
     expect(getUserLanguage()).toBe('de');
   });
+
+  it('should return "en" when navigator.languages is an empty array', () => {
+    vi.stubGlobal('navigator', { languages: [] });
+    expect(getUserLanguage()).toBe('en');
+  });
 });
