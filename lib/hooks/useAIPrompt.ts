@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { Availability } from './useAI';
 
 /**
  * Role of a participant in a conversation.
@@ -188,7 +187,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
 
       if (streaming) {
         const stream = session.promptStreaming(input, { signal: abortControllerRef.current.signal });
-        // @ts-expect-error - ReadableStream is async iterable in many environments
+        // @ts-ignore - ReadableStream is async iterable in many environments
         for await (const chunk of stream) {
           // The Prompt API returns cumulative chunks
           setData(chunk);
