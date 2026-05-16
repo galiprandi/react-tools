@@ -13,3 +13,7 @@
 ## 2025-05-25 - [Full Circle Features: Implementation to Documentation]
 **Learning:** A micro-feature is only complete when it is reflected in the `README.md`. Always update the component/hook documentation table when adding new public API methods to ensure users can discover and use the new functionality immediately.
 **Pattern:** Every change to `UseListReturn` or similar public interfaces must be accompanied by a corresponding update in the project's primary `README.md`.
+
+## 2026-05-15 - [Render Prop Reload Pattern]
+**Learning:** Adding a `reload` function as an argument to render props in components that manage async state (`AsyncBlock`) provides a seamless way for users to implement manual refresh or retry logic without increasing component complexity.
+**Pattern:** Implement an internal `tick` state that triggers the core `useEffect` and expose a `reload` callback that increments it via the component's render functions.

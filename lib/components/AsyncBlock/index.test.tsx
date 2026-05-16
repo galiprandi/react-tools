@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, cleanup, screen } from '@testing-library/react'
+import { render, cleanup, screen, act } from '@testing-library/react'
 import { AsyncBlock } from './index'
 
 describe('<AsyncBlock />', () => {
@@ -85,5 +85,52 @@ describe('<AsyncBlock />', () => {
 
         unmount()
         // Test should not hang or fail due to cleanup
+    })
+
+    it('should reload the promise when reload is called', async () => {
+        let callCount = 0
+        let resolvePromise: (value: string) => void
+
+        const promiseFn = vi.fn(() => {
+            callCount++
+            return new Promise<string>((resolve) => {
+                resolvePromise = resolve
+            })
+        })
+
+        render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={(data, reload) => (
+                    <div>
+                        <span>{data}</span>
+                        <button onClick={reload}>Reload</button>
+                    </div>
+                )}
+                error={() => null}
+            />
+        )
+
+        expect(screen.getByText('Loading')).toBeDefined()
+        act(() => {
+            resolvePromise(`Data ${callCount}`)
+        })
+
+        await screen.findByText('Data 1')
+        expect(promiseFn).toHaveBeenCalledTimes(1)
+
+        const button = screen.getByText('Reload')
+        act(() => {
+            button.click()
+        })
+
+        expect(screen.getByText('Loading')).toBeDefined()
+        act(() => {
+            resolvePromise(`Data ${callCount}`)
+        })
+
+        await screen.findByText('Data 2')
+        expect(promiseFn).toHaveBeenCalledTimes(2)
     })
 })

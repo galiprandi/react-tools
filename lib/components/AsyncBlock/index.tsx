@@ -41,7 +41,12 @@ export const AsyncBlock = <T,>({
     )
     const [data, setData] = useState<T | null>(null)
     const [err, setErr] = useState<unknown>(null)
+    const [tick, setTick] = useState(0)
     const isMounted = useRef(true)
+
+    const reload = useCallback(() => {
+        setTick((t) => t + 1)
+    }, [])
 
     const run = useCallback(
         (abortController: AbortController) => {
@@ -105,18 +110,22 @@ export const AsyncBlock = <T,>({
             // This ensures any in-flight requests are canceled when
             // the component unmounts or dependencies change
         }
-    }, deps)
+    }, [...deps, tick])
 
     if (state === 'pending') {
-        return typeof pending === 'function' ? <>{pending()}</> : <>{pending}</>
+        return typeof pending === 'function' ? (
+            <>{pending(reload)}</>
+        ) : (
+            <>{pending}</>
+        )
     }
 
     if (state === 'error') {
-        return <>{error?.(err)}</>
+        return <>{error?.(err, reload)}</>
     }
 
     if (state === 'success' && data !== null) {
-        return <>{success(data)}</>
+        return <>{success(data, reload)}</>
     }
 
     return null
@@ -133,16 +142,19 @@ export interface AsyncBlockProps<T> extends PropsWithChildren {
     promiseFn: (signal?: AbortSignal) => Promise<T>
     /**
      * Element or function to render while the promise is pending.
+     * Optionally receives a reload function to re-run the async operation.
      */
-    pending: ReactNode | (() => ReactNode)
+    pending: ReactNode | ((reload: () => void) => ReactNode)
     /**
      * Function to render if the promise resolves successfully.
+     * Receives the data and a reload function.
      */
-    success: (data: T) => ReactNode
+    success: (data: T, reload: () => void) => ReactNode
     /**
      * Function to render if the promise is rejected or times out.
+     * Receives the error and a reload function.
      */
-    error: (err: unknown) => ReactNode
+    error: (err: unknown, reload: () => void) => ReactNode
     /**
      * Optional timeout in milliseconds before failing the promise.
      */

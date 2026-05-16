@@ -98,8 +98,18 @@ Declarative component to render async data with loading, success, and error stat
 <AsyncBlock
   promiseFn={() => fetch(`/api/user`).then(res => res.json())}
   pending={<p>Loading...</p>}
-  success={(data) => <p>Welcome {data.name}</p>}
-  error={(err) => <p>Error: {(err as Error).message}</p>}
+  success={(data, reload) => (
+    <div>
+      <p>Welcome {data.name}</p>
+      <button onClick={reload}>Refresh</button>
+    </div>
+  )}
+  error={(err, reload) => (
+    <div>
+      <p>Error: {(err as Error).message}</p>
+      <button onClick={reload}>Retry</button>
+    </div>
+  )}
   timeOut={5000}
   deps={[userId]}
 />
@@ -110,9 +120,9 @@ Declarative component to render async data with loading, success, and error stat
 | Prop         | Type                                     | Description                             |
 |--------------|------------------------------------------|------------------------------------------|
 | `promiseFn`  | `(signal?: AbortSignal) => Promise<T>`   | Async function returning a Promise       |
-| `pending`    | `ReactNode \| () => ReactNode`           | UI while loading                         |
-| `success`    | `(data: T) => ReactNode`                 | UI on success                            |
-| `error`      | `(err: unknown) => ReactNode`            | UI on error                              |
+| `pending`    | `ReactNode \| (reload: () => void) => ReactNode` | UI while loading                 |
+| `success`    | `(data: T, reload: () => void) => ReactNode` | UI on success                      |
+| `error`      | `(err: unknown, reload: () => void) => ReactNode` | UI on error                    |
 | `timeOut`    | `number`                                 | Optional timeout in ms                   |
 | `deps`       | `any[]`                                  | Dependency list for re-execution         |
 | `onSuccess`  | `(data: T) => void`                      | Optional success callback                |
