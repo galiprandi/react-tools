@@ -1,6 +1,13 @@
 import { Dialog } from '../../../lib/main'
+import { useState } from 'react'
 
 export const UseDialogPage = () => {
+    const [logs, setLogs] = useState<string[]>([])
+
+    const addLog = (message: string) => {
+        setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`])
+    }
+
     return (
         <main>
             <article>
@@ -19,17 +26,13 @@ export const UseDialogPage = () => {
                             <li><code>opener</code>: ReactNode - Button or element to open the dialog</li>
                             <li><code>onOpen</code>: () =&gt; void - Callback when dialog opens</li>
                             <li><code>onClose</code>: () =&gt; void - Callback when dialog closes</li>
-                            <li><code>wrapper</code>: keyof JSX.IntrinsicElements - Wrapper element type</li>
-                            <li><code>threshold</code>: number - Intersection threshold for Observer</li>
-                            <li><code>onAppear</code>: () =&gt; void - Callback when element appears in viewport</li>
-                            <li><code>onDisappear</code>: () =&gt; void - Callback when element disappears from viewport</li>
+                            <li><code>isOpen</code>: boolean - Control dialog state externally</li>
                         </ul>
                         <p><strong>Features:</strong></p>
                         <ul>
                             <li>Native HTML dialog element</li>
                             <li>Modal and dialog modes</li>
                             <li>Accessibility support</li>
-                            <li>Intersection Observer integration</li>
                         </ul>
                     </article>
                 </section>
@@ -41,8 +44,14 @@ export const UseDialogPage = () => {
                         <Dialog
                             behavior="dialog"
                             opener={<button>Toggle Dialog</button>}
-                            onOpen={() => console.info('Dialog opened')}
-                            onClose={() => console.info('Dialog closed')}
+                            onOpen={() => {
+                                addLog('Dialog opened')
+                                console.info('Dialog opened')
+                            }}
+                            onClose={() => {
+                                addLog('Dialog closed')
+                                console.info('Dialog closed')
+                            }}
                         >
                             <h2>Hello there 👋</h2>
                             <p>This is a dialog example.</p>
@@ -57,6 +66,13 @@ export const UseDialogPage = () => {
                                 </a>
                             </p>
                         </Dialog>
+
+                        <details>
+                            <summary>Callback Logs</summary>
+                            <pre style={{ maxHeight: '200px', overflow: 'auto' }}>
+                                <code>{logs.join('\n')}</code>
+                            </pre>
+                        </details>
                     </article>
                 </section>
             </article>
