@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react'
  * Custom hook that debounces a value by a specified delay.
  *
  * @template T
- * @param {T} value - The value to debounce.
- * @param {number} delay - The delay in milliseconds to debounce the value.
- * @returns {T} - Returns the debounced value.
+ * @param value - The value to debounce.
+ * @param delay - The delay in milliseconds to debounce the value.
+ * @returns The debounced value.
  *
- * Example usage:
- *
+ * @example
  * ```tsx
  * const MyComponent = () => {
  *     const [value, setValue] = useState('');
