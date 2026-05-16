@@ -1,24 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react'
-
-const RESTRICTED_KEYS = [
-    '__proto__',
-    'constructor',
-    'prototype',
-    'toString',
-    'valueOf',
-    'toLocaleString',
-    'hasOwnProperty',
-    'isPrototypeOf',
-    'propertyIsEnumerable',
-]
+import { isRestrictedKey } from '../utilities/security'
 
 function getValueToCompare<T>(item: T, key: string | undefined | null): any {
     if (key === undefined || key === null) {
         return item
     }
 
-    if (RESTRICTED_KEYS.includes(key)) {
+    if (isRestrictedKey(key)) {
         return undefined
     }
     if (typeof item === 'object' && item !== null) {

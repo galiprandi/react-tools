@@ -12,3 +12,13 @@
 **Vulnerability:** The `useList` hook allowed matching items using prototype properties like `constructor` or `__proto__` when a key was provided to helper methods like `removeBy` or `toggle`.
 **Learning:** Functions that dynamically access object properties using a string key from parameters can unintentionally expose internal object state or methods if the key is not validated.
 **Prevention:** Implement a blacklist of restricted keys (e.g., `__proto__`, `constructor`, `prototype`, `toString`) when performing dynamic property access on objects, especially in generic utilities or hooks.
+
+## 2025-05-16 - Dependency Upgrade and ID Selector Constraints
+**Vulnerability:** Vitest (<1.6.1) and Happy DOM (<20.0.2) were vulnerable to Remote Code Execution (RCE).
+**Learning:** Upgrading Happy DOM to v20+ introduced a breaking change where `querySelector` (used internally by React/Testing Library) fails on IDs containing colons (common in React 18's `useId`). This caused tests using datalists or linked elements to crash.
+**Prevention:** When upgrading test environments, verify that ID generation patterns (like `useId`) remain compatible with the environment's CSS selector parser. Prefixing dynamic IDs with a string (e.g., `datalist-${baseId}`) ensures compatibility across different DOM implementations.
+
+## 2025-05-16 - Centralized Prototype Pollution Defense
+**Vulnerability:** Duplicated and incomplete lists of restricted keys (`__proto__`, `constructor`, etc.) in multiple components increased the risk of inconsistent security coverage.
+**Learning:** Security-critical constants like restricted keys for object property validation should be centralized to ensure consistency and easier maintenance.
+**Prevention:** Use the centralized `isRestrictedKey` utility from `lib/utilities/security.ts` for all operations involving dynamic property assignment from untrusted input (e.g., Form data, List operations).
