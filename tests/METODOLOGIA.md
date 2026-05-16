@@ -115,26 +115,62 @@ This methodology allows tests to be repeated at any time:
 
 As a complement to E2E tests with Playwright, this methodology includes an analysis of which features documented in README.md do NOT have corresponding unit tests.
 
+### ⚠️ CRITICAL: Always Verify Current Test State
+
+**BEFORE analyzing coverage, ALWAYS execute the following steps:**
+
+1. **Run all unit tests first** to verify they pass and get current test count:
+   ```bash
+   npm test
+   ```
+   This ensures you're analyzing the ACTUAL current state, not outdated assumptions.
+
+2. **List all test files** to see what exists:
+   ```bash
+   find_by_name Pattern: "*.test.ts"
+   find_by_name Pattern: "*.test.tsx"
+   ```
+
+3. **Document test execution** in the results file:
+   - Total test files executed
+   - Total tests passed
+   - Any warnings or errors
+   - Execution timestamp
+
 ### Analysis Process
 
 1. **Extract documented features**: For each component/hook from README.md, list all documented props/options/returns
 
 2. **Read existing unit tests**: Review all `.test.ts` and `.test.tsx` files in `lib/` to identify which features are tested
+   - **IMPORTANT**: Read the ACTUAL test files, don't rely on memory or previous reports
+   - For each test file, identify:
+     - Which props/options are being tested
+     - Which callbacks are being verified
+     - Which return values are being checked
 
 3. **Compare and document gaps**: For each component/hook, identify:
-   - Documented features that do NOT have tests
+   - Documented features that do NOT have tests (verify by searching test files)
    - Tested features that are NOT documented (bonus)
-   - Calculate coverage percentage
+   - Calculate coverage percentage based on ACTUAL test content
 
-4. **Add to report**: Include a "Unit Test Coverage Analysis" section in the results file with:
+4. **Verify gaps are real**: For each identified gap:
+   - Search the test file for the prop/feature name
+   - If found, verify it's actually being tested (not just mentioned)
+   - If not found, confirm it's truly missing
+
+5. **Add to report**: Include a "Unit Test Coverage Analysis" section in the results file with:
+   - Test execution summary (from step 1)
    - Gaps by component/hook
    - Coverage percentages
    - Summary of priority areas for improvement
+   - Note: "Analysis conducted on [date] with [X] tests passing"
 
 ### Tools
 
+- `bash` with `npm test` to run tests and verify current state
 - `find_by_name` with `Pattern: "*.test.ts"` to list all tests
 - `read_file` to read each test and analyze coverage
+- `Grep` to search for specific prop/feature names in test files
 - Manual comparison against README.md
 
 ### Gap Documentation Format
@@ -145,6 +181,61 @@ As a complement to E2E tests with Playwright, this methodology includes an analy
 - ❌ `[prop/feature]` - Gap description
 ```
 
+### ⚠️ Common Pitfalls to Avoid
+
+**1. Relying on outdated reports**
+- ❌ Don't reference previous coverage reports without verifying current state
+- ✅ Always run `npm test` first to get current test count
+- ✅ Always read actual test files, don't rely on memory
+
+**2. Misidentifying gaps**
+- ❌ Don't assume a prop is untested just because it's not in a specific test
+- ✅ Use `Grep` to search for prop names across all test files
+- ✅ Verify the prop is actually being tested (not just mentioned in code)
+
+**3. Missing inherited props**
+- ❌ Don't forget that components inherit props from other components
+- ✅ Check component source code to see what props it inherits
+- ✅ Document inherited props separately from own props
+
+**4. Confusing README errors with test gaps**
+- ❌ Don't mark a prop as "untested" if it doesn't exist in the component
+- ✅ Verify the prop exists in the component source code
+- ✅ If README lists a prop that doesn't exist, document as README error, not test gap
+
+## README vs Source Code Verification
+
+To avoid confusing documentation errors with test gaps, verify that README.md accurately reflects the actual component/hook implementation.
+
+### Verification Process
+
+1. **For each component/hook**:
+   - Read the component/hook source code
+   - Extract the actual props/options from TypeScript interfaces
+   - Compare with README.md documentation
+
+2. **Document discrepancies**:
+   - **README Error**: README lists a prop that doesn't exist in source
+   - **Missing Documentation**: Source has a prop not documented in README
+   - **Type Mismatch**: README type doesn't match source type
+
+3. **Handle discrepancies in analysis**:
+   - README errors → Document separately, don't count as test gaps
+   - Missing documentation → Document as documentation gap, not test gap
+   - Type mismatches → Document as documentation error
+
+### Example
+
+If README.md lists Dialog props as:
+- `isOpen`, `behavior`, `onOpen`, `onClose`, `opener`, `wrapper`, `threshold`, `onAppear`, `onDisappear`
+
+But Dialog source code only has:
+- `isOpen`, `behavior`, `onOpen`, `onClose`, `opener`
+
+Then document:
+- **README Error**: `wrapper`, `threshold`, `onAppear`, `onDisappear` don't exist in Dialog (they belong to Observer)
+- These should NOT be counted as "untested props"
+
 ### Prioritization
 
 Gaps should be prioritized as follows:
@@ -152,6 +243,59 @@ Gaps should be prioritized as follows:
 2. **High**: Important options/returns without tests
 3. **Medium**: Secondary props or edge cases
 4. **Low**: Experimental or rarely used features
+
+## Pre-Report Verification Checklist
+
+Before generating the final coverage report, verify the following:
+
+### ✅ Test Execution Verification
+- [ ] Ran `npm test` and all tests passed
+- [ ] Documented total test count in report
+- [ ] Documented execution timestamp in report
+- [ ] Noted any warnings or errors from test execution
+
+### ✅ Test File Verification
+- [ ] Listed all test files with `find_by_name`
+- [ ] Read each test file to understand actual coverage
+- [ ] Used `Grep` to search for specific prop names when unsure
+- [ ] Verified props are actually being tested (not just mentioned)
+
+### ✅ README vs Source Verification
+- [ ] Read component/hook source code for each item
+- [ ] Compared README props with actual TypeScript interfaces
+- [ ] Documented README errors separately from test gaps
+- [ ] Documented missing documentation separately from test gaps
+
+### ✅ Gap Verification
+- [ ] For each identified gap, searched test files for the prop name
+- [ ] Confirmed the prop truly doesn't have a test
+- [ ] Verified the prop actually exists in the component/hook
+- [ ] Distinguished between own props and inherited props
+
+### ✅ Report Completeness
+- [ ] Included test execution summary
+- [ ] Included coverage percentages for each component/hook
+- [ ] Documented README errors separately
+- [ ] Documented test gaps separately
+- [ ] Added note with analysis date and test count
+- [ ] Prioritized gaps by importance
+
+### Report Format Update
+
+Add this header to the Unit Test Coverage Analysis section:
+
+```markdown
+## Unit Test Coverage Analysis
+
+**Test Execution Summary:**
+- Execution date: [YYYY-MM-DD HH:MM]
+- Test files: [X]
+- Total tests: [X]
+- Status: [All passed / X failed]
+- Warnings: [None / List warnings]
+
+**Note:** This analysis was conducted by reading actual test files on [date]. Do not reference this report without verifying current test state with `npm test`.
+```
 
 ## Recommended Improvements
 
