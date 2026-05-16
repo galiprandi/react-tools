@@ -80,7 +80,7 @@ describe('useAI', () => {
     expect(result.current.isApiAvailable('languageDetector')).toBe(true);
   });
 
-  it.skip('should check only specified APIs', async () => {
+  it('should check only specified APIs', async () => {
     const mockAvailability = vi.fn().mockResolvedValue('available');
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
     SummarizerConstructor.availability = mockAvailability;
@@ -97,7 +97,7 @@ describe('useAI', () => {
     expect(result.current.isAvailable).toBe(true);
   });
 
-  it.skip('should return false for isAvailable when some APIs are unavailable', async () => {
+  it('should return false for isAvailable when some APIs are unavailable', async () => {
     const mockAvailability = vi.fn().mockResolvedValue('available');
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
     SummarizerConstructor.availability = mockAvailability;
@@ -115,7 +115,7 @@ describe('useAI', () => {
     expect(result.current.isAvailable).toBe(false);
   });
 
-  it.skip('should return null progress when not downloading', async () => {
+  it('should return null progress when not downloading', async () => {
     const mockAvailability = vi.fn().mockResolvedValue('available');
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
     SummarizerConstructor.availability = mockAvailability;
@@ -131,7 +131,7 @@ describe('useAI', () => {
     expect(result.current.getApiProgress('summarizer')).toBeNull();
   });
 
-  it.skip('should handle errors in availability check', async () => {
+  it('should handle errors in availability check', async () => {
     const error = new Error('Test Error');
     const mockAvailability = vi.fn().mockRejectedValue(error);
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability };
