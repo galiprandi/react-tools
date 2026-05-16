@@ -11,7 +11,6 @@ describe('useList Security', () => {
         act(() => {
             // This should NOT remove any item because 'constructor' is a restricted key
             // Even though item.constructor === Object
-            // @ts-expect-error: restricted key access test
             result.current.removeBy('constructor', Object)
         })
 
@@ -23,7 +22,6 @@ describe('useList Security', () => {
         const { result } = renderHook(() => useList(initialList))
 
         act(() => {
-            // @ts-expect-error: restricted key access test
             result.current.removeBy('__proto__', Object.prototype)
         })
 
@@ -35,7 +33,6 @@ describe('useList Security', () => {
         const { result } = renderHook(() => useList(initialList))
 
         act(() => {
-            // @ts-expect-error: restricted key access test
             result.current.removeBy('toString', (initialList[0] as { toString: unknown }).toString)
         })
 
