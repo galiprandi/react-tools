@@ -674,6 +674,8 @@ An object containing the current array state (`list`) and helper functions to mo
 | `count`          | `(predicate?: (item: T) => boolean) => number`              | Returns the total number of items in the list, or the count of items matching an optional `predicate`. Does not modify the list.       |
 | `toggle`         | `(item: T, key?: string \| undefined \| null) => void`      | Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. |
 | `move`           | `(fromIndex: number, toIndex: number) => void`              | Moves an item from `fromIndex` to `toIndex` immutably. If indices are out of bounds or identical, the list remains unchanged. |
+| `sort`           | `(compareFn?: (a: T, b: T) => number) => void`              | Sorts the list immutably using an optional comparison function. |
+| `shuffle`        | `() => void`                                                | Randomly reorders the list items immutably. |
 
 ***
 
