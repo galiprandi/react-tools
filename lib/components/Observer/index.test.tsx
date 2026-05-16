@@ -195,4 +195,31 @@ describe('Observer Component', () => {
         expect(onAppearMock).not.toHaveBeenCalled()
         expect(onDisappearMock).toHaveBeenCalled()
     })
+
+    it('should pass root prop to IntersectionObserver', () => {
+        const mockRoot = document.createElement('div')
+        render(
+            <Observer root={mockRoot}>
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledWith(
+            expect.any(Function),
+            expect.objectContaining({ root: mockRoot })
+        )
+    })
+
+    it('should pass rootMargin prop to IntersectionObserver', () => {
+        render(
+            <Observer rootMargin="50px">
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledWith(
+            expect.any(Function),
+            expect.objectContaining({ rootMargin: '50px' })
+        )
+    })
 })

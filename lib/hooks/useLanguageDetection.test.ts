@@ -149,4 +149,41 @@ describe('useLanguageDetection', () => {
     expect(result.current.status).toBe('idle');
     expect(mockDetector.detect).not.toHaveBeenCalled();
   });
+
+  it('should respect warmup option', async () => {
+    renderHook(() => useLanguageDetection({ warmup: true }));
+    await waitFor(() => expect(mockDetectorCreate).toHaveBeenCalled());
+  });
+
+  it('should handle download progress', async () => {
+    mockAvailability.mockResolvedValue('downloading');
+
+    let monitorCallback: ((monitor: { addEventListener: (event: string, callback: (e: Event) => void) => void }) => void) | undefined;
+    mockDetectorCreate.mockImplementation(({ monitor }: { monitor?: (m: { addEventListener: (event: string, callback: (e: Event) => void) => void }) => void }) => {
+      monitorCallback = monitor;
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(mockDetector), 100);
+      });
+    });
+
+    const { result } = renderHook(() => useLanguageDetection({ text: 'Hello world' }));
+
+    await waitFor(() => expect(result.current.status).toBe('downloading'));
+
+    const eventListeners = new Map<string, (e: Event) => void>();
+    const mockMonitor = {
+      addEventListener: (event: string, callback: (e: Event) => void) => {
+        eventListeners.set(event, callback);
+      },
+    };
+    monitorCallback?.(mockMonitor);
+
+    act(() => {
+      const progressEvent = { loaded: 50, total: 100 } as ProgressEvent;
+      const callback = eventListeners.get('downloadprogress');
+      callback?.(progressEvent);
+    });
+
+    expect(result.current.progress).toEqual({ loaded: 50, total: 100 });
+  });
 });
