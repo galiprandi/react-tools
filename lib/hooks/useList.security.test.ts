@@ -11,7 +11,6 @@ describe('useList Security', () => {
         act(() => {
             // This should NOT remove any item because 'constructor' is a restricted key
             // Even though item.constructor === Object
-            // @ts-ignore - testing restricted key
             result.current.removeBy('constructor', Object)
         })
 
@@ -23,7 +22,6 @@ describe('useList Security', () => {
         const { result } = renderHook(() => useList(initialList))
 
         act(() => {
-            // @ts-ignore - testing restricted key
             result.current.removeBy('__proto__', Object.prototype)
         })
 
@@ -35,8 +33,7 @@ describe('useList Security', () => {
         const { result } = renderHook(() => useList(initialList))
 
         act(() => {
-            // @ts-ignore - testing restricted key
-            result.current.removeBy('toString', initialList[0].toString)
+            result.current.removeBy('toString', (initialList[0] as { toString: unknown }).toString)
         })
 
         expect(result.current.list).toHaveLength(1)

@@ -6,13 +6,13 @@ exports[`<Input /> > should be render a datalist with options 1`] = `
     Enter your name:
     <input
       data-testid="test-3"
-      list=":r0:-datalist"
+      list="datalist-:r0:"
       name="name"
       type="text"
       value=""
     />
     <datalist
-      id=":r0:-datalist"
+      id="datalist-:r0:"
     >
       <option
         value="John Doe"

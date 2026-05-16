@@ -31,6 +31,8 @@
  * </Form>
  * ```
  */
+import { isRestrictedKey } from '../../utilities/security'
+
 export const Form = <T,>(props: FormProps<T>): JSX.Element => {
     const { onSubmitValues, filterEmptyValues, ...restProps } = props
 
@@ -45,21 +47,10 @@ export const Form = <T,>(props: FormProps<T>): JSX.Element => {
             const formData = new FormData(event.currentTarget)
             const entries = formData.entries()
             const values = Object.create(null) as T
-            const restrictedKeys = [
-                '__proto__',
-                'constructor',
-                'prototype',
-                'toString',
-                'valueOf',
-                'toLocaleString',
-                'hasOwnProperty',
-                'isPrototypeOf',
-                'propertyIsEnumerable',
-            ]
 
             for (const [key, value] of entries) {
                 // Security check: prevent prototype pollution and object property injection
-                if (restrictedKeys.includes(key)) {
+                if (isRestrictedKey(key)) {
                     continue
                 }
 
