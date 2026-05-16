@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { AsyncBlock } from '../../../lib/main'
 
 const fetchCharactersByPage = async (page: number, signal?: AbortSignal) => {
@@ -12,6 +12,11 @@ const fetchCharactersByPage = async (page: number, signal?: AbortSignal) => {
 
 export const UseAsyncBlockPage = () => {
     const [page, setPage] = useState(1)
+    const [logs, setLogs] = useState<string[]>([])
+
+    const addLog = useCallback((message: string) => {
+        setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`])
+    }, [])
 
     return (
         <main>
@@ -81,11 +86,18 @@ export const UseAsyncBlockPage = () => {
                                     </div>
                                 </section>
                             )}
-                            error={(err) => (
-                                <p style={{ color: 'red' }}>{(err as Error)?.message}</p>
-                            )}
+                            error={(err) => <p style={{ color: 'red' }}>{(err as Error)?.message}</p>}
                             timeOut={5000}
+                            onSuccess={(data) => addLog(`onSuccess: Loaded ${data.results?.length || 0} characters`)}
+                            onError={(err) => addLog(`onError: ${(err as Error)?.message}`)}
                         />
+
+                        <details>
+                            <summary>Callback Logs</summary>
+                            <pre style={{ maxHeight: '200px', overflow: 'auto' }}>
+                                <code>{logs.join('\n')}</code>
+                            </pre>
+                        </details>
                     </article>
                 </section>
             </article>
