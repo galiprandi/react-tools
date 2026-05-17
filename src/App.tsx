@@ -14,11 +14,12 @@ import { UseLanguageDetectionPage } from './pages/ai/useLanguageDetectionPage'
 import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
 import { UseAIPromptPage } from './pages/ai/useAIPromptPage'
 import { UseAIWritePage } from './pages/ai/useAIWritePage'
+import { UseAIRewriterPage } from './pages/ai/useAIRewriterPage'
 import { UseTimerPage } from './pages/timer/useTimerPage'
 import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'debounce' | 'timer' | 'list'>('ai-prompt')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'ai-rewriter' | 'debounce' | 'timer' | 'list'>('ai-prompt')
 
     return (
         <main>
@@ -230,6 +231,18 @@ function App() {
                                         useAIWrite
                                     </a>
                                 </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-rewriter' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-rewriter')
+                                        }}
+                                    >
+                                        useAIRewriter
+                                    </a>
+                                </li>
                             </ul>
                         </details>
                     </li>
@@ -261,6 +274,8 @@ function App() {
             {currentPage === 'ai-prompt' && <UseAIPromptPage />}
 
             {currentPage === 'ai-write' && <UseAIWritePage />}
+
+            {currentPage === 'ai-rewriter' && <UseAIRewriterPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
 

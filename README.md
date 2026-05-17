@@ -59,6 +59,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
 - **useTranslator** - Translate text between languages with streaming support
 - **useAIPrompt** - Generate AI responses using Chrome's Prompt API (Gemini Nano)
 - **useAIWrite** - Generate written content with customizable tone and format
+- **useAIRewriter** - Rewrite and restructure text with customizable tone, format, and length
 
 ***
 
@@ -81,6 +82,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
   * [useTranslator](#usetranslator)
   * [useAIPrompt](#useaiprompt)
   * [useAIWrite](#useaiwrite)
+  * [useAIRewriter](#useairewriter)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -734,6 +736,92 @@ function MyComponent() {
 - Marketing copy
 
 **Note**: This hook requires Chrome's Writer API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
+
+### useAIRewriter
+
+**Description**\
+Hook for using the browser's Rewriter API to rewrite and restructure text with customizable tone, format, and length. This hook provides a React interface to Chrome's native Rewriter API. It handles model initialization, download progress, streaming support, shared context management, and automatic cleanup on unmount. Perfect for improving writing style, adjusting tone, condensing or expanding content, and restructuring text for different audiences.
+
+**Example**
+
+```tsx
+import { useAIRewriter } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const { data, rewrite, status, progress } = useAIRewriter({
+    tone: 'more-formal',
+    format: 'markdown',
+    length: 'shorter',
+    sharedContext: 'This is for a professional business email',
+    streaming: true
+  });
+
+  const handleRewrite = async () => {
+    await rewrite('Hi, I wanted to let you know the project is going well.', 'Make it more professional');
+  };
+
+  return (
+    <div>
+      <button onClick={handleRewrite} disabled={status === 'rewriting'}>
+        Rewrite
+      </button>
+      {status === 'rewriting' && <p>Rewriting...</p>}
+      {status === 'downloading' && <p>Downloading model...</p>}
+      {data && <p>{data}</p>}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option          | Type                      | Default | Description                                   |
+|-----------------|---------------------------|---------|-----------------------------------------------|
+| `tone`          | `'more-formal' \| 'as-is' \| 'more-casual'` | `'as-is'` | Writing tone: more-formal (professional), as-is (balanced), more-casual (friendly) |
+| `format`        | `'as-is' \| 'markdown' \| 'plain-text'` | `'as-is'` | Output format: as-is (preserve original), markdown (formatted), plain-text |
+| `length`        | `'shorter' \| 'as-is' \| 'longer'` | `'as-is'` | Length of the output: shorter (condense), as-is (preserve), longer (expand) |
+| `sharedContext` | `string`                  | -       | Shared context for all rewriting tasks (helps maintain consistency across multiple rewrites) |
+| `outputLanguage`| `string`                  | -       | Output language (BCP 47 format, e.g., 'en', 'es', 'fr') |
+| `expectedInputLanguages` | `string[]`      | -       | Expected input languages (BCP 47 format) |
+| `expectedContextLanguages` | `string[]` | -       | Expected context languages (BCP 47 format) |
+| `streaming`     | `boolean`                 | `false` | Enable streaming output for real-time results |
+| `warmup`        | `boolean`                 | `true`  | Preload model on component mount for faster first rewrite |
+
+**Returns**
+
+| Property        | Type                                        | Description                                                  |
+|-----------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`          | `string`                                    | The rewritten text                                         |
+| `status`        | `'idle' \| 'initializing' \| 'downloading' \| 'rewriting' \| 'success' \| 'error'` | Current status of the rewriting process |
+| `progress`      | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`         | `Error \| null`                             | Error object if rewriting failed                            |
+| `rewrite`       | `(text: string, context?: string, overrideTone?: 'more-formal' \| 'as-is' \| 'more-casual') => Promise<void>` | Function to rewrite text with optional context and tone override |
+| `reset`         | `() => void`                                | Function to reset the hook state                            |
+
+**Features:**
+
+- **Multiple Tones**: Adjust tone to be more formal, keep as-is, or more casual
+- **Format Options**: Preserve original format, convert to markdown, or plain-text
+- **Length Control**: Condense (shorter), preserve (as-is), or expand (longer) content
+- **Shared Context**: Maintain consistency across multiple rewriting tasks
+- **Language Support**: Specify expected input/output languages
+- **Streaming**: Real-time content generation for better UX
+- **Tone Override**: Override global tone setting per rewrite
+- **Reusable Rewriter**: The same rewriter instance can be used for multiple rewrites
+
+**Use Cases:**
+
+- Email tone adjustment (make more professional or casual)
+- Content condensation (summarize long text)
+- Content expansion (add detail and elaboration)
+- Style improvement (enhance readability and flow)
+- Audience adaptation (rewrite for different audiences)
+- Review polishing (improve feedback constructiveness)
+- Format conversion (convert to markdown or plain-text)
+
+**Note**: This hook requires Chrome's Rewriter API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
 
 ***
 
