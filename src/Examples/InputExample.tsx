@@ -6,6 +6,7 @@ export const InputExample = () => {
     const [valueDebounced, setValueDebounced] = useState<InputProps['value']>()
     const [transform, setTransform] =
         useState<InputProps['transform']>('titleCase')
+    const [useArrayTransform, setUseArrayTransform] = useState(false)
 
     return (
         <section>
@@ -22,40 +23,57 @@ export const InputExample = () => {
                 onChangeValue={setValue}
                 onChangeDebounce={setValueDebounced}
                 debounceDelay={1000}
-                transform={transform}
+                transform={
+                    useArrayTransform
+                        ? ['toUpperCase', 'onlyAlphanumeric']
+                        : transform
+                }
                 datalist={['John Doe', 'Jane Doe', 'John Smith']}
             />
 
             <p>
                 <label>
-                    Transformation:
-                    <select
-                        name="tranformation"
-                        id="tranformation"
-                        value={transform}
-                        onChange={(e) =>
-                            setTransform(
-                                e.target.value as InputProps['transform'],
-                            )
-                        }
-                    >
-                        <option value="">None</option>
-                        <option value="toUpperCase">Upper Case</option>
-                        <option value="toLowerCase">Lower Case</option>
-                        <option value="capitalize">Capitalize</option>
-                        <option value="titleCase">Title Case</option>
-                        <option value="snakeCase">Snake Case</option>
-                        <option value="camelCase">Camel Case</option>
-                        <option value="kebabCase">Kebab Case</option>
-                        <option value="onlyNumbers">Only Numbers</option>
-                        <option value="onlyLetters">Only Letters</option>
-                        <option value="onlyEmail">Only Email</option>
-                        <option value="onlyAlphanumeric">
-                            Only Alphanumeric
-                        </option>
-                    </select>
+                    <input
+                        type="checkbox"
+                        checked={useArrayTransform}
+                        onChange={(e) => setUseArrayTransform(e.target.checked)}
+                    />
+                    Use array transform (toUpperCase + onlyAlphanumeric)
                 </label>
             </p>
+
+            {!useArrayTransform && (
+                <p>
+                    <label>
+                        Transformation:
+                        <select
+                            name="tranformation"
+                            id="tranformation"
+                            value={transform}
+                            onChange={(e) =>
+                                setTransform(
+                                    e.target.value as InputProps['transform'],
+                                )
+                            }
+                        >
+                            <option value="">None</option>
+                            <option value="toUpperCase">Upper Case</option>
+                            <option value="toLowerCase">Lower Case</option>
+                            <option value="capitalize">Capitalize</option>
+                            <option value="titleCase">Title Case</option>
+                            <option value="snakeCase">Snake Case</option>
+                            <option value="camelCase">Camel Case</option>
+                            <option value="kebabCase">Kebab Case</option>
+                            <option value="onlyNumbers">Only Numbers</option>
+                            <option value="onlyLetters">Only Letters</option>
+                            <option value="onlyEmail">Only Email</option>
+                            <option value="onlyAlphanumeric">
+                                Only Alphanumeric
+                            </option>
+                        </select>
+                    </label>
+                </p>
+            )}
             <p>
                 Transformed value: <code>{value}</code>
                 <br />

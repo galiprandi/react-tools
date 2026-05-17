@@ -138,6 +138,7 @@ export interface InputProps
     debounceDelay?: number
     /**
      * Transformation type for the input value (e.g., "uppercase", "lowercase").
+     * Can be a single transform or an array of transforms to apply sequentially.
      */
     transform?: Parameters<typeof valueTransforms>[1]
     /**

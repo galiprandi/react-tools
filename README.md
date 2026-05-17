@@ -177,6 +177,13 @@ Custom input component supporting transformations, debounce, datalist, and more.
   onChangeValue={(val) => console.log(val)}
   debounceDelay={500}
 />
+
+// Multiple transforms applied sequentially
+<Input
+  label="Username"
+  transform={['toUpperCase', 'onlyAlphanumeric']}
+  onChangeValue={(val) => console.log(val)}
+/>
 ```
 
 **Props**
@@ -184,7 +191,7 @@ Custom input component supporting transformations, debounce, datalist, and more.
 | Prop                | Type                                | Description                             |
 |---------------------|-------------------------------------|------------------------------------------|
 | `label`             | `string`                            | Optional label                          |
-| `transform`         | `string` (`"camelCase"`, `"pascalCase"`, `"kebabCase"`, `"titleCase"`, `"onlyEmail"`...) | Built-in value transforms         |
+| `transform`         | `string \| string[]` (`"camelCase"`, `"pascalCase"`, `"kebabCase"`, `"titleCase"`, `"onlyEmail"`...) | Built-in value transforms (single or array for sequential application)         |
 | `transformFn`       | `(value: string) => string`         | Custom value transform                   |
 | `onChangeValue`     | `(value: string) => void`           | Fires on value change                    |
 | `onChangeDebounce`  | `(value: string) => void`           | Fires after debounce                     |

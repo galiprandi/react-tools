@@ -123,4 +123,70 @@ describe('<Input />', () => {
 
         expect(onChangeValue).toHaveBeenCalledWith('value.transformed')
     })
+
+    it('should apply multiple transforms from array', () => {
+        const testId = 'test-6'
+        const onChangeValue = vi.fn()
+
+        const { getByTestId } = render(
+            <Input
+                id={testId}
+                type="text"
+                name="name"
+                data-testid={testId}
+                transform={['toUpperCase', 'onlyAlphanumeric']}
+                onChangeValue={onChangeValue}
+            />,
+        )
+
+        // Type 'test value 123!' in input
+        const input = getByTestId(testId)
+        fireEvent.change(input, { target: { value: 'test value 123!' } })
+
+        expect(onChangeValue).toHaveBeenCalledWith('TESTVALUE123')
+    })
+
+    it('should apply multiple transforms in sequence', () => {
+        const testId = 'test-7'
+        const onChangeValue = vi.fn()
+
+        const { getByTestId } = render(
+            <Input
+                id={testId}
+                type="text"
+                name="name"
+                data-testid={testId}
+                transform={['onlyLetters', 'toUpperCase']}
+                onChangeValue={onChangeValue}
+            />,
+        )
+
+        // Type 'test123' in input
+        const input = getByTestId(testId)
+        fireEvent.change(input, { target: { value: 'test123' } })
+
+        expect(onChangeValue).toHaveBeenCalledWith('TEST')
+    })
+
+    it('should work with empty array', () => {
+        const testId = 'test-8'
+        const onChangeValue = vi.fn()
+
+        const { getByTestId } = render(
+            <Input
+                id={testId}
+                type="text"
+                name="name"
+                data-testid={testId}
+                transform={[]}
+                onChangeValue={onChangeValue}
+            />,
+        )
+
+        // Type 'test value' in input
+        const input = getByTestId(testId)
+        fireEvent.change(input, { target: { value: 'test value' } })
+
+        expect(onChangeValue).toHaveBeenCalledWith('test value')
+    })
 })
