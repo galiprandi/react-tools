@@ -52,7 +52,7 @@ describe('useTranslator', () => {
   it('should translate text successfully', async () => {
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', streaming: false, warmup: false }));
 
     await act(async () => {
       await result.current.translate('Hello world');
@@ -65,7 +65,7 @@ describe('useTranslator', () => {
   it('should auto-translate when text is provided', async () => {
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', text: 'Hello world' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', text: 'Hello world', streaming: false, warmup: false }));
 
     await waitFor(() => expect(result.current.status).toBe('success'));
     expect(result.current.data).toBe('Hola mundo');
@@ -77,7 +77,7 @@ describe('useTranslator', () => {
 
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'user' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'user', streaming: false, warmup: false }));
 
     await act(async () => {
       await result.current.translate('Hello world');
@@ -99,7 +99,7 @@ describe('useTranslator', () => {
   it('should skip translation when source and target are the same', async () => {
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'en' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'en', streaming: false, warmup: false }));
 
     await act(async () => {
       await result.current.translate('Hello world');
@@ -114,7 +114,7 @@ describe('useTranslator', () => {
     const error = new Error('Translation failed');
     mockTranslator.translate.mockRejectedValue(error);
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', streaming: false, warmup: false }));
 
     await act(async () => {
       await result.current.translate('Hello world');
@@ -127,7 +127,7 @@ describe('useTranslator', () => {
   it('should reset state', async () => {
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
-    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es' }));
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', streaming: false, warmup: false }));
 
     await act(async () => {
       await result.current.translate('Hello world');

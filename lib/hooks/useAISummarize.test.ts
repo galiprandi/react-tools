@@ -204,7 +204,7 @@ describe('useAISummarize', () => {
       (window as unknown as { LanguageDetector?: unknown }).LanguageDetector = (global as unknown as { LanguageDetector?: unknown }).LanguageDetector;
     }
 
-    const { result } = renderHook(() => useAISummarize({ outputLanguage: 'auto' }));
+    const { result } = renderHook(() => useAISummarize({ outputLanguage: 'auto', warmup: false }));
 
     await act(async () => {
       await result.current.summarize('Bonjour le monde');
