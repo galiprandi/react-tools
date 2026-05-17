@@ -91,7 +91,7 @@ export interface UseAIPromptResult {
  * @returns An object with state and functions to interact with the model
  */
 export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult {
-  const { initialPrompts, temperature, topK, streaming = false, warmup = false } = options;
+  const { initialPrompts, temperature, topK, streaming = false, warmup = true } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AIPromptStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
@@ -109,6 +109,10 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     setError(null);
     setContextUsage(0);
     setContextWindow(0);
+    if (sessionRef.current) {
+      sessionRef.current.destroy();
+      sessionRef.current = null;
+    }
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -188,9 +192,11 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       if (streaming) {
         const stream = session.promptStreaming(input, { signal: abortControllerRef.current.signal });
         // @ts-ignore - ReadableStream is async iterable in many environments
+        let accumulated = '';
         for await (const chunk of stream) {
-          // The Prompt API returns cumulative chunks
-          setData(chunk);
+          // The Prompt API returns incremental chunks, accumulate them
+          accumulated += chunk;
+          setData(accumulated);
           setContextUsage(session.contextUsage || 0);
         }
         setStatus('success');

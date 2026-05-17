@@ -384,7 +384,7 @@ function MyComponent() {
 | `expectedContextLanguages`| `string[]`                                    | `undefined`  | Expected context languages (BCP 47 format)    |
 | `preference`              | `'auto' \| 'capability'`                       | `'auto'`     | Performance preference (auto or capability)   |
 | `streaming`               | `boolean`                                     | `false`      | Enable streaming output for real-time results |
-| `warmup`                  | `boolean`                                     | `false`      | Preload model on mount for faster first summary |
+| `warmup`                  | `boolean`                                     | `true`       | Preload model on mount for faster first summary |
 
 **Returns**
 
@@ -443,12 +443,11 @@ function MyComponent() {
 ```
 
 **Options**
-
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `text` | `string` | - | Text to detect language from. Re-detects automatically when changed |
 | `enable` | `boolean` | `true` | Enable/disable auto-detection |
-| `warmup` | `boolean` | `false` | Preload the model on component mount for faster first detection |
+| `warmup` | `boolean` | `true` | Preload model on component mount for faster first detection |
 | `minConfidence` | `number` | `0` | Minimum confidence to include in allLangs (0.0 - 1.0) |
 | `maxResults` | `number` | - | Maximum number of results to return in allLangs |
 
@@ -508,7 +507,7 @@ function MyComponent() {
 | `sourceLanguage`| `'auto' \| SupportedLanguage` | `'auto'` | Source language code. Use `'auto'` to detect from text automatically |
 | `targetLanguage`| `'user' \| SupportedLanguage` | `'user'` | Target language code. Use `'user'` for browser language |
 | `streaming`     | `boolean` | `false` | Enable streaming output for real-time results |
-| `warmup`        | `boolean` | `false` | Preload model on mount for faster first translation |
+| `warmup`        | `boolean` | `true` | Preload model on component mount for faster first translation |
 | `enable`        | `boolean` | `true` | Enable/disable auto-translation |
 
 **Returns**

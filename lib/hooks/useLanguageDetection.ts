@@ -127,7 +127,7 @@ interface LanguageDetector {
  * @returns An object with detected language, confidence, all results, user language info, status, progress, error, and reset function
  */
 export function useLanguageDetection(options: UseLanguageDetectionOptions = {}): UseLanguageDetectionResult {
-  const { text, enable = true, warmup = false, minConfidence = 0, maxResults } = options;
+  const { text, enable = true, warmup = true, minConfidence = 0, maxResults } = options;
   const [allLangs, setAllLangs] = useState<DetectionResult[]>([]);
   const [status, setStatus] = useState<LanguageDetectionStatus>('idle');
   const [progress, setProgress] = useState<DownloadProgress | null>(null);

@@ -8,7 +8,7 @@ export const UseLanguageDetectionPage = () => {
     const ai = useAI()
     const [text, setText] = useState<string>(sampleText)
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
-    const detector = useLanguageDetection({ text, warmup: false })
+    const detector = useLanguageDetection({ text, warmup: true })
 
     const handleReset = () => {
         detector.reset()

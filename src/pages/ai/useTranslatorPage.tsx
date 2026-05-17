@@ -10,7 +10,7 @@ export const UseTranslatorPage = () => {
     const [sourceLanguage, setSourceLanguage] = useState<'auto' | SupportedLanguage>('auto')
     const [targetLanguage, setTargetLanguage] = useState<'user' | SupportedLanguage>('user')
     const [streaming, setStreaming] = useState<boolean>(false)
-    const [warmup, setWarmup] = useState<boolean>(false)
+    const [warmup, setWarmup] = useState<boolean>(true)
     const [enable, setEnable] = useState<boolean>(true)
     
     const translator = useTranslator({ text, sourceLanguage, targetLanguage, streaming, warmup, enable })

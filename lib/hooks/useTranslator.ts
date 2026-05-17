@@ -147,7 +147,7 @@ interface Translator {
  * @returns An object with data, detected languages, status, progress, error, and functions to translate or reset
  */
 export function useTranslator(options: UseTranslatorOptions = {}): UseTranslatorResult {
-  const { text, sourceLanguage = 'auto', targetLanguage = 'user', streaming = false, warmup = false, enable = true } = options;
+  const { text, sourceLanguage = 'auto', targetLanguage = 'user', streaming = true, warmup = true, enable = true } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<TranslationStatus>('idle');
   const [progress, setProgress] = useState<DownloadProgress | null>(null);

@@ -146,11 +146,11 @@ interface AISummarizer {
  * @param options.expectedContextLanguages - Expected context languages (BCP 47 format)
  * @param options.preference - Performance preference: 'auto' or 'capability' (default: 'auto')
  * @param options.streaming - Enable streaming output for real-time results (default: false)
- * @param options.warmup - Preload model on mount for faster first summary (default: false)
+ * @param options.warmup - Preload model on mount for faster first summary (default: true)
  * @returns An object with data, status, progress, error, and functions to summarize or reset
  */
 export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummarizeReturn {
-  const { type, format, length, sharedContext, outputLanguage = 'auto', expectedInputLanguages, expectedContextLanguages, preference = 'auto', streaming = false, warmup = false } = options;
+  const { type, format, length, sharedContext, outputLanguage = 'auto', expectedInputLanguages, expectedContextLanguages, preference = 'auto', streaming = false, warmup = true } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AISummarizeStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);

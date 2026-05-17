@@ -14,7 +14,7 @@ export const UseAISummarizePage = () => {
         outputLanguage: 'en',
         preference: 'auto',
         streaming: true,
-        warmup: false,
+        warmup: true,
     })
     const summarize = useAISummarize(options)
     const [displayedText, setDisplayedText] = useState('')
@@ -184,7 +184,7 @@ Since the Transformer does not rely on recurrence or convolution of the text in 
                                 <input
                                     type="checkbox"
                                     role="switch"
-                                    checked={options.warmup ?? false}
+                                    checked={options.warmup ?? true}
                                     onChange={(e) => setOptions({ ...options, warmup: e.target.checked })}
                                 />
                                 Warmup

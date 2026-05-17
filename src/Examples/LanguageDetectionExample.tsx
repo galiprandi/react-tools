@@ -6,7 +6,7 @@ export const LanguageDetectionExample = () => {
     const ai = useAI()
     const [text, setText] = useState('Hallo und herzlich willkommen!')
     const [isTextareaExpanded, setIsTextareaExpanded] = useState(false)
-    const detector = useLanguageDetection({ warmup: false })
+    const detector = useLanguageDetection({ warmup: true })
 
     const handleDetect = () => {
         if (text.trim()) {

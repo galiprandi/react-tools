@@ -12,9 +12,10 @@ import { UseAIPage } from './pages/ai/useAIPage'
 import { UseAISummarizePage } from './pages/ai/useAISummarizePage'
 import { UseLanguageDetectionPage } from './pages/ai/useLanguageDetectionPage'
 import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
+import { UseAIPromptPage } from './pages/ai/useAIPromptPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'debounce'>('asyncblock')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce'>('ai-prompt')
 
     return (
         <main>
@@ -178,6 +179,18 @@ function App() {
                                         useTranslator
                                     </a>
                                 </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-prompt' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-prompt')
+                                        }}
+                                    >
+                                        useAIPrompt
+                                    </a>
+                                </li>
                             </ul>
                         </details>
                     </li>
@@ -205,6 +218,8 @@ function App() {
             {currentPage === 'ai-language-detection' && <UseLanguageDetectionPage />}
 
             {currentPage === 'ai-translator' && <UseTranslatorPage />}
+
+            {currentPage === 'ai-prompt' && <UseAIPromptPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
         </main>

@@ -10,7 +10,7 @@ export const TranslatorExample = () => {
         sourceLanguage: 'auto',
         targetLanguage: 'user',
         streaming: false,
-        warmup: false,
+        warmup: true,
         enable: true,
     })
     const translator = useTranslator({ ...options, text: text })
