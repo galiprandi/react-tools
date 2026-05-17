@@ -86,6 +86,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
   * [useAIRewriter](#useairewriter)
   * [useAIProofreader](#useaiproofreader)
   * [useDebounce](#usedebounce)
+  * [useThrottle](#usethrottle)
   * [useTimer](#usetimer)
   * [useList](#uselist)
 * [Accessibility & Performance](#accessibility--performance)
@@ -944,6 +945,29 @@ const debouncedSearch = useDebounce(searchTerm, 500);
 
 **Returns**\
 Debounced version of the value (`T`).
+
+***
+
+### useThrottle
+
+**Description**\
+A React hook that returns a throttled version of a value. Ensures the value updates at most once every specified limit.
+
+**Example**
+
+```tsx
+const throttledValue = useThrottle(value, 500);
+```
+
+**Props**
+
+| Parameter     | Type      | Description                    |
+|---------------|-----------|--------------------------------|
+| `value`       | `T`       | Value to throttle              |
+| `limit`       | `number`  | Limit in milliseconds          |
+
+**Returns**\
+Throttled version of the value (`T`).
 
 ***
 
