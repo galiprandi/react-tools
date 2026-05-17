@@ -2,6 +2,7 @@ import './App.css'
 import { useState } from 'react'
 import { UseDateTimePage } from './pages/dateTime/useDateTimePage'
 import { UseDebouncePage } from './pages/debounce/useDebouncePage'
+import { UseThrottlePage } from './pages/throttle/useThrottlePage'
 import { UseDialogPage } from './pages/dialog/useDialogPage'
 import { UseFormPage } from './pages/form/useFormPage'
 import { UseInputPage } from './pages/input/useInputPage'
@@ -20,7 +21,7 @@ import { UseTimerPage } from './pages/timer/useTimerPage'
 import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'ai-rewriter' | 'ai-proofreader' | 'debounce' | 'timer' | 'list'>('ai-prompt')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'ai-rewriter' | 'ai-proofreader' | 'debounce' | 'throttle' | 'timer' | 'list'>('ai-prompt')
 
     return (
         <main>
@@ -134,6 +135,18 @@ function App() {
                                         }}
                                     >
                                         useDebounce
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'throttle' ? '' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('throttle')
+                                        }}
+                                    >
+                                        useThrottle
                                     </a>
                                 </li>
                                 <li>
@@ -293,6 +306,8 @@ function App() {
             {currentPage === 'ai-proofreader' && <UseAIProofreaderPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
+
+            {currentPage === 'throttle' && <UseThrottlePage />}
 
             {currentPage === 'timer' && <UseTimerPage />}
 
