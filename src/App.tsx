@@ -15,11 +15,12 @@ import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
 import { UseAIPromptPage } from './pages/ai/useAIPromptPage'
 import { UseAIWritePage } from './pages/ai/useAIWritePage'
 import { UseAIRewriterPage } from './pages/ai/useAIRewriterPage'
+import { UseAIProofreaderPage } from './pages/ai/useAIProofreaderPage'
 import { UseTimerPage } from './pages/timer/useTimerPage'
 import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'ai-rewriter' | 'debounce' | 'timer' | 'list'>('ai-prompt')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'ai-rewriter' | 'ai-proofreader' | 'debounce' | 'timer' | 'list'>('ai-prompt')
 
     return (
         <main>
@@ -243,6 +244,18 @@ function App() {
                                         useAIRewriter
                                     </a>
                                 </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-proofreader' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-proofreader')
+                                        }}
+                                    >
+                                        useAIProofreader
+                                    </a>
+                                </li>
                             </ul>
                         </details>
                     </li>
@@ -276,6 +289,8 @@ function App() {
             {currentPage === 'ai-write' && <UseAIWritePage />}
 
             {currentPage === 'ai-rewriter' && <UseAIRewriterPage />}
+
+            {currentPage === 'ai-proofreader' && <UseAIProofreaderPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
 

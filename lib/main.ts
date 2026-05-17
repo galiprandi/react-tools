@@ -15,3 +15,4 @@ export { useTranslator, type UseTranslatorOptions, type TranslationStatus, type 
 export { useAIPrompt, type UseAIPromptOptions, type AIPromptStatus, type AIPromptRole, type AIPromptMessage } from './hooks/useAIPrompt'
 export { useAIWrite, type UseAIWriteOptions, type AIWriteStatus } from './hooks/useAIWrite'
 export { useAIRewriter, type UseAIRewriterOptions, type AIRewriterStatus } from './hooks/useAIRewriter'
+export { useAIProofreader, type UseAIProofreaderOptions, type AIProofreaderStatus, type ProofreadCorrection, type ProofreadResult } from './hooks/useAIProofreader'

@@ -60,6 +60,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
 - **useAIPrompt** - Generate AI responses using Chrome's Prompt API (Gemini Nano)
 - **useAIWrite** - Generate written content with customizable tone and format
 - **useAIRewriter** - Rewrite and restructure text with customizable tone, format, and length
+- **useAIProofreader** - Check grammar and spelling with highlighted corrections
 
 ***
 
@@ -83,6 +84,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
   * [useAIPrompt](#useaiprompt)
   * [useAIWrite](#useaiwrite)
   * [useAIRewriter](#useairewriter)
+  * [useAIProofreader](#useaiproofreader)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -822,6 +824,96 @@ function MyComponent() {
 - Format conversion (convert to markdown or plain-text)
 
 **Note**: This hook requires Chrome's Rewriter API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
+
+### useAIProofreader
+
+**Description**\
+Hook for using the browser's Proofreader API to check grammar and spelling with highlighted corrections. This hook provides a React interface to Chrome's native Proofreader API. It handles model initialization, download progress, and automatic cleanup on unmount. Perfect for text editing, content review, and improving writing quality.
+
+**Example**
+
+```tsx
+import { useAIProofreader } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const { data, corrections, proofread, status, progress } = useAIProofreader({
+    expectedInputLanguages: ['en'],
+  });
+
+  const handleProofread = async () => {
+    await proofread('I seen him yesterday at the store.');
+  };
+
+  return (
+    <div>
+      <button onClick={handleProofread} disabled={status === 'proofreading'}>
+        Proofread
+      </button>
+      {status === 'proofreading' && <p>Proofreading...</p>}
+      {status === 'downloading' && <p>Downloading model...</p>}
+      {data && <p>{data}</p>}
+      {corrections.length > 0 && (
+        <ul>
+          {corrections.map((c, i) => (
+            <li key={i}>
+              {c.type && <span>Type: {c.type}</span>}
+              {c.explanation && <span> - {c.explanation}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option          | Type                      | Default | Description                                   |
+|-----------------|---------------------------|---------|-----------------------------------------------|
+| `expectedInputLanguages` | `string[]`      | -       | Expected input languages (BCP 47 format, e.g., 'en', 'es') |
+| `warmup`        | `boolean`                 | `true`  | Preload model on component mount for faster first proofread |
+
+**Returns**
+
+| Property        | Type                                        | Description                                                  |
+|-----------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`          | `string`                                    | The corrected text                                         |
+| `corrections`   | `ProofreadCorrection[]`                     | Array of corrections with startIndex, endIndex, type, and explanation |
+| `status`        | `'idle' \| 'initializing' \| 'downloading' \| 'proofreading' \| 'success' \| 'error'` | Current status of the proofreading process |
+| `progress`      | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`         | `Error \| null`                             | Error object if proofreading failed                          |
+| `proofread`     | `(text: string) => Promise<void>`           | Function to proofread text                                  |
+| `reset`         | `() => void`                                | Function to reset the hook state                            |
+
+**ProofreadCorrection:**
+
+- `startIndex`: Start index of the correction in the original text
+- `endIndex`: End index of the correction in the original text
+- `type`: Type of correction (e.g., 'grammar', 'spelling')
+- `explanation`: Explanation of the correction
+
+**Features:**
+
+- **Grammar Checking**: Detect and correct grammatical errors
+- **Spelling Correction**: Identify and fix spelling mistakes
+- **Detailed Corrections**: Get correction type and explanation for each issue
+- **Language Support**: Specify expected input languages for better accuracy
+- **Fast Proofreading**: Warmup option for faster first proofread
+- **Reusable Proofreader**: The same proofreader instance can be used for multiple checks
+
+**Use Cases:**
+
+- Text editing (grammar and spell checking)
+- Content review (improving writing quality)
+- Email validation (catching typos before sending)
+- Document proofreading (ensuring professional quality)
+- Blog post review (improving readability)
+- Comment moderation (identifying language issues)
+
+**Note**: This hook requires Chrome's Proofreader API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
 
 ***
 
