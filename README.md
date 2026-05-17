@@ -57,6 +57,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
 - **useAISummarize** - Generate text summaries with streaming support
 - **useLanguageDetection** - Detect language from text with confidence scores
 - **useTranslator** - Translate text between languages with streaming support
+- **useAIPrompt** - Generate AI responses using Chrome's Prompt API (Gemini Nano)
 
 ***
 
@@ -77,6 +78,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
   * [useAISummarize](#useaisummarize)
   * [useLanguageDetection](#uselanguagedetection)
   * [useTranslator](#usetranslator)
+  * [useAIPrompt](#useaiprompt)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -559,6 +561,71 @@ function MyComponent() {
 `ar`, `bg`, `bn`, `cs`, `da`, `de`, `el`, `en`, `es`, `fi`, `fr`, `hi`, `hr`, `hu`, `id`, `it`, `iw`, `ja`, `kn`, `ko`, `lt`, `mr`, `nl`, `no`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `ta`, `te`, `th`, `tr`, `uk`, `vi`, `zh`, `zh-Hant`
 
 **Note**: This hook requires Chrome's Translator API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
+
+### useAIPrompt
+
+**Description**\
+Hook for using the browser's Prompt API (Gemini Nano). This hook provides a React interface to Chrome's native Prompt API. It handles session creation, model download progress, streaming support, context management, and automatic cleanup on unmount. Supports multi-turn conversations with system prompts and custom AI parameters.
+
+**Example**
+
+```tsx
+import { useAIPrompt } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const { data, prompt, status, contextUsage, contextWindow } = useAIPrompt({
+    initialPrompts: [
+      { role: 'system', content: 'You are a helpful assistant.' }
+    ],
+    temperature: 0.7,
+    topK: 40,
+    streaming: true
+  });
+
+  const handleSend = async () => {
+    await prompt('What is the capital of France?');
+  };
+
+  return (
+    <div>
+      <button onClick={handleSend} disabled={status === 'prompting'}>
+        Send
+      </button>
+      {status === 'prompting' && <p>Thinking...</p>}
+      {status === 'downloading' && <p>Downloading model...</p>}
+      {data && <p>{data}</p>}
+      <small>Context: {contextUsage} / {contextWindow} tokens</small>
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option          | Type                      | Default | Description                                   |
+|-----------------|---------------------------|---------|-----------------------------------------------|
+| `initialPrompts`| `AIPromptMessage[]`       | -       | Initial prompts to provide context to the model (system/user/assistant roles) |
+| `temperature`    | `number`                  | -       | Temperature for sampling (higher is more creative) |
+| `topK`          | `number`                  | -       | Top-K sampling parameter                     |
+| `streaming`     | `boolean`                 | `false` | Enable streaming output for real-time results |
+| `warmup`        | `boolean`                 | `true`  | Preload model on component mount for faster first prompt |
+
+**Returns**
+
+| Property        | Type                                        | Description                                                  |
+|-----------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`          | `string`                                    | The AI response text                                        |
+| `status`        | `'idle' \| 'initializing' \| 'downloading' \| 'prompting' \| 'success' \| 'error'` | Current status of the prompt process |
+| `progress`      | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`         | `Error \| null`                             | Error object if prompting failed                            |
+| `prompt`        | `(input: string \| AILanguageModelPrompt[]) => Promise<void>` | Function to send a prompt to the AI |
+| `reset`         | `() => void`                                | Function to reset the hook state                            |
+| `contextUsage`  | `number`                                    | Number of tokens used in the current session                |
+| `contextWindow` | `number`                                    | Maximum number of tokens allowed in the session              |
+
+**Note**: This hook requires Chrome's Prompt API (Gemini Nano), which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
 
 ***
 
