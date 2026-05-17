@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { Form, Input, Dialog, DateTime, Observer, useDebounce } from './main.ts'
+import {
+    Form,
+    Input,
+    Dialog,
+    DateTime,
+    Observer,
+    useDebounce,
+    useThrottle,
+} from './main.ts'
 
 describe('All component and utils should be exported', () => {
     it('Form should be defined', () => expect(Form).toBeDefined())
@@ -13,4 +21,6 @@ describe('All component and utils should be exported', () => {
     it('Observer should be defined', () => expect(Observer).toBeDefined())
 
     it('useDebounce should be defined', () => expect(useDebounce).toBeDefined())
+
+    it('useThrottle should be defined', () => expect(useThrottle).toBeDefined())
 })
