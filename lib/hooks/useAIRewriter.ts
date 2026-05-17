@@ -173,11 +173,10 @@ export function useAIRewriter(options: UseAIRewriterOptions = {}): UseAIRewriter
 
         if (streaming) {
           const stream = rewriter.rewriteStreaming(text, options);
-          let fullText = '';
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            fullText += chunk;
-            setData(fullText);
+            // The Rewriter API returns cumulative chunks
+            setData(chunk);
           }
           setStatus('success');
         } else {

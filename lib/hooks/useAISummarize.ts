@@ -257,11 +257,10 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
 
         if (streaming) {
           const stream = summarizer.summarizeStreaming(text, options);
-          let fullText = '';
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            fullText += chunk;
-            setData(fullText);
+            // The Summarizer API returns cumulative chunks
+            setData(chunk);
           }
           setStatus('success');
         } else {

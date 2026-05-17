@@ -147,7 +147,7 @@ describe('useTranslator', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['Hola', ' mundo', '!'];
+    const chunks = ['part1', 'part1part2', 'full translation'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
@@ -163,7 +163,7 @@ describe('useTranslator', () => {
       await result.current.translate('Hello world!');
     });
 
-    expect(result.current.data).toBe('Hola mundo!');
+    expect(result.current.data).toBe('full translation');
     expect(result.current.status).toBe('success');
   });
 

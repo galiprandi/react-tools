@@ -64,7 +64,7 @@ describe('useAIPrompt', () => {
   });
 
   it('should handle streaming with cumulative chunks', async () => {
-    const chunks = ['Hello', ' world', '!'];
+    const chunks = ['Hello', 'Hello world', 'Hello world!'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
@@ -103,6 +103,21 @@ describe('useAIPrompt', () => {
 
     expect(result.current.status).toBe('error');
     expect(result.current.error).toBe(error);
+  });
+
+  it('should throw error when user activation is not active', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: false },
+    });
+
+    const { result } = renderHook(() => useAIPrompt());
+
+    await act(async () => {
+      await result.current.prompt('hello');
+    });
+
+    expect(result.current.status).toBe('error');
+    expect(result.current.error?.message).toContain('User activation required');
   });
 
   it('should handle availability "after-download"', async () => {

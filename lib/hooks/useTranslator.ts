@@ -313,11 +313,10 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
 
         if (streaming) {
           const stream = translator.translateStreaming(textToTranslate, { signal: abortControllerRef.current.signal });
-          let fullText = '';
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            fullText += chunk;
-            setData(fullText);
+            // The Translator API returns cumulative chunks
+            setData(chunk);
           }
           setStatus('success');
         } else {
