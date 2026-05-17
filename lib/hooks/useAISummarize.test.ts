@@ -283,4 +283,102 @@ describe('useAISummarize', () => {
       delete (window as unknown as { LanguageDetector?: unknown }).LanguageDetector;
     }
   });
+
+  it('should pass type option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ type: 'tldr' }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'tldr',
+      })
+    );
+  });
+
+  it('should pass format option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ format: 'markdown' }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        format: 'markdown',
+      })
+    );
+  });
+
+  it('should pass length option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ length: 'short' }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        length: 'short',
+      })
+    );
+  });
+
+  it('should pass sharedContext option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ sharedContext: 'This is a shared context' }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sharedContext: 'This is a shared context',
+      })
+    );
+  });
+
+  it('should pass expectedInputLanguages option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ expectedInputLanguages: ['en', 'es'] }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expectedInputLanguages: ['en', 'es'],
+      })
+    );
+  });
+
+  it('should pass expectedContextLanguages option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ expectedContextLanguages: ['en', 'fr'] }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expectedContextLanguages: ['en', 'fr'],
+      })
+    );
+  });
+
+  it('should pass preference option to Summarizer.create', async () => {
+    const { result } = renderHook(() => useAISummarize({ preference: 'capability' }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(mockSummarizerCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        preference: 'capability',
+      })
+    );
+  });
 });

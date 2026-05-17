@@ -13,9 +13,11 @@ import { UseAISummarizePage } from './pages/ai/useAISummarizePage'
 import { UseLanguageDetectionPage } from './pages/ai/useLanguageDetectionPage'
 import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
 import { UseAIPromptPage } from './pages/ai/useAIPromptPage'
+import { UseTimerPage } from './pages/timer/useTimerPage'
+import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce'>('ai-prompt')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce' | 'timer' | 'list'>('asyncblock')
 
     return (
         <main>
@@ -134,6 +136,30 @@ function App() {
                                 <li>
                                     <a
                                         href="#"
+                                        className={currentPage === 'timer' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('timer')
+                                        }}
+                                    >
+                                        useTimer
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'list' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('list')
+                                        }}
+                                    >
+                                        useList
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="#"
                                         className={currentPage === 'ai-status' ? 'secondary' : ''}
                                         onClick={(e) => {
                                             e.preventDefault()
@@ -222,6 +248,10 @@ function App() {
             {currentPage === 'ai-prompt' && <UseAIPromptPage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
+
+            {currentPage === 'timer' && <UseTimerPage />}
+
+            {currentPage === 'list' && <UseListPage />}
         </main>
     )
 }

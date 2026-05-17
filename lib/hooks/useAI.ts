@@ -2,11 +2,21 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * Represents the availability state of AI APIs.
+ *
+ * - `unavailable`: The API is not supported or available.
+ * - `downloadable`: The model can be downloaded.
+ * - `downloading`: The model is currently being downloaded.
+ * - `available`: The API is ready to use.
  */
 export type Availability = 'unavailable' | 'downloadable' | 'downloading' | 'available';
 
 /**
  * Represents the status of the AI availability check.
+ *
+ * - `idle`: Initial state.
+ * - `loading`: Checking API availability.
+ * - `ready`: Finished checking all APIs.
+ * - `error`: An error occurred during the check.
  */
 export type AIAvailabilityStatus = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -26,11 +36,17 @@ export type AIApiType =
  * Status of a specific AI API.
  */
 export interface AIApiStatus {
-  /** Availability state of the API */
+  /**
+   * Availability state of the API.
+   */
   availability: Availability;
-  /** Download progress if model is being downloaded */
+  /**
+   * Download progress if model is being downloaded.
+   */
   progress?: { loaded: number; total: number };
-  /** Error if availability check failed */
+  /**
+   * Error if availability check failed.
+   */
   error?: Error;
 }
 
@@ -38,11 +54,22 @@ export interface AIApiStatus {
  * Options for the useAI hook.
  */
 export interface UseAIOptions {
-  /** Specific APIs to check. If not provided, checks all APIs. */
+  /**
+   * Specific APIs to check. If not provided, checks all APIs.
+   */
   apis?: AIApiType[];
-  /** Callback when an API's download progress updates */
+  /**
+   * Callback when an API's download progress updates.
+   *
+   * @param api - The API type
+   * @param progress - The progress object
+   */
   onProgress?: (api: AIApiType, progress: { loaded: number; total: number }) => void;
-  /** Callback when an API becomes ready */
+  /**
+   * Callback when an API becomes ready.
+   *
+   * @param api - The API type
+   */
   onReady?: (api: AIApiType) => void;
 }
 
@@ -50,21 +77,48 @@ export interface UseAIOptions {
  * Result object returned by the useAI hook.
  */
 export interface UseAIResult {
-  /** Whether any of the requested APIs are available */
+  /**
+   * Whether all requested APIs (if provided) or at least one default API is available.
+   */
   isAvailable: boolean;
-  /** The current status of the availability check */
+  /**
+   * The current status of the availability check.
+   */
   status: AIAvailabilityStatus;
-  /** Error object if the check failed */
+  /**
+   * Error object if the check failed.
+   */
   error: Error | null;
-  /** Status of each API */
+  /**
+   * Status of each API.
+   */
   apis: Record<AIApiType, AIApiStatus>;
-  /** Check if a specific API is available */
+  /**
+   * Check if a specific API is available.
+   *
+   * @param api - The API to check
+   * @returns True if available, false otherwise
+   */
   isApiAvailable: (api: AIApiType) => boolean;
-  /** Get download progress for a specific API */
+  /**
+   * Get download progress for a specific API.
+   *
+   * @param api - The API to get progress for
+   * @returns The progress object or null if not downloading
+   */
   getApiProgress: (api: AIApiType) => { loaded: number; total: number } | null;
-  /** Preload a specific API's model */
+  /**
+   * Preload a specific API's model.
+   *
+   * @param api - The API to preload
+   * @returns A promise that resolves when the preload starts/finishes
+   */
   preload: (api: AIApiType) => Promise<void>;
-  /** Preload all APIs' models */
+  /**
+   * Preload all APIs' models.
+   *
+   * @returns A promise that resolves when all preloads start
+   */
   preloadAll: () => Promise<void>;
 }
 
@@ -75,6 +129,9 @@ export interface UseAIResult {
  * track model download progress, and preload models for faster initial use.
  * Supports current APIs (Summarizer, Translator, LanguageDetector) and
  * experimental APIs (Prompt, Writer, Rewriter, Proofreader).
+ *
+ * @param options - Configuration for the AI availability check
+ * @returns An object containing availability information, status, and preload functions
  *
  * @example
  * ```tsx
@@ -97,9 +154,6 @@ export interface UseAIResult {
  *   return <LoadingBar {...progress} />;
  * }
  * ```
- *
- * @param options - Configuration for the AI availability check
- * @returns An object containing availability information, status, and preload functions
  */
 export function useAI(options: UseAIOptions = {}): UseAIResult {
   const { apis: apisToCheck, onProgress, onReady } = options;
@@ -278,6 +332,15 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
     return apiStatuses[api].progress || null;
   }, [apiStatuses]);
 
+  const previousApisRef = useRef<string>('');
+  const stableApisToCheck = useRef<AIApiType[] | undefined>(apisToCheck);
+
+  const currentApisStr = JSON.stringify(apisToCheck);
+  if (previousApisRef.current !== currentApisStr) {
+    previousApisRef.current = currentApisStr;
+    stableApisToCheck.current = apisToCheck;
+  }
+
   useEffect(() => {
     let isMounted = true;
     
@@ -287,7 +350,7 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
       setStatus('loading');
       setError(null);
 
-      const apis = apisToCheck || (Object.keys(apiStatuses) as AIApiType[]);
+      const apis = stableApisToCheck.current || (Object.keys(apiStatuses) as AIApiType[]);
       await Promise.all(apis.map(api => checkApiAvailability(api)));
 
       if (isMounted) {
@@ -300,10 +363,10 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
     return () => {
       isMounted = false;
     };
-  }, [apisToCheck]);
+  }, [stableApisToCheck.current, checkApiAvailability]);
 
-  const allApisAvailable = apisToCheck
-    ? apisToCheck.some(api => apiStatuses[api].availability === 'available')
+  const allApisAvailable = stableApisToCheck.current && stableApisToCheck.current.length > 0
+    ? stableApisToCheck.current.every(api => apiStatuses[api].availability === 'available')
     : ['summarizer', 'translator', 'languageDetector'].some(api => apiStatuses[api as AIApiType].availability === 'available');
 
   return {

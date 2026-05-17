@@ -838,4 +838,93 @@ describe('useList', () => {
             expect(result.current.list).toBe(originalList)
         })
     })
+
+    describe('sort', () => {
+        it('should sort the list with default sort order', () => {
+            const { result } = renderHook(() => useList(['b', 'c', 'a']))
+            act(() => {
+                result.current.sort()
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should sort the list with a custom compare function', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 3, name: 'c' },
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                ]),
+            )
+            act(() => {
+                result.current.sort((a, b) => a.id - b.id)
+            })
+            expect(result.current.list).toEqual([
+                { id: 1, name: 'a' },
+                { id: 2, name: 'b' },
+                { id: 3, name: 'c' },
+            ])
+        })
+
+        it('should return a new list instance even if sort order remains same', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.sort()
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).not.toBe(originalList)
+        })
+
+        it('should do nothing on an empty list', () => {
+            const { result } = renderHook(() => useList<string>([]))
+            act(() => {
+                result.current.sort()
+            })
+            expect(result.current.list).toEqual([])
+        })
+    })
+
+    describe('shuffle', () => {
+        it('should reorder the list items', () => {
+            // Use a large enough list to minimize the chance of random "same order"
+            const initialList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            const { result } = renderHook(() => useList(initialList))
+            act(() => {
+                result.current.shuffle()
+            })
+            expect(result.current.list).toHaveLength(initialList.length)
+            expect(result.current.list).not.toEqual(initialList)
+            expect(result.current.list.sort((a, b) => a - b)).toEqual(
+                initialList,
+            )
+        })
+
+        it('should return a new list instance', () => {
+            const initialList = [1, 2]
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.shuffle()
+            })
+            expect(result.current.list).not.toBe(originalList)
+        })
+
+        it('should handle an empty list', () => {
+            const { result } = renderHook(() => useList<number>([]))
+            act(() => {
+                result.current.shuffle()
+            })
+            expect(result.current.list).toEqual([])
+        })
+
+        it('should handle a single item list', () => {
+            const { result } = renderHook(() => useList([1]))
+            act(() => {
+                result.current.shuffle()
+            })
+            expect(result.current.list).toEqual([1])
+        })
+    })
 })

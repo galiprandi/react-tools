@@ -98,8 +98,18 @@ Declarative component to render async data with loading, success, and error stat
 <AsyncBlock
   promiseFn={() => fetch(`/api/user`).then(res => res.json())}
   pending={<p>Loading...</p>}
-  success={(data) => <p>Welcome {data.name}</p>}
-  error={(err) => <p>Error: {(err as Error).message}</p>}
+  success={(data, reload) => (
+    <div>
+      <p>Welcome {data.name}</p>
+      <button onClick={reload}>Refresh</button>
+    </div>
+  )}
+  error={(err, reload) => (
+    <div>
+      <p>Error: {(err as Error).message}</p>
+      <button onClick={reload}>Retry</button>
+    </div>
+  )}
   timeOut={5000}
   deps={[userId]}
 />
@@ -110,9 +120,9 @@ Declarative component to render async data with loading, success, and error stat
 | Prop         | Type                                     | Description                             |
 |--------------|------------------------------------------|------------------------------------------|
 | `promiseFn`  | `(signal?: AbortSignal) => Promise<T>`   | Async function returning a Promise       |
-| `pending`    | `ReactNode \| () => ReactNode`           | UI while loading                         |
-| `success`    | `(data: T) => ReactNode`                 | UI on success                            |
-| `error`      | `(err: unknown) => ReactNode`            | UI on error                              |
+| `pending`    | `ReactNode \| (reload: () => void) => ReactNode` | UI while loading                 |
+| `success`    | `(data: T, reload: () => void) => ReactNode` | UI on success                      |
+| `error`      | `(err: unknown, reload: () => void) => ReactNode` | UI on error                    |
 | `timeOut`    | `number`                                 | Optional timeout in ms                   |
 | `deps`       | `any[]`                                  | Dependency list for re-execution         |
 | `onSuccess`  | `(data: T) => void`                      | Optional success callback                |
@@ -227,40 +237,56 @@ Accessible dialog/modal component built on top of the native `<dialog>` element.
 | `onClose`   | `() => void`                  | Triggered on close                         |
 | `opener`    | `ReactNode`                   | Element to trigger opening                 |
 | `children`  | `ReactNode`                   | Content inside the dialog                  |
+| `...dialogProps` | All native `<dialog>` props | Inherits all HTML dialog element attributes |
 
 ***
 
 ### Observer
 
 **Description**\
-Tracks whether a child element is visible in the viewport using `IntersectionObserver`.
+Tracks whether a child element is visible in the viewport using `IntersectionObserver`. Triggers callbacks when the element appears or disappears from the viewport.
 
 **Example**
 
 ```tsx
-<Observer onChange={(visible) => console.log(visible)}>
+<Observer
+  wrapper="section"
+  onAppear={() => console.log('Element appeared')}
+  onDisappear={() => console.log('Element disappeared')}
+  threshold={0.5}
+>
   <div>Watch me appear!</div>
 </Observer>
 ```
 
 **Props**
 
-| Prop        | Type                             | Description                             |
-|-------------|----------------------------------|------------------------------------------|
-| `onChange`  | `(isVisible: boolean) => void`   | Callback when visibility changes        |
-| `threshold` | `number \| number[]`             | Intersection threshold (optional)       |
+| Prop          | Type                                       | Description                             |
+|---------------|--------------------------------------------|------------------------------------------|
+| `wrapper`     | `keyof ReactHTML` (default: `'div'`)       | HTML element to wrap children with        |
+| `onAppear`    | `(entry: IntersectionObserverEntry) => void` | Callback when element appears in viewport |
+| `onDisappear` | `(entry: IntersectionObserverEntry) => void` | Callback when element disappears from viewport |
+| `threshold`   | `number \| number[]`                       | Intersection threshold (0-1)              |
+| `root`        | `Element \| null`                           | The element used as the viewport          |
+| `rootMargin`  | `string`                                    | Margin around the root                    |
+
+**Note**: This component extends `IntersectionObserverInit`, accepting all standard Intersection Observer options.
 
 ***
 
 ### LazyRender
 
 **Description**\
-Only renders children when they become visible in the viewport.
+Only renders children when they become visible in the viewport. Automatically unmounts children when they disappear to optimize performance.
 
 **Example**
 
 ```tsx
-<LazyRender placeholder={<span>Loading...</span>}>
+<LazyRender
+  wrapper="section"
+  placeholder={<span>Loading...</span>}
+  threshold={0.5}
+>
   <img src="/heavy-image.jpg" alt="Lazy" />
 </LazyRender>
 ```
@@ -269,8 +295,13 @@ Only renders children when they become visible in the viewport.
 
 | Prop         | Type                      | Description                              |
 |--------------|---------------------------|-------------------------------------------|
+| `wrapper`     | `keyof ReactHTML` (default: `'div'`) | HTML element to wrap children with        |
 | `placeholder`| `ReactNode`               | Rendered before children become visible   |
-| `threshold`  | `number \| number[]`      | Optional visibility sensitivity           |
+| `threshold`  | `number \| number[]`      | Intersection threshold (0-1)              |
+| `root`        | `Element \| null`         | The element used as the viewport          |
+| `rootMargin`  | `string`                  | Margin around the root                    |
+
+**Note**: This component extends `IntersectionObserverInit`, accepting all standard Intersection Observer options.
 
 ***
 
@@ -663,6 +694,8 @@ An object containing the current array state (`list`) and helper functions to mo
 | `count`          | `(predicate?: (item: T) => boolean) => number`              | Returns the total number of items in the list, or the count of items matching an optional `predicate`. Does not modify the list.       |
 | `toggle`         | `(item: T, key?: string \| undefined \| null) => void`      | Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. |
 | `move`           | `(fromIndex: number, toIndex: number) => void`              | Moves an item from `fromIndex` to `toIndex` immutably. If indices are out of bounds or identical, the list remains unchanged. |
+| `sort`           | `(compareFn?: (a: T, b: T) => number) => void`              | Sorts the list immutably using an optional comparison function. |
+| `shuffle`        | `() => void`                                                | Randomly reorders the list items immutably. |
 
 ***
 

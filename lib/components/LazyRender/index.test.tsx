@@ -114,4 +114,31 @@ describe('LazyRender Component', () => {
             expect.objectContaining(options),
         )
     })
+
+    it('should pass root prop to IntersectionObserver', () => {
+        const mockRoot = document.createElement('div')
+        render(
+            <LazyRender root={mockRoot}>
+                <div>Content</div>
+            </LazyRender>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledWith(
+            expect.any(Function),
+            expect.objectContaining({ root: mockRoot })
+        )
+    })
+
+    it('should pass rootMargin prop to IntersectionObserver', () => {
+        render(
+            <LazyRender rootMargin="50px">
+                <div>Content</div>
+            </LazyRender>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledWith(
+            expect.any(Function),
+            expect.objectContaining({ rootMargin: '50px' })
+        )
+    })
 })

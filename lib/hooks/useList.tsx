@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react'
+import { isRestrictedKey } from '../utilities/security'
 
 function getValueToCompare<T>(item: T, key: string | undefined | null): any {
     if (key === undefined || key === null) {
         return item
+    }
+
+    if (isRestrictedKey(key)) {
+        return undefined
     }
     if (typeof item === 'object' && item !== null) {
         return (item as any)[key]
@@ -251,6 +256,24 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [setListCallback],
     )
 
+    const sort = useCallback(
+        (compareFn?: (a: T, b: T) => number) => {
+            setListCallback((currentList) => [...currentList].sort(compareFn))
+        },
+        [setListCallback],
+    )
+
+    const shuffle = useCallback(() => {
+        setListCallback((currentList) => {
+            const newList = [...currentList]
+            for (let i = newList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1))
+                ;[newList[i], newList[j]] = [newList[j], newList[i]]
+            }
+            return newList
+        })
+    }, [setListCallback])
+
     return {
         list,
         addItem,
@@ -270,6 +293,8 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         count,
         toggle,
         move,
+        sort,
+        shuffle,
     }
 }
 
@@ -322,4 +347,8 @@ interface UseListReturn<T> {
     toggle: (item: T, key?: string | undefined | null) => void
     /** Moves an item from one index to another immutably. */
     move: (fromIndex: number, toIndex: number) => void
+    /** Sorts the list immutably using an optional comparison function. */
+    sort: (compareFn?: (a: T, b: T) => number) => void
+    /** Randomly reorders the list items immutably. */
+    shuffle: () => void
 }

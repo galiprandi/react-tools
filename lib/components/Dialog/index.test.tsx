@@ -99,4 +99,22 @@ describe('Dialog', () => {
         fireEvent.click(button)
         expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
     })
+
+    it('should pass native dialog element props via spread', () => {
+        const { container } = render(
+            <Dialog
+                isOpen={false}
+                className="custom-dialog"
+                id="my-dialog"
+                aria-labelledby="dialog-title"
+            >
+                <p>Content</p>
+            </Dialog>
+        )
+
+        const dialog = container.querySelector('dialog')
+        expect(dialog?.className).toContain('custom-dialog')
+        expect(dialog?.getAttribute('id')).toBe('my-dialog')
+        expect(dialog?.getAttribute('aria-labelledby')).toBe('dialog-title')
+    })
 })

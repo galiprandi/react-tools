@@ -48,7 +48,8 @@ export function Input(props: InputProps): JSX.Element {
     const valueDebounce = useDebounce(value, debounceDelay)
 
     // Generate a unique id for the datalist
-    const did = `${props.id ?? useId()}-datalist`
+    const baseId = props.id ?? useId()
+    const did = `datalist-${baseId}`
 
     // Update the debounced value
     useEffect(() => {
