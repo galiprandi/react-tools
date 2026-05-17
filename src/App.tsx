@@ -13,11 +13,12 @@ import { UseAISummarizePage } from './pages/ai/useAISummarizePage'
 import { UseLanguageDetectionPage } from './pages/ai/useLanguageDetectionPage'
 import { UseTranslatorPage } from './pages/ai/useTranslatorPage'
 import { UseAIPromptPage } from './pages/ai/useAIPromptPage'
+import { UseAIWritePage } from './pages/ai/useAIWritePage'
 import { UseTimerPage } from './pages/timer/useTimerPage'
 import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce' | 'timer' | 'list'>('ai-prompt')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'ai-write' | 'debounce' | 'timer' | 'list'>('ai-prompt')
 
     return (
         <main>
@@ -217,6 +218,18 @@ function App() {
                                         useAIPrompt
                                     </a>
                                 </li>
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={currentPage === 'ai-write' ? 'secondary' : ''}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage('ai-write')
+                                        }}
+                                    >
+                                        useAIWrite
+                                    </a>
+                                </li>
                             </ul>
                         </details>
                     </li>
@@ -246,6 +259,8 @@ function App() {
             {currentPage === 'ai-translator' && <UseTranslatorPage />}
 
             {currentPage === 'ai-prompt' && <UseAIPromptPage />}
+
+            {currentPage === 'ai-write' && <UseAIWritePage />}
 
             {currentPage === 'debounce' && <UseDebouncePage />}
 

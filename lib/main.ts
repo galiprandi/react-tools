@@ -13,3 +13,4 @@ export { useAISummarize, type UseAISummarizeOptions, type AISummarizeStatus } fr
 export { useLanguageDetection, type UseLanguageDetectionOptions, type LanguageDetectionStatus, type DetectionResult } from './hooks/useLanguageDetection'
 export { useTranslator, type UseTranslatorOptions, type TranslationStatus, type SupportedLanguage } from './hooks/useTranslator'
 export { useAIPrompt, type UseAIPromptOptions, type AIPromptStatus, type AIPromptRole, type AIPromptMessage } from './hooks/useAIPrompt'
+export { useAIWrite, type UseAIWriteOptions, type AIWriteStatus } from './hooks/useAIWrite'

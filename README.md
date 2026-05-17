@@ -58,6 +58,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
 - **useLanguageDetection** - Detect language from text with confidence scores
 - **useTranslator** - Translate text between languages with streaming support
 - **useAIPrompt** - Generate AI responses using Chrome's Prompt API (Gemini Nano)
+- **useAIWrite** - Generate written content with customizable tone and format
 
 ***
 
@@ -79,6 +80,7 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
   * [useLanguageDetection](#uselanguagedetection)
   * [useTranslator](#usetranslator)
   * [useAIPrompt](#useaiprompt)
+  * [useAIWrite](#useaiwrite)
   * [useDebounce](#usedebounce)
   * [useTimer](#usetimer)
   * [useList](#uselist)
@@ -648,6 +650,90 @@ The hook supports automatic type inference for:
 - **Model capability**: Multimodal support depends on the specific Chrome AI model version and capabilities available in the browser.
 
 **Note**: This hook requires Chrome's Prompt API (Gemini Nano), which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
+
+***
+
+### useAIWrite
+
+**Description**\
+Hook for using the browser's Writer API to generate written content with customizable tone and format. This hook provides a React interface to Chrome's native Writer API. It handles model initialization, download progress, streaming support, shared context management, and automatic cleanup on unmount. Perfect for generating emails, blog posts, social media content, and other written materials.
+
+**Example**
+
+```tsx
+import { useAIWrite } from '@galiprandi/react-tools';
+
+function MyComponent() {
+  const { data, write, status, progress } = useAIWrite({
+    tone: 'formal',
+    format: 'markdown',
+    length: 'medium',
+    sharedContext: 'This is for a professional business email',
+    streaming: true
+  });
+
+  const handleWrite = async () => {
+    await write('Write a thank you email to a colleague for their help on the project', 'I want to mention their attention to detail');
+  };
+
+  return (
+    <div>
+      <button onClick={handleWrite} disabled={status === 'writing'}>
+        Generate
+      </button>
+      {status === 'writing' && <p>Writing...</p>}
+      {status === 'downloading' && <p>Downloading model...</p>}
+      {data && <p>{data}</p>}
+    </div>
+  );
+}
+```
+
+**Options**
+
+| Option          | Type                      | Default | Description                                   |
+|-----------------|---------------------------|---------|-----------------------------------------------|
+| `tone`          | `'formal' \| 'neutral' \| 'casual'` | `'neutral'` | Writing tone: formal (professional), neutral (balanced), casual (friendly) |
+| `format`        | `'markdown' \| 'plain-text'` | `'markdown'` | Output format: markdown (formatted) or plain-text |
+| `length`        | `'short' \| 'medium' \| 'long'` | `'short'` | Length of the output: short (brief), medium (moderate), long (detailed) |
+| `sharedContext` | `string`                  | -       | Shared context for all writing tasks (helps maintain consistency across multiple writes) |
+| `outputLanguage`| `string`                  | -       | Output language (BCP 47 format, e.g., 'en', 'es', 'fr') |
+| `expectedInputLanguages` | `string[]`      | -       | Expected input languages (BCP 47 format) |
+| `expectedContextLanguages` | `string[]` | -       | Expected context languages (BCP 47 format) |
+| `streaming`     | `boolean`                 | `false` | Enable streaming output for real-time results |
+| `warmup`        | `boolean`                 | `true`  | Preload model on component mount for faster first write |
+
+**Returns**
+
+| Property        | Type                                        | Description                                                  |
+|-----------------|---------------------------------------------|--------------------------------------------------------------|
+| `data`          | `string`                                    | The generated written content                                |
+| `status`        | `'idle' \| 'initializing' \| 'downloading' \| 'writing' \| 'success' \| 'error'` | Current status of the writing process |
+| `progress`      | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
+| `error`         | `Error \| null`                             | Error object if writing failed                              |
+| `write`         | `(prompt: string, context?: string) => Promise<void>` | Function to generate written content with optional context |
+| `reset`         | `() => void`                                | Function to reset the hook state                            |
+
+**Features:**
+
+- **Multiple Tones**: Choose between formal, neutral, or casual writing styles
+- **Format Options**: Output in markdown or plain-text
+- **Length Control**: Generate short, medium, or long content
+- **Shared Context**: Maintain consistency across multiple writing tasks
+- **Language Support**: Specify expected input/output languages
+- **Streaming**: Real-time content generation for better UX
+- **Reusable Writer**: The same writer instance can be used for multiple writes
+
+**Use Cases:**
+
+- Email generation (professional, casual, thank you, follow-up)
+- Blog post writing
+- Social media content creation
+- Document drafting
+- Report generation
+- Marketing copy
+
+**Note**: This hook requires Chrome's Writer API, which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
 
 ***
 
