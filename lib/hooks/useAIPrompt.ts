@@ -6,13 +6,70 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 export type AIPromptRole = 'system' | 'user' | 'assistant';
 
 /**
+ * Simplified content type for automatic type inference.
+ */
+export type AIPromptContentSimple = string |
+  AudioBuffer | ArrayBufferView | ArrayBuffer | Blob |
+  HTMLImageElement | SVGImageElement | HTMLVideoElement |
+  HTMLCanvasElement | ImageBitmap | OffscreenCanvas |
+  VideoFrame | ImageData;
+
+/**
+ * Internal content type for Chrome Prompt API (type + value).
+ */
+export interface AIPromptContentInternal {
+  type: 'text' | 'audio' | 'image';
+  value: AIPromptContentSimple;
+}
+
+/**
+ * Infer content type from value for automatic type detection.
+ */
+function inferContentType(value: AIPromptContentSimple): 'text' | 'audio' | 'image' {
+  if (typeof value === 'string') return 'text';
+  
+  // Audio types
+  if (value instanceof AudioBuffer) return 'audio';
+  if (value instanceof ArrayBuffer || ArrayBuffer.isView(value)) return 'audio';
+  
+  // Blob: check MIME type
+  if (value instanceof Blob) {
+    if (value.type.startsWith('audio/')) return 'audio';
+    return 'image'; // fallback for images or blobs without clear type
+  }
+  
+  // Visual elements
+  if (value instanceof HTMLImageElement) return 'image';
+  if (value instanceof SVGImageElement) return 'image';
+  if (value instanceof HTMLVideoElement) return 'image';
+  if (value instanceof HTMLCanvasElement) return 'image';
+  if (value instanceof ImageBitmap) return 'image';
+  if (typeof OffscreenCanvas !== 'undefined' && value instanceof OffscreenCanvas) return 'image';
+  if (typeof VideoFrame !== 'undefined' && value instanceof VideoFrame) return 'image';
+  if (value instanceof ImageData) return 'image';
+  
+  return 'text';
+}
+
+/**
+ * Normalize content to Chrome Prompt API format with automatic type inference.
+ */
+function normalizeContent(content: AIPromptContentSimple | AIPromptContentSimple[]): AIPromptContentInternal[] {
+  const items = Array.isArray(content) ? content : [content];
+  return items.map(value => ({
+    type: inferContentType(value),
+    value
+  }));
+}
+
+/**
  * A message in a conversation.
  */
 export interface AIPromptMessage {
   /** The role of the message sender */
   role: AIPromptRole;
-  /** The content of the message */
-  content: string;
+  /** The content of the message (text or multimodal) */
+  content: AIPromptContentSimple | AIPromptContentSimple[];
 }
 
 /**
@@ -29,6 +86,10 @@ export interface UseAIPromptOptions {
   streaming?: boolean;
   /** Preload the model on component mount */
   warmup?: boolean;
+  /** Expected input types for multimodal support */
+  expectedInputs?: { type: 'text' | 'audio' | 'image'; languages?: string[] }[];
+  /** Expected output types for multimodal support */
+  expectedOutputs?: { type: 'text' | 'audio' | 'image'; languages?: string[] }[];
 }
 
 /**
@@ -49,7 +110,9 @@ export interface UseAIPromptResult {
   /** Error object if prompting failed */
   error: Error | null;
   /** Function to send a prompt to the AI */
-  prompt: (input: string | AILanguageModelPrompt[]) => Promise<void>;
+  prompt: (input: string | AIPromptMessage[]) => Promise<void>;
+  /** Function to append contextual messages without generating response */
+  append: (messages: AIPromptMessage[]) => Promise<void>;
   /** Function to reset the hook state */
   reset: () => void;
   /** Number of tokens used in the current session */
@@ -91,7 +154,7 @@ export interface UseAIPromptResult {
  * @returns An object with state and functions to interact with the model
  */
 export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult {
-  const { initialPrompts, temperature, topK, streaming = false, warmup = true } = options;
+  const { initialPrompts, temperature, topK, streaming = false, warmup = true, expectedInputs, expectedOutputs } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AIPromptStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
@@ -156,6 +219,8 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       initialPrompts,
       temperature,
       topK,
+      expectedInputs,
+      expectedOutputs,
       monitor(m: any) {
         m.addEventListener('downloadprogress', (e: any) => {
           setProgress({ loaded: e.loaded, total: e.total });
@@ -175,7 +240,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     return instance;
   }, [initialPrompts, temperature, topK]);
 
-  const prompt = useCallback(async (input: string | AILanguageModelPrompt[]) => {
+  const prompt = useCallback(async (input: string | AIPromptMessage[]) => {
     if (status === 'prompting' || status === 'initializing' || status === 'downloading') {
       return;
     }
@@ -189,9 +254,16 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
 
       abortControllerRef.current = new AbortController();
 
+      // Normalize input to Chrome API format
+      const normalizedInput = typeof input === 'string' 
+        ? input 
+        : input.map(msg => ({
+            role: msg.role,
+            content: normalizeContent(msg.content)
+          }));
+
       if (streaming) {
-        const stream = session.promptStreaming(input, { signal: abortControllerRef.current.signal });
-        // @ts-ignore - ReadableStream is async iterable in many environments
+        const stream = session.promptStreaming(normalizedInput, { signal: abortControllerRef.current.signal });
         let accumulated = '';
         for await (const chunk of stream) {
           // The Prompt API returns incremental chunks, accumulate them
@@ -201,7 +273,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
         }
         setStatus('success');
       } else {
-        const result = await session.prompt(input, { signal: abortControllerRef.current.signal });
+        const result = await session.prompt(normalizedInput, { signal: abortControllerRef.current.signal });
         setData(result);
         setContextUsage(session.contextUsage || 0);
         setStatus('success');
@@ -234,12 +306,27 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     };
   }, [warmup, createSession]);
 
+  const append = useCallback(async (messages: AIPromptMessage[]) => {
+    try {
+      const session = await createSession();
+      const normalizedMessages = messages.map(msg => ({
+        role: msg.role,
+        content: normalizeContent(msg.content)
+      }));
+      await session.append(normalizedMessages);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error during append'));
+      setStatus('error');
+    }
+  }, [createSession]);
+
   return {
     data,
     status,
     progress,
     error,
     prompt,
+    append,
     reset,
     contextUsage,
     contextWindow,

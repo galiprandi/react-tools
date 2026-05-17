@@ -11,11 +11,18 @@ interface ChatMessage {
 export const UseAIPromptPage = () => {
     const ai = useAI()
     const [showConfig, setShowConfig] = useState(false)
+    const [mode, setMode] = useState<'text' | 'multimodal'>('text')
+    const [showAttachmentMenu, setShowAttachmentMenu] = useState(false)
     const [input, setInput] = useState<string>('')
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
     const [streamingResponse, setStreamingResponse] = useState<string>('')
+    const [uploadedImage, setUploadedImage] = useState<File | null>(null)
+    const [uploadedAudio, setUploadedAudio] = useState<File | null>(null)
+    const [isDrawing, setIsDrawing] = useState(false)
+    const [appendedImages, setAppendedImages] = useState<File[]>([])
     const chatContainerRef = useRef<HTMLElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+    const canvasRefCallback = useRef<HTMLCanvasElement>(null)
     const [options, setOptions] = useState<UseAIPromptOptions>({
         initialPrompts: [
             { role: 'system', content: 'You are a helpful assistant. Always respond in the same language as the user\'s question.' }
@@ -24,6 +31,8 @@ export const UseAIPromptPage = () => {
         topK: 40,
         streaming: true,
         warmup: true,
+        expectedInputs: [{ type: 'text' }, { type: 'image' }, { type: 'audio' }],
+        expectedOutputs: [{ type: 'text' }],
     })
     const prompt = useAIPrompt(options)
     const debouncedPromptStatus = useDebounce(prompt.status, 300)
@@ -35,20 +44,102 @@ export const UseAIPromptPage = () => {
         setChatHistory(prev => [...prev, { role: 'user', content: userMessage }])
         setInput('')
 
-        const conversation: AIPromptMessage[] = chatHistory.length === 0
-            ? [
-                ...(options.initialPrompts || []),
-                { role: 'user', content: userMessage }
+        let content: AIPromptMessage[]
+        
+        // Check if we have any multimodal content
+        const hasMultimodalContent = uploadedImage || uploadedAudio || canvasRefCallback.current
+        
+        if (hasMultimodalContent) {
+            // Multimodal mode - include all content
+            const multimodalContent: (string | File | HTMLCanvasElement)[] = [userMessage]
+            
+            if (uploadedImage) {
+                multimodalContent.push(uploadedImage)
+            }
+            
+            if (uploadedAudio) {
+                multimodalContent.push(uploadedAudio)
+            }
+            
+            if (canvasRefCallback.current) {
+                multimodalContent.push(canvasRefCallback.current)
+            }
+            
+            content = [
+                { role: 'user', content: multimodalContent }
             ]
-            : [
-                ...chatHistory.map(msg => ({ role: msg.role, content: msg.content })),
-                { role: 'user', content: userMessage }
-            ]
+        } else {
+            // Text-only mode
+            content = chatHistory.length === 0
+                ? [
+                    { role: 'user', content: userMessage }
+                ]
+                : [
+                    ...chatHistory.map(msg => ({ role: msg.role, content: msg.content })),
+                    { role: 'user', content: userMessage }
+                ]
+        }
 
         try {
-            await prompt.prompt(conversation)
+            await prompt.prompt(content)
+            // Clear uploaded files after sending
+            setUploadedImage(null)
+            setUploadedAudio(null)
         } catch (error) {
             console.error('Error during prompt:', error)
+        }
+    }
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setUploadedImage(file)
+        }
+    }
+
+    const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setUploadedAudio(file)
+        }
+    }
+
+    const handleAppendImage = async () => {
+        if (!uploadedImage) return
+        
+        try {
+            await prompt.append([
+                { role: 'user', content: ['Imagen de referencia:', uploadedImage] }
+            ])
+            setAppendedImages(prev => [...prev, uploadedImage])
+            setUploadedImage(null)
+        } catch (error) {
+            console.error('Error during append:', error)
+        }
+    }
+
+    const handleCanvasDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!canvasRefCallback.current || !isDrawing) return
+        
+        const canvas = canvasRefCallback.current
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+        
+        const rect = canvas.getBoundingClientRect()
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top)
+        ctx.stroke()
+    }
+
+    const handleCanvasMouseDown = () => setIsDrawing(true)
+    const handleCanvasMouseUp = () => setIsDrawing(false)
+    const handleCanvasMouseLeave = () => setIsDrawing(false)
+    
+    const clearCanvas = () => {
+        if (canvasRefCallback.current) {
+            const ctx = canvasRefCallback.current.getContext('2d')
+            if (ctx) {
+                ctx.clearRect(0, 0, canvasRefCallback.current.width, canvasRefCallback.current.height)
+            }
         }
     }
 
@@ -115,7 +206,107 @@ export const UseAIPromptPage = () => {
                     <button onClick={handleReset} style={{ marginLeft: '10px' }}>
                         Clear Chat
                     </button>
+                    <button 
+                        onClick={() => setMode(mode === 'text' ? 'multimodal' : 'text')}
+                        style={{ marginLeft: '10px' }}
+                    >
+                        Mode: {mode === 'text' ? 'Text' : 'Multimodal'}
+                    </button>
                 </div>
+
+                {/* Multimodal Panel */}
+                {mode === 'multimodal' && (
+                    <section style={{ marginBottom: '20px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+                        <h3>Multimodal Input</h3>
+                        
+                        {/* Image Upload */}
+                        <div style={{ marginBottom: '15px' }}>
+                            <label>Upload Image:</label>
+                            <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                style={{ marginLeft: '10px' }}
+                            />
+                            {uploadedImage && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <small>Image loaded: {uploadedImage.type}</small>
+                                    <button 
+                                        onClick={handleAppendImage}
+                                        style={{ marginLeft: '10px' }}
+                                    >
+                                        Append to Context
+                                    </button>
+                                    <button 
+                                        onClick={() => setUploadedImage(null)}
+                                        style={{ marginLeft: '5px' }}
+                                    >
+                                        Clear
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Audio Upload */}
+                        <div style={{ marginBottom: '15px' }}>
+                            <label>Upload Audio:</label>
+                            <input 
+                                type="file" 
+                                accept="audio/*"
+                                onChange={handleAudioUpload}
+                                style={{ marginLeft: '10px' }}
+                            />
+                            {uploadedAudio && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <small>Audio loaded: {uploadedAudio.type}</small>
+                                    <button 
+                                        onClick={() => setUploadedAudio(null)}
+                                        style={{ marginLeft: '10px' }}
+                                    >
+                                        Clear
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Canvas Drawing */}
+                        <div style={{ marginBottom: '15px' }}>
+                            <label>Draw on Canvas:</label>
+                            <div style={{ marginTop: '10px' }}>
+                                <canvas
+                                    ref={canvasRefCallback}
+                                    width={400}
+                                    height={200}
+                                    style={{ border: '1px solid #ccc', cursor: 'crosshair' }}
+                                    onMouseDown={handleCanvasMouseDown}
+                                    onMouseUp={handleCanvasMouseUp}
+                                    onMouseLeave={handleCanvasMouseLeave}
+                                    onMouseMove={handleCanvasDraw}
+                                />
+                                <button 
+                                    onClick={clearCanvas}
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    Clear Canvas
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Appended Images */}
+                        {appendedImages.length > 0 && (
+                            <div style={{ marginBottom: '15px' }}>
+                                <label>Appended Images ({appendedImages.length}):</label>
+                                <div style={{ marginTop: '10px' }}>
+                                    {appendedImages.map((_, idx) => (
+                                        <span key={idx} style={{ marginRight: '10px' }}>
+                                            Image {idx + 1}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                )}
 
                 {/* Configuration Panel */}
                 {showConfig && (
@@ -176,7 +367,7 @@ export const UseAIPromptPage = () => {
                                 System Prompt
                             </label>
                             <textarea
-                                value={options.initialPrompts?.[0]?.content || ''}
+                                value={typeof options.initialPrompts?.[0]?.content === 'string' ? options.initialPrompts[0].content : ''}
                                 onChange={(e) => setOptions({
                                     ...options,
                                     initialPrompts: [{ role: 'system', content: e.target.value }]
@@ -263,6 +454,57 @@ export const UseAIPromptPage = () => {
                         onChange={(e) => setInput(e.target.value)}
                         disabled={!ai.isAvailable || prompt.status === 'prompting' || prompt.status === 'initializing' || prompt.status === 'downloading'}
                     />
+                    <button 
+                        type="button"
+                        className="contrast"
+                        onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
+                        title="Adjuntar archivo"
+                    >
+                        +
+                    </button>
+                    
+                    {/* Attachment Menu */}
+                    {showAttachmentMenu && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '100%',
+                            left: '0',
+                            marginBottom: '5px',
+                            background: 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '8px',
+                            padding: '10px',
+                            zIndex: 1000,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '5px'
+                        }}>
+                            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                📷 Imagen
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        handleImageUpload(e)
+                                        setShowAttachmentMenu(false)
+                                    }}
+                                    style={{ display: 'none' }}
+                                />
+                            </label>
+                            <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                🎵 Audio
+                                <input 
+                                    type="file" 
+                                    accept="audio/*"
+                                    onChange={(e) => {
+                                        handleAudioUpload(e)
+                                        setShowAttachmentMenu(false)
+                                    }}
+                                    style={{ display: 'none' }}
+                                />
+                            </label>
+                        </div>
+                    )}
                     <input
                         type="submit"
                         value={prompt.status === 'prompting' ? 'Sending...' : 'Send'}

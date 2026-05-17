@@ -567,7 +567,7 @@ function MyComponent() {
 ### useAIPrompt
 
 **Description**\
-Hook for using the browser's Prompt API (Gemini Nano). This hook provides a React interface to Chrome's native Prompt API. It handles session creation, model download progress, streaming support, context management, and automatic cleanup on unmount. Supports multi-turn conversations with system prompts and custom AI parameters.
+Hook for using the browser's Prompt API (Gemini Nano) with multimodal support. This hook provides a React interface to Chrome's native Prompt API with automatic type inference for text, images, and audio. It handles session creation, model download progress, streaming support, context management, and automatic cleanup on unmount. Supports multi-turn conversations with system prompts, custom AI parameters, and multimodal content.
 
 **Example**
 
@@ -575,14 +575,22 @@ Hook for using the browser's Prompt API (Gemini Nano). This hook provides a Reac
 import { useAIPrompt } from '@galiprandi/react-tools';
 
 function MyComponent() {
-  const { data, prompt, status, contextUsage, contextWindow } = useAIPrompt({
+  const { data, prompt, append, status, contextUsage, contextWindow } = useAIPrompt({
     initialPrompts: [
       { role: 'system', content: 'You are a helpful assistant.' }
     ],
+    expectedInputs: [{ type: 'text' }, { type: 'image' }],
+    expectedOutputs: [{ type: 'text' }],
     temperature: 0.7,
     topK: 40,
     streaming: true
   });
+
+  const handleSendWithImage = async (imageBlob: Blob) => {
+    await prompt([
+      { role: 'user', content: ['Describe this image:', imageBlob] }
+    ]);
+  };
 
   const handleSend = async () => {
     await prompt('What is the capital of France?');
@@ -611,6 +619,8 @@ function MyComponent() {
 | `topK`          | `number`                  | -       | Top-K sampling parameter                     |
 | `streaming`     | `boolean`                 | `false` | Enable streaming output for real-time results |
 | `warmup`        | `boolean`                 | `true`  | Preload model on component mount for faster first prompt |
+| `expectedInputs` | `{ type: 'text' \| 'image' \| 'audio' }[]` | - | Expected input types for multimodal support (e.g., `[{ type: 'text' }, { type: 'image' }]`) |
+| `expectedOutputs`| `{ type: 'text' }[]`       | - | Expected output types (e.g., `[{ type: 'text' }]`) |
 
 **Returns**
 
@@ -620,10 +630,22 @@ function MyComponent() {
 | `status`        | `'idle' \| 'initializing' \| 'downloading' \| 'prompting' \| 'success' \| 'error'` | Current status of the prompt process |
 | `progress`      | `{ loaded: number; total: number } \| null` | Download progress if model is being downloaded              |
 | `error`         | `Error \| null`                             | Error object if prompting failed                            |
-| `prompt`        | `(input: string \| AILanguageModelPrompt[]) => Promise<void>` | Function to send a prompt to the AI |
+| `prompt`        | `(input: string \| AILanguageModelPrompt[]) => Promise<void>` | Function to send a prompt to the AI (supports text or multimodal content) |
+| `append`        | `(input: AILanguageModelPrompt[]) => Promise<void>` | Function to append contextual messages without generating response (useful for preloading images/audio) |
 | `reset`         | `() => void`                                | Function to reset the hook state                            |
 | `contextUsage`  | `number`                                    | Number of tokens used in the current session                |
 | `contextWindow` | `number`                                    | Maximum number of tokens allowed in the session              |
+
+**Multimodal Support:**
+
+The hook supports automatic type inference for:
+- **Text**: strings
+- **Audio**: AudioBuffer, ArrayBuffer, ArrayBufferView, Blob (audio/*)
+- **Images**: HTMLImageElement, SVGImageElement, HTMLVideoElement, HTMLCanvasElement, ImageBitmap, OffscreenCanvas, VideoFrame, Blob (image/*), ImageData
+
+**Important Limitations:**
+- **Single content type per prompt**: The Chrome AI model currently has limitations processing multiple content types (e.g., image + audio) simultaneously in a single prompt. Send one type of multimodal content at a time for best results.
+- **Model capability**: Multimodal support depends on the specific Chrome AI model version and capabilities available in the browser.
 
 **Note**: This hook requires Chrome's Prompt API (Gemini Nano), which is currently experimental and may not be available in all browsers. Use the `useAI` hook to check availability first.
 

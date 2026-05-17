@@ -17,7 +17,7 @@ import { UseTimerPage } from './pages/timer/useTimerPage'
 import { UseListPage } from './pages/list/useListPage'
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce' | 'timer' | 'list'>('asyncblock')
+    const [currentPage, setCurrentPage] = useState<'asyncblock' | 'form' | 'input' | 'datetime' | 'dialog' | 'observer' | 'lazyrender' | 'ai-status' | 'ai-summarizer' | 'ai-language-detection' | 'ai-translator' | 'ai-prompt' | 'debounce' | 'timer' | 'list'>('ai-prompt')
 
     return (
         <main>
