@@ -23,35 +23,27 @@
  * console.log(multiple); // "HELLOWORLD123"
  * ```
  */
+
+/**
+ * Available transformation types for strings.
+ */
+export type TransformType =
+  | "toUpperCase"
+  | "toLowerCase"
+  | "capitalize"
+  | "titleCase"
+  | "snakeCase"
+  | "camelCase"
+  | "pascalCase"
+  | "kebabCase"
+  | "onlyNumbers"
+  | "onlyLetters"
+  | "onlyEmail"
+  | "onlyAlphanumeric";
+
 export const valueTransforms = (
   value: string,
-  transform?:
-    | "toUpperCase"
-    | "toLowerCase"
-    | "capitalize"
-    | "titleCase"
-    | "snakeCase"
-    | "camelCase"
-    | "pascalCase"
-    | "kebabCase"
-    | "onlyNumbers"
-    | "onlyLetters"
-    | "onlyEmail"
-    | "onlyAlphanumeric"
-    | Array<
-        | "toUpperCase"
-        | "toLowerCase"
-        | "capitalize"
-        | "titleCase"
-        | "snakeCase"
-        | "camelCase"
-        | "pascalCase"
-        | "kebabCase"
-        | "onlyNumbers"
-        | "onlyLetters"
-        | "onlyEmail"
-        | "onlyAlphanumeric"
-      >
+  transform?: TransformType | TransformType[],
 ): string => {
   const applyTransform = (val: string, t: string): string => {
     switch (t) {
@@ -60,15 +52,16 @@ export const valueTransforms = (
       case "toLowerCase":
         return val.toLowerCase();
       case "capitalize":
-        return val.toLowerCase().charAt(0).toUpperCase() + val.slice(1);
+        return val.trim().charAt(0).toUpperCase() + val.trim().slice(1).toLowerCase();
       case "titleCase":
         return val.toLowerCase().replace(/\b\w/g, (ch) => ch.toUpperCase());
       case "snakeCase":
-        return val.toLowerCase().replace(/\s/g, "_");
+        return val.toLowerCase().trim().replace(/\s+/g, "_");
       case "camelCase":
         return val
           .replace(/([a-z])([A-Z])/g, "$1 $2")
           .replace(/[_-]/g, " ")
+          .toLowerCase()
           .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
             index === 0 ? word.toLowerCase() : word.toUpperCase(),
           )
@@ -77,6 +70,7 @@ export const valueTransforms = (
         return val
           .replace(/([a-z])([A-Z])/g, "$1 $2")
           .replace(/[_-]/g, " ")
+          .toLowerCase()
           .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
           .replace(/\s+/g, "");
       case "kebabCase":

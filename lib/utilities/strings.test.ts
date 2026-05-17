@@ -76,12 +76,39 @@ describe('valueTransforms', () => {
 
     it('should handle strings with multiple spaces', () => {
         expect(valueTransforms('hello   world', 'snakeCase')).toBe(
-            'hello___world',
+            'hello_world',
         )
-        expect(valueTransforms('  hello  ', 'capitalize')).toBe('  hello  ')
+        expect(valueTransforms('  hello  ', 'capitalize')).toBe('Hello')
     })
 
     it('should handle multiple words in capitalize (only first char of first word)', () => {
         expect(valueTransforms('hello world', 'capitalize')).toBe('Hello world')
+    })
+
+    it('should lowercase other characters in capitalize', () => {
+        expect(valueTransforms('HELLO', 'capitalize')).toBe('Hello')
+        expect(valueTransforms('hELLO', 'capitalize')).toBe('Hello')
+    })
+
+    it('should handle all-caps in camelCase and pascalCase', () => {
+        expect(valueTransforms('HELLO WORLD', 'camelCase')).toBe('helloWorld')
+        expect(valueTransforms('HELLO WORLD', 'pascalCase')).toBe('HelloWorld')
+    })
+
+    it('should apply sequential transforms from an array', () => {
+        expect(
+            valueTransforms('Hello World 123!', [
+                'toUpperCase',
+                'onlyAlphanumeric',
+            ]),
+        ).toBe('HELLOWORLD123')
+
+        expect(
+            valueTransforms('  Some_Mixed-Value  ', [
+                'onlyLetters',
+                'toLowerCase',
+                'capitalize',
+            ]),
+        ).toBe('Somemixedvalue')
     })
 })
