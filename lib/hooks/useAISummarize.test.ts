@@ -57,7 +57,7 @@ describe('useAISummarize', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['part1', 'part2', 'full summary'];
+    const chunks = ['part1', 'part1part2', 'full summary'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
@@ -73,7 +73,7 @@ describe('useAISummarize', () => {
       await result.current.summarize('input text');
     });
 
-    expect(result.current.data).toBe('part1part2full summary');
+    expect(result.current.data).toBe('full summary');
     expect(result.current.status).toBe('success');
   });
 

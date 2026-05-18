@@ -22,3 +22,8 @@
 **Vulnerability:** Duplicated and incomplete lists of restricted keys (`__proto__`, `constructor`, etc.) in multiple components increased the risk of inconsistent security coverage.
 **Learning:** Security-critical constants like restricted keys for object property validation should be centralized to ensure consistency and easier maintenance.
 **Prevention:** Use the centralized `isRestrictedKey` utility from `lib/utilities/security.ts` for all operations involving dynamic property assignment from untrusted input (e.g., Form data, List operations).
+
+## 2026-05-18 - DoS in AI Streaming Hooks
+**Vulnerability:** AI hooks (Prompt, Summarizer, etc.) were accumulating chunks in streaming mode (`setData(prev => prev + chunk)`), leading to memory exhaustion because Chrome's AI APIs return cumulative chunks.
+**Learning:** Always verify whether a streaming API returns incremental or cumulative data. Cumulative data requires state replacement to avoid redundant and potentially explosive memory usage.
+**Prevention:** In AI streaming hooks, use `setData(chunk)` to replace state with the latest cumulative result, and enforce `userActivation` to prevent automated abuse of local AI resources.

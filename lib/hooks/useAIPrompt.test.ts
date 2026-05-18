@@ -64,7 +64,7 @@ describe('useAIPrompt', () => {
   });
 
   it('should handle streaming with cumulative chunks', async () => {
-    const chunks = ['Hello', ' world', '!'];
+    const chunks = ['Hello', 'Hello world', 'Hello world!'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {

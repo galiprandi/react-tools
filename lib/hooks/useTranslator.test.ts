@@ -147,7 +147,7 @@ describe('useTranslator', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['Hola', ' mundo', '!'];
+    const chunks = ['Hola', 'Hola mundo', 'Hola mundo!'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {

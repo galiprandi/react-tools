@@ -53,7 +53,7 @@ describe('useAIWrite', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['part1', 'part2', 'full text'];
+    const chunks = ['part1', 'part1part2', 'full text'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
@@ -69,7 +69,7 @@ describe('useAIWrite', () => {
       await result.current.write('prompt');
     });
 
-    expect(result.current.data).toBe('part1part2full text');
+    expect(result.current.data).toBe('full text');
     expect(result.current.status).toBe('success');
   });
 
