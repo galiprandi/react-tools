@@ -13,3 +13,7 @@
 ## 2025-05-20 - [Robust String Transformations]
 **Learning:** Common string transformations (camelCase, pascalCase, snakeCase) often fail on "extreme" inputs like all-caps strings or multiple consecutive spaces if they rely on simple regex-based word boundaries. Standardizing input via `.toLowerCase()` and `.trim()` before applying transformation regexes significantly increases utility robustness.
 **Action:** Always normalize casing and whitespace when implementing or updating string transformation utilities to handle inconsistent user input.
+
+## 2026-05-18 - [Security Utility Documentation and Testing]
+**Learning:** Security-critical utilities like `isRestrictedKey` must be explicitly documented with their security purpose (e.g., prototype pollution prevention) and covered by exhaustive unit tests, including case-sensitivity and edge cases.
+**Action:** Always provide JSDoc with @example and dedicated unit tests for any utility involved in security checks or data validation.

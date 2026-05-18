@@ -22,10 +22,19 @@ export const RESTRICTED_KEYS: string[] = [
 ]
 
 /**
- * Checks if a given key is restricted.
+ * Checks if a given key is restricted to prevent prototype pollution.
  *
  * @param key - The key to check.
  * @returns True if the key is restricted, false otherwise.
+ *
+ * @example
+ * ```ts
+ * const restricted = isRestrictedKey('__proto__');
+ * console.log(restricted); // true
+ *
+ * const safe = isRestrictedKey('name');
+ * console.log(safe); // false
+ * ```
  */
 export const isRestrictedKey = (key: string): boolean => {
     return RESTRICTED_KEYS.includes(key)
