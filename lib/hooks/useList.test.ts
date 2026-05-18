@@ -735,7 +735,9 @@ describe('useList', () => {
         })
 
         it('should remove a primitive item if it is in the list', () => {
-            const { result } = renderHook(() => useList<string>(['a', 'b', 'c']))
+            const { result } = renderHook(() =>
+                useList<string>(['a', 'b', 'c']),
+            )
             act(() => {
                 result.current.toggle('b')
             })
@@ -768,7 +770,10 @@ describe('useList', () => {
             act(() => {
                 result.current.toggle({ id: 2, name: 'other' }, 'id')
             })
-            expect(result.current.list).toEqual([item1, { id: 2, name: 'other' }])
+            expect(result.current.list).toEqual([
+                item1,
+                { id: 2, name: 'other' },
+            ])
         })
 
         it('should remove an object if it is in the list (by key)', () => {
@@ -925,6 +930,65 @@ describe('useList', () => {
                 result.current.shuffle()
             })
             expect(result.current.list).toEqual([1])
+        })
+    })
+
+    describe('swap', () => {
+        it('should swap two items in the list', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.swap(0, 2)
+            })
+            expect(result.current.list).toEqual(['c', 'b', 'a'])
+        })
+
+        it('should return a new list instance', () => {
+            const initialList = ['a', 'b']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(0, 1)
+            })
+            expect(result.current.list).not.toBe(originalList)
+        })
+
+        it('should do nothing if indices are identical', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(1, 1)
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing if indexA is out of bounds', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(-1, 1)
+            })
+            expect(result.current.list).toBe(originalList)
+            act(() => {
+                result.current.swap(3, 1)
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing if indexB is out of bounds', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(1, -1)
+            })
+            expect(result.current.list).toBe(originalList)
+            act(() => {
+                result.current.swap(1, 3)
+            })
+            expect(result.current.list).toBe(originalList)
         })
     })
 })
