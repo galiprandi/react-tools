@@ -269,7 +269,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
           setData(chunk);
           setContextUsage(session.contextUsage || 0);
         }
-        setStatus('success');
+        setStatus('success')
       } else {
         const result = await session.prompt(normalizedInput, { signal: abortControllerRef.current.signal });
         setData(result);

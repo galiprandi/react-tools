@@ -27,3 +27,8 @@
 **Vulnerability:** AI hooks (Prompt, Summarizer, etc.) were accumulating chunks in streaming mode (`setData(prev => prev + chunk)`), leading to memory exhaustion because Chrome's AI APIs return cumulative chunks.
 **Learning:** Always verify whether a streaming API returns incremental or cumulative data. Cumulative data requires state replacement to avoid redundant and potentially explosive memory usage.
 **Prevention:** In AI streaming hooks, use `setData(chunk)` to replace state with the latest cumulative result, and enforce `userActivation` to prevent automated abuse of local AI resources.
+
+## 2025-05-22 - Missing User Activation and Resource Exhaustion in Built-in AI
+**Vulnerability:** `useAIPrompt` was missing a mandatory `throw` for missing user activation, and AI hooks were vulnerable to a DoS (high memory usage) by manually concatenating cumulative chunks from Chrome's Built-in AI APIs.
+**Learning:** Built-in browser AI APIs (Prompt, Summarizer, etc.) often return cumulative results in their streaming methods. Concatenating these chunks instead of replacing the state leads to quadratic string growth and potential memory exhaustion. Enforcing user activation prevents automated background abuse of local LLMs.
+**Prevention:** Always replace the state with the latest chunk (`setData(chunk)`) when using cumulative streaming APIs. Consistently enforce `navigator.userActivation.isActive` across all hooks using experimental browser AI.
