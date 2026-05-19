@@ -64,14 +64,14 @@ describe('useAIPrompt', () => {
   });
 
   it('should handle streaming with cumulative chunks', async () => {
-    const chunks = ['Hello', ' world', '!'];
+    const chunks = ['Hello', 'Hello world', 'Hello world!']
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
-          yield chunk;
+          yield chunk
         }
       },
-    };
+    }
     mockSession.promptStreaming.mockReturnValue(mockStream);
 
     const { result } = renderHook(() => useAIPrompt({ streaming: true }));
@@ -146,6 +146,21 @@ describe('useAIPrompt', () => {
     expect(result.current.data).toBe('');
     expect(result.current.status).toBe('idle');
   });
+
+  it('should throw error if user activation is not active', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: false },
+    })
+
+    const { result } = renderHook(() => useAIPrompt({ warmup: false }))
+
+    await act(async () => {
+      await result.current.prompt('hello')
+    })
+
+    expect(result.current.status).toBe('error')
+    expect(result.current.error?.message).toContain('User activation required')
+  })
 
   it('should handle download progress', async () => {
     mockLanguageModel.availability.mockResolvedValue('after-download');

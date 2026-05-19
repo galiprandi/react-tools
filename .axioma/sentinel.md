@@ -22,3 +22,8 @@
 **Vulnerability:** Duplicated and incomplete lists of restricted keys (`__proto__`, `constructor`, etc.) in multiple components increased the risk of inconsistent security coverage.
 **Learning:** Security-critical constants like restricted keys for object property validation should be centralized to ensure consistency and easier maintenance.
 **Prevention:** Use the centralized `isRestrictedKey` utility from `lib/utilities/security.ts` for all operations involving dynamic property assignment from untrusted input (e.g., Form data, List operations).
+
+## 2025-05-22 - Missing User Activation and Resource Exhaustion in Built-in AI
+**Vulnerability:** `useAIPrompt` was missing a mandatory `throw` for missing user activation, and AI hooks were vulnerable to a DoS (high memory usage) by manually concatenating cumulative chunks from Chrome's Built-in AI APIs.
+**Learning:** Built-in browser AI APIs (Prompt, Summarizer, etc.) often return cumulative results in their streaming methods. Concatenating these chunks instead of replacing the state leads to quadratic string growth and potential memory exhaustion. Enforcing user activation prevents automated background abuse of local LLMs.
+**Prevention:** Always replace the state with the latest chunk (`setData(chunk)`) when using cumulative streaming APIs. Consistently enforce `navigator.userActivation.isActive` across all hooks using experimental browser AI.
