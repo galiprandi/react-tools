@@ -17,3 +17,7 @@
 ## 2026-05-18 - [Security Utility Documentation and Testing]
 **Learning:** Security-critical utilities like `isRestrictedKey` must be explicitly documented with their security purpose (e.g., prototype pollution prevention) and covered by exhaustive unit tests, including case-sensitivity and edge cases.
 **Action:** Always provide JSDoc with @example and dedicated unit tests for any utility involved in security checks or data validation.
+
+## 2025-05-22 - [Robust Timer Testing and Documentation]
+**Learning:** Testing timers requires considering edge cases like negative delays or past dates, which browsers typically treat as a 0ms delay. Standardizing all exported hooks with detailed JSDoc and removing legacy/non-English comments significantly improves API discoverability and maintainability.
+**Action:** Always include edge cases for timing-related utilities and ensure all comments/JSDoc are in English and follow the project's standard format.

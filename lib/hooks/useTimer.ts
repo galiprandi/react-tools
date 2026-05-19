@@ -1,5 +1,12 @@
-import { useRef, useEffect, useCallback } from 'react' // Eliminado useState
+import { useRef, useEffect, useCallback } from 'react'
 
+/**
+ * Calculates the delay in milliseconds from a number or a Date object.
+ *
+ * @param delay - The delay as a number (ms) or a Date object.
+ * @returns The calculated delay in milliseconds.
+ * @internal
+ */
 function calculateDelay(delay: number | Date): number {
     if (delay instanceof Date) {
         const now = new Date()
@@ -10,6 +17,36 @@ function calculateDelay(delay: number | Date): number {
     return delay
 }
 
+/**
+ * A custom hook for managing various types of timers (timeouts, intervals, limited intervals)
+ * with support for progress tracking and Date objects.
+ *
+ * This hook provides a unified interface for browser timers with additional features like
+ * remaining time calculation and iteration tracking for intervals.
+ *
+ * @param options - Configuration options for the timer callbacks.
+ * @returns An object containing methods to set and clear timers, and query their status.
+ *
+ * @example
+ * ```tsx
+ * const MyComponent = () => {
+ *   const { setTimeout, clearTimer, isActive } = useTimer({
+ *     onTimerComplete: (id) => console.log(`Timer ${id} finished!`),
+ *   });
+ *
+ *   const startTimer = () => {
+ *     setTimeout(() => alert('Hello!'), 3000);
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={startTimer}>Start 3s Timer</button>
+ *       <button onClick={clearTimer} disabled={!isActive()}>Cancel</button>
+ *     </div>
+ *   );
+ * };
+ * ```
+ */
 export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
     const { onSetTimer, onCancelTimer, onTimerComplete, onProgress } = options
 
@@ -236,7 +273,6 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
                     timerRef.current.remainingIterations--
 
                     if (timerRef.current.remainingIterations <= 0) {
-                        // Eliminada la asignación a completedId aquí
                         clear()
                     }
                 }
@@ -295,10 +331,31 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
     }
 }
 
+/**
+ * Configuration options for the useTimer hook.
+ */
 export interface UseTimerProps {
+    /**
+     * Callback triggered when a new timer is set.
+     * @param timerId - The ID of the newly set timer.
+     */
     onSetTimer?: (timerId: number) => void
+    /**
+     * Callback triggered when a timer is manually canceled.
+     * @param timerId - The ID of the canceled timer.
+     */
     onCancelTimer?: (timerId: number) => void
+    /**
+     * Callback triggered when a timer (timeout or interval iteration) completes.
+     * @param timerId - The ID of the completed timer.
+     */
     onTimerComplete?: (timerId: number) => void
+    /**
+     * Callback triggered periodically to report timer progress.
+     * @param progress - A value between 0 and 1 representing the completion ratio.
+     * @param elapsedMs - Time elapsed since the timer started in milliseconds.
+     * @param totalMs - Total expected duration of the timer in milliseconds.
+     */
     onProgress?: (progress: number, elapsedMs: number, totalMs: number) => void
 }
 
@@ -314,19 +371,66 @@ interface TimerRef {
     progressIntervalId: number | null
 }
 
+/**
+ * Return value of the useTimer hook.
+ */
 export interface UseTimerReturn {
+    /**
+     * Sets a timeout that executes the callback after the specified delay.
+     * @param callback - The function to execute.
+     * @param delay - The delay in milliseconds or a Date object.
+     * @returns The timer ID.
+     */
     setTimeout: (callback: () => void, delay: number | Date) => number | null
+    /**
+     * Sets an interval that executes the callback repeatedly.
+     * @param callback - The function to execute.
+     * @param delay - The delay between executions in milliseconds.
+     * @returns The timer ID.
+     */
     setInterval: (callback: () => void, delay: number) => number | null
+    /**
+     * Sets a timeout that executes the callback at the specified target Date.
+     * @param callback - The function to execute.
+     * @param targetDate - The Date object when the callback should run.
+     * @returns The timer ID.
+     */
     setTimeoutDate: (callback: () => void, targetDate: Date) => number | null
+    /**
+     * Sets an interval that executes the callback a limited number of times.
+     * @param callback - The function to execute.
+     * @param delay - The delay between executions in milliseconds.
+     * @param iterations - The number of times to execute the callback.
+     * @returns The timer ID.
+     */
     setLimitedInterval: (
         callback: () => void,
         delay: number,
         iterations: number,
     ) => number | null
+    /**
+     * Clears the currently active timer.
+     */
     clearTimer: () => void
 
+    /**
+     * Checks if there is an active timer.
+     * @returns True if a timer is active, false otherwise.
+     */
     isActive: () => boolean
+    /**
+     * Gets the ID of the currently active timer.
+     * @returns The timer ID or null if no timer is active.
+     */
     getCurrentTimerId: () => number | null
+    /**
+     * Gets the number of iterations remaining for a limited interval.
+     * @returns The number of iterations or null if not applicable.
+     */
     getRemainingIterations: () => number | null
+    /**
+     * Gets the remaining time in milliseconds for the current timeout.
+     * @returns The remaining time in ms, or -1 if no timeout is active.
+     */
     getRemainingTime: () => number
 }

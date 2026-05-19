@@ -481,4 +481,24 @@ describe('useTimer', () => {
 
         consoleLogSpy.mockRestore()
     })
+
+    it('should handle negative delays in setTimeout by executing immediately', () => {
+        const callback = vi.fn()
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setTimeout(callback, -1000)
+        })
+
+        // setTimeout with negative delay should still be asynchronous in browser,
+        // but it should be queued with 0 delay.
+        expect(callback).not.toHaveBeenCalled()
+
+        act(() => {
+            vi.advanceTimersByTime(0)
+        })
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(result.current.isActive()).toBe(false)
+    })
 })
