@@ -274,6 +274,30 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         })
     }, [setListCallback])
 
+    const swap = useCallback(
+        (indexA: number, indexB: number) => {
+            setListCallback((currentList) => {
+                if (
+                    indexA < 0 ||
+                    indexA >= currentList.length ||
+                    indexB < 0 ||
+                    indexB >= currentList.length ||
+                    indexA === indexB
+                ) {
+                    return currentList
+                }
+
+                const newList = [...currentList]
+                ;[newList[indexA], newList[indexB]] = [
+                    newList[indexB],
+                    newList[indexA],
+                ]
+                return newList
+            })
+        },
+        [setListCallback],
+    )
+
     return {
         list,
         addItem,
@@ -295,6 +319,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         move,
         sort,
         shuffle,
+        swap,
     }
 }
 
@@ -351,4 +376,6 @@ interface UseListReturn<T> {
     sort: (compareFn?: (a: T, b: T) => number) => void
     /** Randomly reorders the list items immutably. */
     shuffle: () => void
+    /** Swaps two items in the list immutably based on their indices. */
+    swap: (indexA: number, indexB: number) => void
 }
