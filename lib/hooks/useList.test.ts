@@ -927,4 +927,52 @@ describe('useList', () => {
             expect(result.current.list).toEqual([1])
         })
     })
+
+    describe('swap', () => {
+        it('should swap two items in the list', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.swap(0, 2)
+            })
+            expect(result.current.list).toEqual(['c', 'b', 'a'])
+        })
+
+        it('should do nothing if indices are identical', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(1, 1)
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing if any index is out of bounds', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+
+            act(() => {
+                result.current.swap(-1, 1)
+            })
+            expect(result.current.list).toBe(originalList)
+
+            act(() => {
+                result.current.swap(1, 3)
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should return a new list instance on successful swap', () => {
+            const initialList = ['a', 'b']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.swap(0, 1)
+            })
+            expect(result.current.list).toEqual(['b', 'a'])
+            expect(result.current.list).not.toBe(originalList)
+        })
+    })
 })
