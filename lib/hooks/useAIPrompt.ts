@@ -210,9 +210,15 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       }
     }
 
-    // Check user activation (required by Chrome for some AI APIs)
-    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as any).userActivation?.isActive) {
-      // Note: Some versions might not strictly require this for Prompt API but it's a good practice for built-in AI
+    // Check user activation (required by Chrome for built-in AI APIs)
+    if (
+      typeof navigator !== 'undefined' &&
+      'userActivation' in navigator &&
+      !(navigator as any).userActivation?.isActive
+    ) {
+      throw new Error(
+        'User activation required. Please interact with the page first.',
+      )
     }
 
     const instance = await LanguageModel.create({
@@ -263,15 +269,15 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
           }));
 
       if (streaming) {
-        const stream = session.promptStreaming(normalizedInput, { signal: abortControllerRef.current.signal });
-        let accumulated = '';
+        const stream = session.promptStreaming(normalizedInput, {
+          signal: abortControllerRef.current.signal,
+        })
         for await (const chunk of stream) {
-          // The Prompt API returns incremental chunks, accumulate them
-          accumulated += chunk;
-          setData(accumulated);
-          setContextUsage(session.contextUsage || 0);
+          // The Prompt API returns cumulative chunks, replace state with the latest one
+          setData(chunk)
+          setContextUsage(session.contextUsage || 0)
         }
-        setStatus('success');
+        setStatus('success')
       } else {
         const result = await session.prompt(normalizedInput, { signal: abortControllerRef.current.signal });
         setData(result);
