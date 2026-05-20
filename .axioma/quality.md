@@ -21,3 +21,7 @@
 ## 2025-05-22 - [Robust Timer Testing and Documentation]
 **Learning:** Testing timers requires considering edge cases like negative delays or past dates, which browsers typically treat as a 0ms delay. Standardizing all exported hooks with detailed JSDoc and removing legacy/non-English comments significantly improves API discoverability and maintainability.
 **Action:** Always include edge cases for timing-related utilities and ensure all comments/JSDoc are in English and follow the project's standard format.
+
+## 2025-05-25 - [Micro Quality Improvement Scope]
+**Learning:** Maintaining a strict 50-line diff limit ensures quality improvements remain "micro" and easy to review. Combining documentation updates and test coverage improvements across multiple files can easily exceed this limit and complicate reviews.
+**Action:** Focus on a single quality gap (either tests or JSDoc) in a single file per PR to adhere to the micro-improvement philosophy.
