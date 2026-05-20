@@ -176,7 +176,11 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
             
             if (typeof LanguageDetector.availability === 'function') {
               const avail = await LanguageDetector.availability();
-              if (avail !== 'unavailable' && typeof LanguageDetector.create === 'function') {
+
+              // Check user activation (required by Chrome)
+              const isActive = typeof navigator !== 'undefined' && 'userActivation' in navigator && (navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive;
+
+              if (isActive && avail !== 'unavailable' && typeof LanguageDetector.create === 'function') {
                 const detector = await LanguageDetector.create();
                 const results = await detector.detect(textToDetect);
                 detector.destroy();
