@@ -32,3 +32,8 @@
 **Vulnerability:** `useAIPrompt` was missing a mandatory `throw` for missing user activation, and AI hooks were vulnerable to a DoS (high memory usage) by manually concatenating cumulative chunks from Chrome's Built-in AI APIs.
 **Learning:** Built-in browser AI APIs (Prompt, Summarizer, etc.) often return cumulative results in their streaming methods. Concatenating these chunks instead of replacing the state leads to quadratic string growth and potential memory exhaustion. Enforcing user activation prevents automated background abuse of local LLMs.
 **Prevention:** Always replace the state with the latest chunk (`setData(chunk)`) when using cumulative streaming APIs. Consistently enforce `navigator.userActivation.isActive` across all hooks using experimental browser AI.
+
+## 2025-05-23 - Holistic User Activation Enforcement in AI APIs
+**Vulnerability:** AI model preloading and internal utility functions (like auto-language detection) were bypasses for the user activation requirement, allowing background resource consumption and potential fingerprinting.
+**Learning:** Security gates must be applied not just at the primary user-facing action, but at any entry point that triggers expensive or privacy-sensitive model initialization, including preloading and automated background tasks.
+**Prevention:** Consistently verify `navigator.userActivation.isActive` in all methods that call `.create()` on AI models, including internal helpers and preloading hooks.

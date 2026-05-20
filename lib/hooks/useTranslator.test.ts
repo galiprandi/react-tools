@@ -75,6 +75,10 @@ describe('useTranslator', () => {
     const { getUserLanguage } = await import('../utilities/userLanguage');
     vi.mocked(getUserLanguage).mockReturnValue('es');
 
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
+
     mockTranslator.translate.mockResolvedValue('Hola mundo');
 
     const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'user', streaming: false, warmup: false }));
@@ -168,11 +172,17 @@ describe('useTranslator', () => {
   });
 
   it('should respect warmup option', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', warmup: true }));
     await waitFor(() => expect(mockTranslatorCreate).toHaveBeenCalled());
   });
 
   it('should detect source language when sourceLanguage is auto', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     const mockLanguageDetector = {
       detect: vi.fn().mockResolvedValue([{ detectedLanguage: 'fr', confidence: 0.99 }]),
       destroy: vi.fn(),

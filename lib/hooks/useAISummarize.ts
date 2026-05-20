@@ -55,6 +55,11 @@ async function detectLanguageFromText(text: string): Promise<string> {
     }
   }
 
+  // Check user activation (required by Chrome)
+  if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
+    return 'en';
+  }
+
   if (typeof LanguageDetector.create !== 'function') {
     return 'en';
   }

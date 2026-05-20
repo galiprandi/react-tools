@@ -284,6 +284,11 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
       const globalApi = (window as unknown as Record<string, { create?: (options?: unknown) => Promise<unknown>; constructor?: { create?: (options?: unknown) => Promise<unknown> } }>)[apiName];
       const apiConstructor = typeof globalApi === 'function' ? globalApi : (globalApi as { constructor?: { create?: (options?: unknown) => Promise<unknown> } })?.constructor;
 
+      // Check user activation (required by Chrome for built-in AI APIs)
+      if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
+        throw new Error('User activation required to preload AI models. Please interact with the page first.');
+      }
+
       if (typeof apiConstructor?.create === 'function') {
         setApiStatuses(prev => ({ ...prev, [api]: { availability: 'downloading' } }));
         
