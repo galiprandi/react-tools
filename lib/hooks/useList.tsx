@@ -257,8 +257,29 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     )
 
     const sort = useCallback(
-        (compareFn?: (a: T, b: T) => number) => {
-            setListCallback((currentList) => [...currentList].sort(compareFn))
+        (
+            keyOrCompareFn?: string | ((a: T, b: T) => number) | null,
+            order: 'asc' | 'desc' = 'asc',
+        ) => {
+            setListCallback((currentList) => {
+                const newList = [...currentList]
+                if (typeof keyOrCompareFn === 'function') {
+                    return newList.sort(keyOrCompareFn)
+                }
+
+                return newList.sort((a, b) => {
+                    const valA = getValueToCompare(a, keyOrCompareFn)
+                    const valB = getValueToCompare(b, keyOrCompareFn)
+
+                    if (valA === valB) return 0
+
+                    if (valA === undefined || valA === null) return 1
+                    if (valB === undefined || valB === null) return -1
+
+                    const result = valA < valB ? -1 : 1
+                    return order === 'asc' ? result : -result
+                })
+            })
         },
         [setListCallback],
     )
@@ -372,8 +393,11 @@ interface UseListReturn<T> {
     toggle: (item: T, key?: string | undefined | null) => void
     /** Moves an item from one index to another immutably. */
     move: (fromIndex: number, toIndex: number) => void
-    /** Sorts the list immutably using an optional comparison function. */
-    sort: (compareFn?: (a: T, b: T) => number) => void
+    /** Sorts the list immutably using an optional key or comparison function, and an optional sort order. */
+    sort: (
+        keyOrCompareFn?: string | ((a: T, b: T) => number) | null,
+        order?: 'asc' | 'desc',
+    ) => void
     /** Randomly reorders the list items immutably. */
     shuffle: () => void
     /** Swaps two items in the list immutably based on their indices. */

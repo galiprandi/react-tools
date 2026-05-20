@@ -840,12 +840,56 @@ describe('useList', () => {
     })
 
     describe('sort', () => {
-        it('should sort the list with default sort order', () => {
+        it('should sort the list with default sort order (ascending)', () => {
             const { result } = renderHook(() => useList(['b', 'c', 'a']))
             act(() => {
                 result.current.sort()
             })
             expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should sort the list in descending order for primitives', () => {
+            const { result } = renderHook(() => useList(['b', 'c', 'a']))
+            act(() => {
+                result.current.sort(null, 'desc')
+            })
+            expect(result.current.list).toEqual(['c', 'b', 'a'])
+        })
+
+        it('should sort the list by key in ascending order', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 3, name: 'c' },
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                ]),
+            )
+            act(() => {
+                result.current.sort('id')
+            })
+            expect(result.current.list).toEqual([
+                { id: 1, name: 'a' },
+                { id: 2, name: 'b' },
+                { id: 3, name: 'c' },
+            ])
+        })
+
+        it('should sort the list by key in descending order', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 3, name: 'c' },
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                ]),
+            )
+            act(() => {
+                result.current.sort('name', 'desc')
+            })
+            expect(result.current.list).toEqual([
+                { id: 3, name: 'c' },
+                { id: 2, name: 'b' },
+                { id: 1, name: 'a' },
+            ])
         })
 
         it('should sort the list with a custom compare function', () => {
