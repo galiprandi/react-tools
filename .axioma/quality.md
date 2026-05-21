@@ -25,3 +25,7 @@
 ## 2025-05-25 - [Micro Quality Improvement Scope]
 **Learning:** Maintaining a strict 50-line diff limit ensures quality improvements remain "micro" and easy to review. Combining documentation updates and test coverage improvements across multiple files can easily exceed this limit and complicate reviews.
 **Action:** Focus on a single quality gap (either tests or JSDoc) in a single file per PR to adhere to the micro-improvement philosophy.
+
+## 2025-05-30 - [Deterministic Date Testing]
+**Learning:** Tests for date conversion utilities like `iso2LocalDateTime` are sensitive to the execution environment's timezone; mock `Date.prototype.getTimezoneOffset` using Vitest spies (`vi.spyOn(...).mockReturnValue(...)`) to achieve deterministic test outcomes across different environments.
+**Action:** Always mock the timezone offset when testing date-to-local-string conversions to prevent flaky tests in CI.

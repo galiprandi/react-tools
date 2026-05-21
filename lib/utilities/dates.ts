@@ -3,16 +3,13 @@ import { DateTimeProps } from '../main'
 /**
  * Converts an ISO date-time string to a local date-time string.
  *
- * @param {string} [date] - The ISO date-time string.
- * @returns {string | undefined} - The local date-time string or undefined if the input is invalid.
+ * @param date - The ISO date-time string
+ * @returns The local date-time string or undefined if input is invalid
  *
- * Example:
- *
- * ```js
- * // Input:  2024-05-14T13:00:00.000Z
- * // Output: 2024-05-14T10:00
- * const localDateTime = iso2LocalDateTime('2024-05-14T13:00:00.000Z');
- * console.log(localDateTime); // "2024-05-14T10:00"
+ * @example
+ * ```ts
+ * const local = iso2LocalDateTime('2024-05-14T13:00:00.000Z');
+ * console.log(local); // "2024-05-14T10:00"
  * ```
  */
 export const iso2LocalDateTime = (

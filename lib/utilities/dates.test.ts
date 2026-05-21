@@ -1,7 +1,16 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { iso2LocalDateTime } from './dates.ts'
 
 describe('iso2LocalDateTime', () => {
+    beforeEach(() => {
+        // Mock timezone offset to UTC-3 (180 minutes)
+        vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(180)
+    })
+
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
+
     const invalidDates = [undefined, null, 12345, 'invalid date string']
 
     invalidDates.forEach((invalidDate) => {
@@ -28,11 +37,9 @@ describe('iso2LocalDateTime', () => {
         expect(iso2LocalDateTime('')).toBe('')
     })
 
-    it('should handle different time zones correctly', () => {
+    it('should handle end of year correctly', () => {
         const isoString = '2024-12-31T23:59:59.000Z'
-        const localString = new Date('2024-12-31T20:59:59.000Z')
-            .toISOString()
-            .slice(0, 16)
-        expect(iso2LocalDateTime(isoString)).toBe(localString)
+        const expectedLocalString = '2024-12-31T20:59'
+        expect(iso2LocalDateTime(isoString)).toBe(expectedLocalString)
     })
 })
