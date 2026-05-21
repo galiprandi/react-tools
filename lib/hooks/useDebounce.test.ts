@@ -77,4 +77,31 @@ describe('useDebounce', () => {
         expect(spy).toHaveBeenCalled()
         spy.mockRestore()
     })
+
+    it('should use default delay of 500ms when no delay is provided', () => {
+        const { result, rerender } = renderHook(
+            ({ val }) => useDebounce(val),
+            {
+                initialProps: { val: 'initial' },
+            },
+        )
+
+        expect(result.current).toBe('initial')
+
+        // Update value
+        rerender({ val: 'updated' })
+        expect(result.current).toBe('initial')
+
+        // Advance timers by 499ms
+        act(() => {
+            vi.advanceTimersByTime(499)
+        })
+        expect(result.current).toBe('initial')
+
+        // Advance timers to 500ms
+        act(() => {
+            vi.advanceTimersByTime(1)
+        })
+        expect(result.current).toBe('updated')
+    })
 })
