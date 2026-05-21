@@ -337,24 +337,28 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
 export interface UseTimerProps {
     /**
      * Callback triggered when a new timer is set.
-     * @param timerId - The ID of the newly set timer.
+     *
+     * @param timerId - The ID of the newly set timer
      */
     onSetTimer?: (timerId: number) => void
     /**
      * Callback triggered when a timer is manually canceled.
-     * @param timerId - The ID of the canceled timer.
+     *
+     * @param timerId - The ID of the canceled timer
      */
     onCancelTimer?: (timerId: number) => void
     /**
      * Callback triggered when a timer (timeout or interval iteration) completes.
-     * @param timerId - The ID of the completed timer.
+     *
+     * @param timerId - The ID of the completed timer
      */
     onTimerComplete?: (timerId: number) => void
     /**
      * Callback triggered periodically to report timer progress.
-     * @param progress - A value between 0 and 1 representing the completion ratio.
-     * @param elapsedMs - Time elapsed since the timer started in milliseconds.
-     * @param totalMs - Total expected duration of the timer in milliseconds.
+     *
+     * @param progress - A value between 0 and 1 representing the completion ratio
+     * @param elapsedMs - Time elapsed since the timer started in milliseconds
+     * @param totalMs - Total expected duration of the timer in milliseconds
      */
     onProgress?: (progress: number, elapsedMs: number, totalMs: number) => void
 }
@@ -377,31 +381,35 @@ interface TimerRef {
 export interface UseTimerReturn {
     /**
      * Sets a timeout that executes the callback after the specified delay.
-     * @param callback - The function to execute.
-     * @param delay - The delay in milliseconds or a Date object.
-     * @returns The timer ID.
+     *
+     * @param callback - The function to execute
+     * @param delay - The delay in milliseconds or a Date object
+     * @returns The timer ID
      */
     setTimeout: (callback: () => void, delay: number | Date) => number | null
     /**
      * Sets an interval that executes the callback repeatedly.
-     * @param callback - The function to execute.
-     * @param delay - The delay between executions in milliseconds.
-     * @returns The timer ID.
+     *
+     * @param callback - The function to execute
+     * @param delay - The delay between executions in milliseconds
+     * @returns The timer ID
      */
     setInterval: (callback: () => void, delay: number) => number | null
     /**
      * Sets a timeout that executes the callback at the specified target Date.
-     * @param callback - The function to execute.
-     * @param targetDate - The Date object when the callback should run.
-     * @returns The timer ID.
+     *
+     * @param callback - The function to execute
+     * @param targetDate - The Date object when the callback should run
+     * @returns The timer ID
      */
     setTimeoutDate: (callback: () => void, targetDate: Date) => number | null
     /**
      * Sets an interval that executes the callback a limited number of times.
-     * @param callback - The function to execute.
-     * @param delay - The delay between executions in milliseconds.
-     * @param iterations - The number of times to execute the callback.
-     * @returns The timer ID.
+     *
+     * @param callback - The function to execute
+     * @param delay - The delay between executions in milliseconds
+     * @param iterations - The number of times to execute the callback
+     * @returns The timer ID
      */
     setLimitedInterval: (
         callback: () => void,
@@ -415,22 +423,26 @@ export interface UseTimerReturn {
 
     /**
      * Checks if there is an active timer.
-     * @returns True if a timer is active, false otherwise.
+     *
+     * @returns True if a timer is active, false otherwise
      */
     isActive: () => boolean
     /**
      * Gets the ID of the currently active timer.
-     * @returns The timer ID or null if no timer is active.
+     *
+     * @returns The timer ID or null if no timer is active
      */
     getCurrentTimerId: () => number | null
     /**
      * Gets the number of iterations remaining for a limited interval.
-     * @returns The number of iterations or null if not applicable.
+     *
+     * @returns The number of iterations or null if not applicable
      */
     getRemainingIterations: () => number | null
     /**
      * Gets the remaining time in milliseconds for the current timeout.
-     * @returns The remaining time in ms, or -1 if no timeout is active.
+     *
+     * @returns The remaining time in ms, or -1 if no timeout is active
      */
     getRemainingTime: () => number
 }
