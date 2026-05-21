@@ -37,3 +37,8 @@
 **Vulnerability:** AI model preloading and internal utility functions (like auto-language detection) were bypasses for the user activation requirement, allowing background resource consumption and potential fingerprinting.
 **Learning:** Security gates must be applied not just at the primary user-facing action, but at any entry point that triggers expensive or privacy-sensitive model initialization, including preloading and automated background tasks.
 **Prevention:** Consistently verify `navigator.userActivation.isActive` in all methods that call `.create()` on AI models, including internal helpers and preloading hooks.
+
+## 2025-05-25 - Security Bypass in useList Comparison Logic
+**Vulnerability:** The `useList` hook's `isRestrictedKey` check could be bypassed if a user provided `undefined` as the target value for comparison, because the hook's internal helper returned `undefined` for restricted keys.
+**Learning:** Using a common value like `undefined` as a fallback or indicator for restricted/invalid keys is insecure if that value can also be provided by the user.
+**Prevention:** Use a unique `Symbol` as a sentinel value when handling restricted keys in comparison or lookup logic to ensure they never match user-controlled input.

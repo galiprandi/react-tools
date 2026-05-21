@@ -38,4 +38,17 @@ describe('useList Security', () => {
 
         expect(result.current.list).toHaveLength(1)
     })
+
+    it('should NOT allow matching items via restricted keys even with undefined value', () => {
+        const initialList = [{ id: 1 }, { id: 2 }]
+        const { result } = renderHook(() => useList(initialList))
+
+        act(() => {
+            // This should NOT remove any item because 'constructor' is a restricted key
+            // and we use a unique Symbol as a fallback that never matches user input.
+            result.current.removeBy('constructor', undefined)
+        })
+
+        expect(result.current.list).toHaveLength(2)
+    })
 })
