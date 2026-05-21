@@ -2,13 +2,15 @@
 import { useState, useCallback } from 'react'
 import { isRestrictedKey } from '../utilities/security'
 
+const RESTRICTED_SYMBOL = Symbol('RESTRICTED_KEY')
+
 function getValueToCompare<T>(item: T, key: string | undefined | null): any {
     if (key === undefined || key === null) {
         return item
     }
 
     if (isRestrictedKey(key)) {
-        return undefined
+        return RESTRICTED_SYMBOL
     }
     if (typeof item === 'object' && item !== null) {
         return (item as any)[key]
