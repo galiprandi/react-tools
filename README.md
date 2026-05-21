@@ -938,10 +938,10 @@ const debouncedSearch = useDebounce(searchTerm, 500);
 
 **Props**
 
-| Parameter     | Type      | Description                    |
-|---------------|-----------|--------------------------------|
-| `value`       | `T`       | Value to debounce              |
-| `delay`       | `number`  | Delay in milliseconds          |
+| Parameter     | Type      | Description                               |
+|---------------|-----------|-------------------------------------------|
+| `value`       | `T`       | Value to debounce                         |
+| `delay`       | `number`  | Delay in milliseconds (default: `500`)    |
 
 **Returns**\
 Debounced version of the value (`T`).
