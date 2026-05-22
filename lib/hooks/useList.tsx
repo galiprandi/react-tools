@@ -25,31 +25,48 @@ function getValueToCompare<T>(item: T, key: string | undefined | null): any {
  * @template T The type of elements in the list array.
  * @param {T[]} [initialList=[]] The initial array state.
  * @returns {UseListReturn<T>} An object containing the current array state and helper functions to modify it immutably.
+ *
+ * @example
+ * ```tsx
+ * interface Task {
+ *   id: number;
+ *   title: string;
+ *   done: boolean;
+ * }
+ *
+ * const { list, addItem, removeBy, updateBy, toggle } = useList<Task>([
+ *   { id: 1, title: 'Buy milk', done: false }
+ * ]);
+ *
+ * const addTask = (title: string) => {
+ *   addItem({ id: Date.now(), title, done: false });
+ * };
+ *
+ * const removeTask = (id: number) => {
+ *   removeBy('id', id);
+ * };
+ *
+ * const completeTask = (id: number) => {
+ *   updateBy('id', id, (task) => ({ ...task, done: true }));
+ * };
+ * ```
  */
 export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     const [list, setList] = useState<T[]>(initialList)
 
-    // CORRECCIÓN AQUÍ: Asegura que siempre se pase una NUEVA instancia a setList si no es un updater function
+    // Ensure that a NEW instance is always passed to setList if it's not an updater function
     const setListCallback = useCallback(
         (newList: T[] | ((currentList: T[]) => T[])) => {
             if (typeof newList === 'function') {
                 setList((currentList) => {
                     const result = newList(currentList)
-                    // Si el updater retorna un array, asegúrate de que sea una *nueva* instancia para React
-                    // Si el resultado es el mismo array que currentList, setList optimizará y no re-renderizará.
-                    // Si el resultado es un *nuevo* array con el mismo contenido, setList *sí* re-renderizará.
-                    // Esto puede ser un debate de rendimiento vs. garantía de nueva instancia.
-                    // La forma más segura para testing (garantizar nueva instancia si *cualquier* cambio ocurrió)
-                    // y a menudo práctica es que los métodos (remove, update, add) *ya devuelvan* nuevas instancias cuando cambian.
-                    // Y que setListCallback simplemente pase el resultado.
-                    // ¡La corrección anterior ya hizo eso!
-                    // Simplemente pasemos el resultado del updater.
-                    return result // Pass the result directly
+                    // Return the result directly. Methods like remove, update, and add
+                    // already return new instances when changes occur.
+                    return result
                 })
             } else {
-                // Si es un array directo, crea una *copia* para asegurar una nueva instancia
-                // Esto es lo que espera el test `should replace the list with a new array`.
-                setList([...newList]) // <--- Usamos spread para crear una copia
+                // If it's a direct array, create a copy to ensure a new instance
+                setList([...newList])
             }
         },
         [setList],
@@ -81,7 +98,8 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
 
     const insertMany = useCallback(
         (items: T[]) => {
-            if (!Array.isArray(items) || items.length === 0) return // Verifica si items es un array no vacío
+            // Verify if items is a non-empty array
+            if (!Array.isArray(items) || items.length === 0) return
             setListCallback((currentList) => [...currentList, ...items])
         },
         [setListCallback],

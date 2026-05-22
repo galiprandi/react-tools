@@ -29,3 +29,7 @@
 ## 2025-05-30 - [Deterministic Date Testing]
 **Learning:** Tests for date conversion utilities like `iso2LocalDateTime` are sensitive to the execution environment's timezone; mock `Date.prototype.getTimezoneOffset` using Vitest spies (`vi.spyOn(...).mockReturnValue(...)`) to achieve deterministic test outcomes across different environments.
 **Action:** Always mock the timezone offset when testing date-to-local-string conversions to prevent flaky tests in CI.
+
+## 2025-06-05 - [Documentation Standardization and Language Consistency]
+**Learning:** Translating legacy non-English comments and adding comprehensive JSDoc examples to core hooks like `useList` significantly improves codebase maintainability and onboarding for new developers.
+**Action:** Proactively identify and normalize documentation language and completeness when touching utility hooks or components.
