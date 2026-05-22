@@ -1019,4 +1019,55 @@ describe('useList', () => {
             expect(result.current.list).not.toBe(originalList)
         })
     })
+
+    describe('reverse', () => {
+        it('should reverse the order of items in the list', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.reverse()
+            })
+            expect(result.current.list).toEqual(['c', 'b', 'a'])
+        })
+
+        it('should reverse a list of objects', () => {
+            const item1 = { id: 1 }
+            const item2 = { id: 2 }
+            const { result } = renderHook(() => useList([item1, item2]))
+            act(() => {
+                result.current.reverse()
+            })
+            expect(result.current.list).toEqual([item2, item1])
+        })
+
+        it('should do nothing and keep same reference for empty list', () => {
+            const { result } = renderHook(() => useList<number>([]))
+            const originalList = result.current.list
+            act(() => {
+                result.current.reverse()
+            })
+            expect(result.current.list).toEqual([])
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing and keep same reference for single item list', () => {
+            const { result } = renderHook(() => useList(['a']))
+            const originalList = result.current.list
+            act(() => {
+                result.current.reverse()
+            })
+            expect(result.current.list).toEqual(['a'])
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should return a new list instance when reversed', () => {
+            const initialList = ['a', 'b']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.reverse()
+            })
+            expect(result.current.list).toEqual(['b', 'a'])
+            expect(result.current.list).not.toBe(originalList)
+        })
+    })
 })

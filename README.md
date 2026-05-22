@@ -1083,6 +1083,7 @@ An object containing the current array state (`list`) and helper functions to mo
 | `sort`           | `(keyOrCompareFn?: string \| ((a: T, b: T) => number) \| null, order?: 'asc' \| 'desc') => void` | Sorts the list immutably using an optional key or comparison function, and an optional sort order. |
 | `shuffle`        | `() => void`                                                | Randomly reorders the list items immutably. |
 | `swap`           | `(indexA: number, indexB: number) => void`                  | Swaps two items in the list immutably based on their indices. |
+| `reverse`         | `() => void`                                                | Reverses the order of the items in the list immutably. |
 
 ***
 
