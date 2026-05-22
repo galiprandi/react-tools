@@ -17,3 +17,7 @@
 ## 2026-05-15 - [Render Prop Reload Pattern]
 **Learning:** Adding a `reload` function as an argument to render props in components that manage async state (`AsyncBlock`) provides a seamless way for users to implement manual refresh or retry logic without increasing component complexity.
 **Pattern:** Implement an internal `tick` state that triggers the core `useEffect` and expose a `reload` callback that increments it via the component's render functions.
+
+## 2026-05-20 - [No-op Optimizations in Immutable State]
+**Learning:** For list manipulation hooks, implementing no-op checks (returning the original state reference) for operations that would result in an identical array (e.g., reversing a single-item list or swapping out-of-bounds indices) prevents unnecessary React re-renders and improves performance.
+**Pattern:** Always check for edge cases where an operation results in no change and return the `currentList` reference immediately.

@@ -29,27 +29,25 @@ function getValueToCompare<T>(item: T, key: string | undefined | null): any {
 export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     const [list, setList] = useState<T[]>(initialList)
 
-    // CORRECCIÓN AQUÍ: Asegura que siempre se pase una NUEVA instancia a setList si no es un updater function
+    // Ensure a NEW instance is always passed to setList if it's not an updater function
     const setListCallback = useCallback(
         (newList: T[] | ((currentList: T[]) => T[])) => {
             if (typeof newList === 'function') {
                 setList((currentList) => {
                     const result = newList(currentList)
-                    // Si el updater retorna un array, asegúrate de que sea una *nueva* instancia para React
-                    // Si el resultado es el mismo array que currentList, setList optimizará y no re-renderizará.
-                    // Si el resultado es un *nuevo* array con el mismo contenido, setList *sí* re-renderizará.
-                    // Esto puede ser un debate de rendimiento vs. garantía de nueva instancia.
-                    // La forma más segura para testing (garantizar nueva instancia si *cualquier* cambio ocurrió)
-                    // y a menudo práctica es que los métodos (remove, update, add) *ya devuelvan* nuevas instancias cuando cambian.
-                    // Y que setListCallback simplemente pase el resultado.
-                    // ¡La corrección anterior ya hizo eso!
-                    // Simplemente pasemos el resultado del updater.
+                    // If the updater returns an array, ensure it is a *new* instance for React
+                    // If the result is the same array as currentList, setList will optimize and not re-render.
+                    // If the result is a *new* array with the same content, setList *will* re-render.
+                    // This can be a debate of performance vs. guaranteed new instance.
+                    // The safest way for testing (ensuring a new instance if *any* change occurred)
+                    // and often practical is that methods (remove, update, add) *already return* new instances when they change.
+                    // And that setListCallback simply passes the result.
                     return result // Pass the result directly
                 })
             } else {
-                // Si es un array directo, crea una *copia* para asegurar una nueva instancia
-                // Esto es lo que espera el test `should replace the list with a new array`.
-                setList([...newList]) // <--- Usamos spread para crear una copia
+                // If it's a direct array, create a *copy* to ensure a new instance
+                // This is what the test `should replace the list with a new array` expects.
+                setList([...newList])
             }
         },
         [setList],
@@ -81,7 +79,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
 
     const insertMany = useCallback(
         (items: T[]) => {
-            if (!Array.isArray(items) || items.length === 0) return // Verifica si items es un array no vacío
+            if (!Array.isArray(items) || items.length === 0) return // Check if items is a non-empty array
             setListCallback((currentList) => [...currentList, ...items])
         },
         [setListCallback],
@@ -321,6 +319,15 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [setListCallback],
     )
 
+    const reverse = useCallback(() => {
+        setListCallback((currentList) => {
+            if (currentList.length <= 1) {
+                return currentList
+            }
+            return [...currentList].reverse()
+        })
+    }, [setListCallback])
+
     return {
         list,
         addItem,
@@ -343,6 +350,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         sort,
         shuffle,
         swap,
+        reverse,
     }
 }
 
@@ -404,4 +412,6 @@ interface UseListReturn<T> {
     shuffle: () => void
     /** Swaps two items in the list immutably based on their indices. */
     swap: (indexA: number, indexB: number) => void
+    /** Reverses the order of the items in the list immutably. */
+    reverse: () => void
 }
