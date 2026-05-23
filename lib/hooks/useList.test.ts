@@ -688,6 +688,73 @@ describe('useList', () => {
         })
     })
 
+    describe('findIdxBy', () => {
+        it('should find the index of the first item matching key and value for objects', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                    { id: 3, name: 'a' },
+                ]),
+            )
+            expect(result.current.findIdxBy('name', 'a')).toBe(0)
+            expect(result.current.findIdxBy('id', 2)).toBe(1)
+            expect(result.current.findIdxBy('id', 3)).toBe(2)
+        })
+
+        it('should find the index of the first item matching value for primitives when key is null/undefined', () => {
+            const { result } = renderHook(() =>
+                useList<string>(['apple', 'banana', 'apple', 'cherry']),
+            )
+            expect(result.current.findIdxBy(undefined, 'apple')).toBe(0)
+            expect(result.current.findIdxBy(null, 'banana')).toBe(1)
+            expect(result.current.findIdxBy(undefined, 'cherry')).toBe(3)
+        })
+
+        it('should return -1 if no item matches the condition', () => {
+            const { result } = renderHook(() => useList([{ id: 1, name: 'a' }]))
+            expect(result.current.findIdxBy('name', 'c')).toBe(-1)
+            expect(result.current.findIdxBy('id', 99)).toBe(-1)
+        })
+
+        it('should return -1 on an empty list', () => {
+            const { result } = renderHook(() => useList<any>())
+            expect(result.current.findIdxBy('id', 1)).toBe(-1)
+        })
+    })
+
+    describe('contains', () => {
+        it('should return true if an item matches key and value for objects', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                ]),
+            )
+            expect(result.current.contains('name', 'a')).toBe(true)
+            expect(result.current.contains('id', 2)).toBe(true)
+        })
+
+        it('should return true if an item matches value for primitives when key is null/undefined', () => {
+            const { result } = renderHook(() =>
+                useList<string>(['apple', 'banana', 'cherry']),
+            )
+            expect(result.current.contains(undefined, 'apple')).toBe(true)
+            expect(result.current.contains(null, 'banana')).toBe(true)
+        })
+
+        it('should return false if no item matches the condition', () => {
+            const { result } = renderHook(() => useList([{ id: 1, name: 'a' }]))
+            expect(result.current.contains('name', 'c')).toBe(false)
+            expect(result.current.contains('id', 99)).toBe(false)
+        })
+
+        it('should return false on an empty list', () => {
+            const { result } = renderHook(() => useList<any>())
+            expect(result.current.contains('id', 1)).toBe(false)
+        })
+    })
+
     describe('count', () => {
         it('should return the total number of items if no predicate is provided', () => {
             const { result } = renderHook(() => useList(['a', 'b', 'c']))

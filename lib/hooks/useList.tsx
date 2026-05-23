@@ -208,6 +208,22 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [list],
     )
 
+    const findIdxBy = useCallback(
+        (key: string | undefined | null, value: any): number => {
+            return list.findIndex(
+                (item) => getValueToCompare(item, key) === value,
+            )
+        },
+        [list],
+    )
+
+    const contains = useCallback(
+        (key: string | undefined | null, value: any): boolean => {
+            return list.some((item) => getValueToCompare(item, key) === value)
+        },
+        [list],
+    )
+
     const count = useCallback(
         (predicate?: (item: T) => boolean): number => {
             if (predicate) {
@@ -345,6 +361,8 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
 
         findItemBy,
         findItemsBy,
+        findIdxBy,
+        contains,
         count,
         toggle,
         move,
@@ -398,6 +416,10 @@ interface UseListReturn<T> {
     findItemBy: (key: string | undefined | null, value: any) => T | undefined
     /** Finds and returns all items matching a key/value pair (or value if key is null/undefined). */
     findItemsBy: (key: string | undefined | null, value: any) => T[]
+    /** Finds and returns the index of the first item matching a key/value pair (or value if key is null/undefined). */
+    findIdxBy: (key: string | undefined | null, value: any) => number
+    /** Checks if any item matches a key/value pair (or value if key is null/undefined). */
+    contains: (key: string | undefined | null, value: any) => boolean
     /** Returns the total number of items, or count of items matching a predicate. */
     count: (predicate?: (item: T) => boolean) => number
     /** Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. */
