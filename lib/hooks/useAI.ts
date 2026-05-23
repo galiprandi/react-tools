@@ -216,6 +216,17 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                     case 'proofreader':
                         apiName = 'Proofreader'
                         break
+                    default:
+                        setApiStatuses((prev) => ({
+                            ...prev,
+                            [api]: {
+                                availability: 'unavailable',
+                                error: new Error(
+                                    `Unrecognized AI API type: ${api}`,
+                                ),
+                            },
+                        }))
+                        return
                 }
 
                 const globalApi = (
@@ -358,6 +369,8 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                 case 'proofreader':
                     apiName = 'Proofreader'
                     break
+                default:
+                    throw new Error(`Unrecognized AI API type: ${api}`)
             }
 
             const globalApi = (

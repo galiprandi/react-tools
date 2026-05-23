@@ -57,3 +57,15 @@
 **Vulnerability:** The `useAI` hook incorrectly identified APIs as available when a plain object (e.g., `{}`) existed with a matching global name. This happened because `globalApi.constructor` resolved to `Object` when `globalApi` was a plain object.
 **Learning:** When dynamically resolving global constructors by name, explicitly verify that the resolved constructor is not the base `Object` to avoid false positives from matching global objects that are not actual class/function constructors.
 **Prevention:** Validate that resolved global constructors are not equal to `Object` and use `isRestrictedKey` to prevent property injection when accessing globals by dynamic names.
+
+## 2024-05-27 - Security Bypass in useList Toggle Logic
+
+**Vulnerability:** The `useList` hook's `toggle` method was vulnerable to a security bypass where using a restricted key (like `constructor`) would incorrectly match and remove the first item in the list. This happened because `getValueToCompare` correctly returned a unique `RESTRICTED_SYMBOL` for restricted keys, but `toggle` then used this symbol to find a match, which always succeeded for any item in the list as they all returned the same symbol.
+**Learning:** When using sentinel values (like Symbols) to indicate restricted or invalid inputs, ensure that subsequent logic (like `findIndex`) does not treat these sentinels as valid values to match against.
+**Prevention:** Explicitly check for the restricted sentinel value in comparison logic and treat it as a non-match where appropriate (e.g., in `toggle` operations).
+
+## 2025-05-28 - Unrecognized API Type Vulnerability in useAI
+
+**Vulnerability:** The `useAI` hook lacked a default case in its API type-to-global name mapping, which could lead to accessing `window[undefined]` or other unintended property access if the `AIApiType` was extended without updating the internal `switch` statements.
+**Learning:** Always implement exhaustive `switch` statements or include a `default` case when mapping union types to internal values to ensure "fail-secure" behavior for future expansions.
+**Prevention:** Use `default` cases in mapping logic to report explicit errors or throw exceptions for unrecognized types.
