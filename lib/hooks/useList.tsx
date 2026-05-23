@@ -221,9 +221,10 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     const toggle = useCallback(
         (item: T, key?: string | undefined | null) => {
             const value = getValueToCompare(item, key)
-            const index = list.findIndex(
-                (i) => getValueToCompare(i, key) === value,
-            )
+            const index =
+                value === RESTRICTED_SYMBOL
+                    ? -1
+                    : list.findIndex((i) => getValueToCompare(i, key) === value)
 
             if (index === -1) {
                 addItem(item)
