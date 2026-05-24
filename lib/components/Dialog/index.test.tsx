@@ -5,9 +5,16 @@ import { Dialog } from './index'
 describe('Dialog', () => {
     beforeEach(() => {
         // Mocking HTMLDialogElement methods as they are not implemented in happy-dom
-        HTMLDialogElement.prototype.show = vi.fn()
-        HTMLDialogElement.prototype.showModal = vi.fn()
-        HTMLDialogElement.prototype.close = vi.fn()
+        // We also need to mock the 'open' property behavior
+        vi.spyOn(HTMLDialogElement.prototype, 'show').mockImplementation(function (this: HTMLDialogElement) {
+            this.setAttribute('open', '')
+        })
+        vi.spyOn(HTMLDialogElement.prototype, 'showModal').mockImplementation(function (this: HTMLDialogElement) {
+            this.setAttribute('open', '')
+        })
+        vi.spyOn(HTMLDialogElement.prototype, 'close').mockImplementation(function (this: HTMLDialogElement) {
+            this.removeAttribute('open')
+        })
     })
 
     it('should render correctly with children', () => {
@@ -116,5 +123,27 @@ describe('Dialog', () => {
         expect(dialog?.className).toContain('custom-dialog')
         expect(dialog?.getAttribute('id')).toBe('my-dialog')
         expect(dialog?.getAttribute('aria-labelledby')).toBe('dialog-title')
+    })
+
+    it('should not redundantly call native methods when re-rendered with new callback instances', () => {
+        const onOpen1 = vi.fn()
+        const onOpen2 = vi.fn()
+
+        const { rerender } = render(
+            <Dialog isOpen={true} onOpen={onOpen1}>
+                <p>Content</p>
+            </Dialog>
+        )
+
+        expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1)
+
+        rerender(
+            <Dialog isOpen={true} onOpen={onOpen2}>
+                <p>Content</p>
+            </Dialog>
+        )
+
+        // It should still be 1 because it's already open
+        expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1)
     })
 })

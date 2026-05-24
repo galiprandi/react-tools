@@ -29,3 +29,11 @@
 ## 2025-05-30 - [Deterministic Date Testing]
 **Learning:** Tests for date conversion utilities like `iso2LocalDateTime` are sensitive to the execution environment's timezone; mock `Date.prototype.getTimezoneOffset` using Vitest spies (`vi.spyOn(...).mockReturnValue(...)`) to achieve deterministic test outcomes across different environments.
 **Action:** Always mock the timezone offset when testing date-to-local-string conversions to prevent flaky tests in CI.
+
+## 2024-06-05 - [Robust Browser API Wrapping]
+**Learning:** Components wrapping browser APIs (like `IntersectionObserver` or `HTMLDialogElement`) should use `useRef` to stabilize callbacks and avoid stale closures without triggering effect re-runs. For `Dialog`, checking the native `open` property before calling methods like `showModal()` prevents `InvalidStateError` and redundant state updates.
+**Action:** Use the "latest ref" pattern for event callbacks in wrapper components and always verify native element state before invoking state-changing methods.
+
+## 2024-06-05 - [Mocking Dialog State in Tests]
+**Learning:** In 'happy-dom', when mocking `HTMLDialogElement` methods, it's crucial to also update the `open` attribute of the element within the mock (e.g., `this.setAttribute('open', '')`). Otherwise, any component logic that checks `dialog.open` after calling a method will receive stale information, leading to incorrect test results.
+**Action:** Ensure mocks for native methods also update the underlying DOM state that the component depends on.
