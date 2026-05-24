@@ -1081,6 +1081,7 @@ An object containing the current array state (`list`) and helper functions to mo
 | `contains`      | `(key: string \| undefined \| null, value: any) => boolean` | Checks if **any** item matches `item[key] === value`. If `key` is `undefined` or `null`, checks if `item === value`. Returns `true` if found, `false` otherwise. |
 | `count`          | `(predicate?: (item: T) => boolean) => number`              | Returns the total number of items in the list, or the count of items matching an optional `predicate`. Does not modify the list.       |
 | `toggle`         | `(item: T, key?: string \| undefined \| null) => void`      | Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. |
+| `upsert`         | `(item: T, key?: string \| undefined \| null) => void`      | Adds an item if it's not present, or updates the existing one if it is, based on an optional key or reference comparison. |
 | `move`           | `(fromIndex: number, toIndex: number) => void`              | Moves an item from `fromIndex` to `toIndex` immutably. If indices are out of bounds or identical, the list remains unchanged. |
 | `sort`           | `(keyOrCompareFn?: string \| ((a: T, b: T) => number) \| null, order?: 'asc' \| 'desc') => void` | Sorts the list immutably using an optional key or comparison function, and an optional sort order. |
 | `shuffle`        | `() => void`                                                | Randomly reorders the list items immutably. |
