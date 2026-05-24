@@ -222,4 +222,50 @@ describe('Observer Component', () => {
             expect.objectContaining({ rootMargin: '50px' })
         )
     })
+
+    it('should use the latest callback even if it changes after mount', () => {
+        const onAppear1 = vi.fn()
+        const onAppear2 = vi.fn()
+        const mockEntry = { isIntersecting: true }
+
+        const { rerender } = render(
+            <Observer onAppear={onAppear1}>
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        // Change the callback
+        rerender(
+            <Observer onAppear={onAppear2}>
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        const callback = mockIntersectionObserver.mock.calls[0][0]
+        callback([mockEntry])
+
+        expect(onAppear1).not.toHaveBeenCalled()
+        expect(onAppear2).toHaveBeenCalledWith(mockEntry)
+    })
+
+    it('should not recreate IntersectionObserver when callbacks change', () => {
+        const onAppear1 = vi.fn()
+        const onAppear2 = vi.fn()
+
+        const { rerender } = render(
+            <Observer onAppear={onAppear1}>
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledTimes(1)
+
+        rerender(
+            <Observer onAppear={onAppear2}>
+                <p>Test Content</p>
+            </Observer>
+        )
+
+        expect(mockIntersectionObserver).toHaveBeenCalledTimes(1)
+    })
 })

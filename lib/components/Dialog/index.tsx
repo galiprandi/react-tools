@@ -49,15 +49,21 @@ export const Dialog = (props: DialogProps): JSX.Element => {
     }, [isOpen])
 
     useEffect(() => {
-        if (!dialog.current) return
+        const dialogElement = dialog.current
+        if (!dialogElement) return
+
         if (open) {
-            behavior === 'dialog'
-                ? dialog.current.show()
-                : dialog.current.showModal()
-            onOpen?.()
+            if (!dialogElement.open) {
+                behavior === 'dialog'
+                    ? dialogElement.show()
+                    : dialogElement.showModal()
+                onOpen?.()
+            }
         } else {
-            dialog.current.close()
-            onClose?.()
+            if (dialogElement.open) {
+                dialogElement.close()
+                onClose?.()
+            }
         }
     }, [open, behavior, onOpen, onClose])
 

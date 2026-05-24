@@ -37,24 +37,44 @@ export const Observer = (props: ObserverProps): ObserverReturn => {
         onAppear,
         onDisappear,
         children,
-        ...options
+        root,
+        rootMargin,
+        threshold,
     } = props
     const ref = useRef<HTMLDivElement>(null)
+    const onAppearRef = useRef(onAppear)
+    const onDisappearRef = useRef(onDisappear)
 
-    const callbackFunction = ([entry]: IntersectionObserverEntry[]) => {
-        if (entry.isIntersecting && onAppear) onAppear(entry)
-        if (!entry.isIntersecting && onDisappear) onDisappear(entry)
-    }
+    // Update refs to always point to the latest callbacks
+    useEffect(() => {
+        onAppearRef.current = onAppear
+        onDisappearRef.current = onDisappear
+    }, [onAppear, onDisappear])
 
     useEffect(() => {
-        const observer = new IntersectionObserver(callbackFunction, options)
+        const callbackFunction = ([entry]: IntersectionObserverEntry[]) => {
+            if (entry.isIntersecting && onAppearRef.current) {
+                onAppearRef.current(entry)
+            }
+            if (!entry.isIntersecting && onDisappearRef.current) {
+                onDisappearRef.current(entry)
+            }
+        }
+
+        const observer = new IntersectionObserver(callbackFunction, {
+            root,
+            rootMargin,
+            threshold,
+        })
+
         const currentRef = ref.current
         if (currentRef) observer.observe(currentRef)
 
         return () => {
             if (currentRef) observer.unobserve(currentRef)
+            observer.disconnect()
         }
-    }, [ref, options])
+    }, [root, rootMargin, threshold])
 
     // eslint-disable-next-line react/no-children-prop
     return createElement(wrapper, { ref, children })
