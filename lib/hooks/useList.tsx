@@ -345,6 +345,27 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         })
     }, [setListCallback])
 
+    const upsert = useCallback(
+        (item: T, key?: string | undefined | null) => {
+            const value = getValueToCompare(item, key)
+            setListCallback((currentList) => {
+                const index =
+                    value === RESTRICTED_SYMBOL
+                        ? -1
+                        : currentList.findIndex(
+                              (i) => getValueToCompare(i, key) === value,
+                          )
+
+                if (index === -1) {
+                    return [...currentList, item]
+                }
+
+                return currentList.map((i, idx) => (idx === index ? item : i))
+            })
+        },
+        [setListCallback],
+    )
+
     return {
         list,
         addItem,
@@ -365,6 +386,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         contains,
         count,
         toggle,
+        upsert,
         move,
         sort,
         shuffle,
@@ -424,6 +446,8 @@ interface UseListReturn<T> {
     count: (predicate?: (item: T) => boolean) => number
     /** Adds an item if it's not present, or removes it if it is, based on an optional key or reference comparison. */
     toggle: (item: T, key?: string | undefined | null) => void
+    /** Adds an item if it's not present, or updates the existing one if it is, based on an optional key or reference comparison. */
+    upsert: (item: T, key?: string | undefined | null) => void
     /** Moves an item from one index to another immutably. */
     move: (fromIndex: number, toIndex: number) => void
     /** Sorts the list immutably using an optional key or comparison function, and an optional sort order. */

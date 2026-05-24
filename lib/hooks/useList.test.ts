@@ -849,6 +849,80 @@ describe('useList', () => {
         })
     })
 
+    describe('upsert', () => {
+        it('should add a primitive item if it is not in the list', () => {
+            const { result } = renderHook(() => useList<string>(['a', 'b']))
+            act(() => {
+                result.current.upsert('c')
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should update a primitive item if it is in the list', () => {
+            const { result } = renderHook(() => useList<string>(['a', 'b', 'c']))
+            act(() => {
+                result.current.upsert('b')
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+            // Even if same value, it should be a new array instance because of setListCallback
+        })
+
+        it('should add an object if it is not in the list (by reference)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1]))
+            act(() => {
+                result.current.upsert(item2)
+            })
+            expect(result.current.list).toEqual([item1, item2])
+        })
+
+        it('should update an object if it is in the list (by reference)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1, item2]))
+            act(() => {
+                result.current.upsert(item2)
+            })
+            expect(result.current.list).toEqual([item1, item2])
+            expect(result.current.list[1]).toBe(item2)
+        })
+
+        it('should add an object if it is not in the list (by key)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const { result } = renderHook(() => useList([item1]))
+            act(() => {
+                result.current.upsert({ id: 2, name: 'other' }, 'id')
+            })
+            expect(result.current.list).toEqual([
+                item1,
+                { id: 2, name: 'other' },
+            ])
+        })
+
+        it('should update an object if it is in the list (by key)', () => {
+            const item1 = { id: 1, name: 'a' }
+            const item2 = { id: 2, name: 'b' }
+            const { result } = renderHook(() => useList([item1, item2]))
+            const newItem2 = { id: 2, name: 'updated' }
+            act(() => {
+                result.current.upsert(newItem2, 'id')
+            })
+            expect(result.current.list).toEqual([item1, newItem2])
+            expect(result.current.list[1]).toBe(newItem2)
+            expect(result.current.list[1]).not.toBe(item2)
+        })
+
+        it('should always add if key is restricted', () => {
+            const { result } = renderHook(() => useList<any>([{ id: 1 }]))
+            act(() => {
+                result.current.upsert({ constructor: 'malicious' }, 'constructor')
+            })
+            expect(result.current.list).toHaveLength(2)
+            expect(result.current.list[1]).toEqual({ constructor: 'malicious' })
+        })
+    })
+
     describe('move', () => {
         it('should move an item forward in the list', () => {
             const { result } = renderHook(() => useList(['a', 'b', 'c']))
