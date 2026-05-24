@@ -69,3 +69,9 @@
 **Vulnerability:** The `useAI` hook lacked a default case in its API type-to-global name mapping, which could lead to accessing `window[undefined]` or other unintended property access if the `AIApiType` was extended without updating the internal `switch` statements.
 **Learning:** Always implement exhaustive `switch` statements or include a `default` case when mapping union types to internal values to ensure "fail-secure" behavior for future expansions.
 **Prevention:** Use `default` cases in mapping logic to report explicit errors or throw exceptions for unrecognized types.
+
+## 2025-05-29 - False Positive AI API Detection via Primitives
+
+**Vulnerability:** The `useAI` hook could incorrectly identify APIs as available if a global property with a matching name was a plain object, array, or basic function, as long as it didn't match the `Object` constructor.
+**Learning:** Checking against only the `Object` constructor is insufficient for dynamic global property resolution. Other built-in constructors like `Array` and `Function` can also produce false positives.
+**Prevention:** Explicitly exclude `Object`, `Array`, and `Function` constructors, and enforce a "fail-secure" check by requiring the presence of specific expected methods (like `create` or `availability`) on the global object itself before reporting it as available.

@@ -269,8 +269,12 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                                   }
                               )?.constructor
 
-                    // Ensure we're not dealing with the base Object constructor
-                    if (apiConstructor === Object) {
+                    // Ensure we're not dealing with base constructors
+                    if (
+                        apiConstructor === Object ||
+                        apiConstructor === Array ||
+                        apiConstructor === Function
+                    ) {
                         setApiStatuses((prev) => ({
                             ...prev,
                             [api]: { availability: 'unavailable' },
@@ -278,11 +282,11 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                         return // This is inside a function passed to Promise.all(apis.map(api => ...))
                     }
 
-                    if (typeof apiConstructor?.availability === 'function') {
+                    if (typeof globalApi?.availability === 'function') {
                         let avail: Availability
                         try {
                             // Try calling without arguments first
-                            avail = await apiConstructor.availability()
+                            avail = await globalApi.availability()
                         } catch (err) {
                             // If that fails, the API might require arguments
                             setApiStatuses((prev) => ({
@@ -306,7 +310,8 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                         if (avail === 'available' && onReadyRef.current) {
                             onReadyRef.current(api)
                         }
-                    } else {
+                    } else if (typeof globalApi?.create === 'function') {
+                        // Fail-secure: only report available if it has a create method
                         setApiStatuses((prev) => ({
                             ...prev,
                             [api]: { availability: 'available' },
@@ -314,6 +319,11 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                         if (onReadyRef.current) {
                             onReadyRef.current(api)
                         }
+                    } else {
+                        setApiStatuses((prev) => ({
+                            ...prev,
+                            [api]: { availability: 'unavailable' },
+                        }))
                     }
                 } else {
                     setApiStatuses((prev) => ({
@@ -404,8 +414,12 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                           }
                       )?.constructor
 
-            // Ensure we're not dealing with the base Object constructor
-            if (apiConstructor === Object) {
+            // Ensure we're not dealing with base constructors
+            if (
+                apiConstructor === Object ||
+                apiConstructor === Array ||
+                apiConstructor === Function
+            ) {
                 throw new Error(`${apiName} is not a valid AI API`)
             }
 
@@ -424,13 +438,13 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                 )
             }
 
-            if (typeof apiConstructor?.create === 'function') {
+            if (typeof globalApi?.create === 'function') {
                 setApiStatuses((prev) => ({
                     ...prev,
                     [api]: { availability: 'downloading' },
                 }))
 
-                const instance = await apiConstructor.create({
+                const instance = await globalApi.create({
                     monitor(m: {
                         addEventListener: (
                             event: string,
