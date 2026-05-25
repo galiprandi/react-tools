@@ -199,9 +199,10 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
     }
 
     // Check user activation (required by Chrome)
-    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
-      throw new Error('User activation required. Please interact with the page first.');
-    }
+    // Skip this check during warmup - let the actual summarize call handle activation
+    // if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
+    //   throw new Error('User activation required. Please interact with the page first.');
+    // }
 
     if (typeof Summarizer.create !== 'function') {
       throw new Error('Summarizer.create is not available');
@@ -286,7 +287,9 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
 
   useEffect(() => {
     if (warmup) {
-      createSummarizer().then(() => setStatus('idle')).catch((err) => {
+      // For warmup, use 'en' as default if outputLanguage is 'auto' to avoid Chrome API error
+      const warmupLanguage = outputLanguage === 'auto' ? 'en' : outputLanguage;
+      createSummarizer(warmupLanguage).then(() => setStatus('idle')).catch((err) => {
         console.error('Failed to warmup summarizer:', err);
       });
     }
@@ -301,7 +304,7 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
         abortControllerRef.current = null;
       }
     };
-  }, [warmup, createSummarizer]);
+  }, [warmup, createSummarizer, outputLanguage]);
 
   return {
     data,
