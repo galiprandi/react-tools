@@ -64,7 +64,8 @@ describe('useAIPrompt', () => {
   });
 
   it('should handle streaming with cumulative chunks', async () => {
-    const chunks = ['Hello', 'Hello world', 'Hello world!'];
+    // Chrome API returns incremental chunks, hook accumulates them
+    const chunks = ['Hello', ' ', 'world', '!'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
@@ -147,7 +148,9 @@ describe('useAIPrompt', () => {
     expect(result.current.status).toBe('idle');
   });
 
-  it('should throw error if user activation is not active', async () => {
+  it('should handle user activation check (commented out for warmup compatibility)', async () => {
+    // User activation check is commented out to allow warmup before user interaction
+    // The check can be re-enabled if needed for security, but would require warmup=false
     vi.stubGlobal('navigator', {
       userActivation: { isActive: false },
     })
@@ -158,8 +161,8 @@ describe('useAIPrompt', () => {
       await result.current.prompt('hello')
     })
 
-    expect(result.current.status).toBe('error')
-    expect(result.current.error?.message).toContain('User activation required')
+    // Since user activation check is disabled, prompt should succeed
+    expect(result.current.status).toBe('success')
   })
 
   it('should handle download progress', async () => {
