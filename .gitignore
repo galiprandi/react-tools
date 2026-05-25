@@ -27,3 +27,6 @@ workspace.code-workspace
 # Coverage test directory
 coverage/*
 .playwright-cli/*
+
+# Context organizer generated files
+.context/*

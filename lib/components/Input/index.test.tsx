@@ -6,7 +6,7 @@ import { Input } from '../../main.ts'
 describe('<Input />', () => {
     afterEach(cleanup)
 
-    it('should be render a input', () => {
+    it('should render an input element', () => {
         const testId = 'test-1'
         const { getByTestId } = render(
             <Input id={testId} type="text" name="name" data-testid={testId} />,
@@ -15,7 +15,7 @@ describe('<Input />', () => {
         expect(getByTestId(testId)).toBeDefined()
     })
 
-    it('should be render a label', () => {
+    it('should render a label when provided', () => {
         const testId = 'test-2'
         const { getByTestId, getByText } = render(
             <Input
@@ -31,7 +31,7 @@ describe('<Input />', () => {
         expect(getByText(/enter your name/i)).toBeDefined()
     })
 
-    it('should be render a datalist with options', () => {
+    it('should render a datalist with options when provided', () => {
         const testId = 'test-3'
         const datalist = ['John Doe', 'Jane Doe', 'John Smith']
         const { getByTestId, container } = render(
@@ -52,7 +52,7 @@ describe('<Input />', () => {
         expect(container).toMatchSnapshot()
     })
 
-    it('should be call onChange, onChangeValue & onChangeDebounce', () => {
+    it('should call onChange, onChangeValue & onChangeDebounce when input value changes', () => {
         const testId = 'test-4'
         const onChange = vi.fn()
         const onChangeValue = vi.fn()
@@ -80,7 +80,7 @@ describe('<Input />', () => {
         expect(onChangeDebounce).toHaveBeenCalledWith('test value')
     })
 
-    it('should be transform value to uppercase', () => {
+    it('should transform value to uppercase when transform prop is provided', () => {
         const testId = 'test-5'
         const onChangeValue = vi.fn()
 
@@ -102,7 +102,7 @@ describe('<Input />', () => {
         expect(onChangeValue).toHaveBeenCalledWith('TEST VALUE')
     })
 
-    it('should be called transformFn', () => {
+    it('should call transformFn when provided', () => {
         const testId = 'test-5'
         const onChangeValue = vi.fn()
 

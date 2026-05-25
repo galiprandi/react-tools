@@ -13,7 +13,7 @@ describe('<DateTime />', () => {
         expect(findByTestId(testId)).toBeDefined()
     })
 
-    it('should by call onChange & onChangeISOValue', () => {
+    it('should call onChange & onChangeISOValue when user changes date input', () => {
         const testId = 'test-2'
         const onChange = vi.fn()
         const onChangeISOValue = vi.fn()

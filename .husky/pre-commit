@@ -1,0 +1,4 @@
+# Hook pre-commit para regenerar BEHAVIOR.md
+pnpm test -- --reporter=json --outputFile=.context/test-results.json || exit 1
+node .agents/skills/context-organizer/scripts/compile-behavior.mjs
+git add BEHAVIOR.md
