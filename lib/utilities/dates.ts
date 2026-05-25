@@ -17,10 +17,20 @@ export const iso2LocalDateTime = (
 ): string | undefined => {
     if (!date || typeof date !== 'string') return date
     const d = new Date(date)
-    if (d instanceof Date && isNaN(d.getTime())) return date
-    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-    if (!isNaN(local.getTime())) {
-        return local.toISOString().slice(0, 16)
+
+    // Security: check if date is valid before processing
+    if (isNaN(d.getTime())) return date
+
+    try {
+        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+        // Check if adjusted date is still valid
+        if (!isNaN(local.getTime())) {
+            return local.toISOString().slice(0, 16)
+        }
+    } catch {
+        // Fallback if toISOString fails due to range errors
+        return date
     }
+
     return date
 }

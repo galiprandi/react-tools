@@ -9,8 +9,10 @@ import { useRef, useEffect, useCallback } from 'react'
  */
 function calculateDelay(delay: number | Date): number {
     if (delay instanceof Date) {
-        const now = new Date()
         const targetTime = delay.getTime()
+        if (isNaN(targetTime)) return 0
+
+        const now = new Date()
         const timeUntilTarget = targetTime - now.getTime()
         return Math.max(0, timeUntilTarget)
     }
