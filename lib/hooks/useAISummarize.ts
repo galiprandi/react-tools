@@ -265,8 +265,8 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
           const stream = summarizer.summarizeStreaming(text, options);
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            // The Summarizer API may return incremental chunks, accumulate them
-            setData(prev => prev + chunk);
+            // The Summarizer API returns cumulative chunks, replace state to avoid DoS
+            setData(chunk);
           }
           setStatus('success');
         } else {
