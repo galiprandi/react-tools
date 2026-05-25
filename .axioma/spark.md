@@ -21,3 +21,7 @@
 ## 2026-05-20 - [No-op Optimizations in Immutable State]
 **Learning:** For list manipulation hooks, implementing no-op checks (returning the original state reference) for operations that would result in an identical array (e.g., reversing a single-item list or swapping out-of-bounds indices) prevents unnecessary React re-renders and improves performance.
 **Pattern:** Always check for edge cases where an operation results in no change and return the `currentList` reference immediately.
+
+## 2025-05-26 - [Shadowing standard props for ISO transforms]
+**Learning:** For components that wrap native HTML inputs, adding `iso*` variants of standard props (like `isoMin` for `min`) allows the component to handle standard data formats while gracefully falling back to native behavior when the specialized prop is absent.
+**Pattern:** Implement specialized props with an `iso` prefix and use a ternary in the render function to prioritize the transformed ISO value: `min={isoMin ? iso2LocalDateTime(isoMin) : min}`.

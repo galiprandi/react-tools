@@ -99,4 +99,29 @@ describe('<DateTime />', () => {
         expect(container.querySelector('datalist')).toBeDefined()
         expect(container.querySelectorAll('option')).toHaveLength(datalist.length)
     })
+
+    it('should support ISO strings for min and max props', () => {
+        // Mock timezone offset to UTC (0) for deterministic results
+        const tzSpy = vi
+            .spyOn(Date.prototype, 'getTimezoneOffset')
+            .mockReturnValue(0)
+
+        const testId = 'test-8'
+        const min = '2021-01-01T00:00:00Z'
+        const max = '2021-12-31T23:59:59Z'
+        const { getByTestId } = render(
+            <DateTime
+                data-testid={testId}
+                isoValue="2021-06-01T12:00:00Z"
+                isoMin={min}
+                isoMax={max}
+            />,
+        )
+
+        const input = getByTestId(testId) as HTMLInputElement
+        expect(input.min).toBe('2021-01-01T00:00')
+        expect(input.max).toBe('2021-12-31T23:59')
+
+        tzSpy.mockRestore()
+    })
 })

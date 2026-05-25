@@ -31,7 +31,8 @@ import { Input } from '../Input'
  * ```
  */
 export const DateTime = (props: DateTimeProps): JSX.Element => {
-    const { isoValue, onChangeISOValue, ...restProps } = props
+    const { isoValue, onChangeISOValue, isoMin, isoMax, min, max, ...restProps } =
+        props
     const [isoDateTime, setIsoDateTime] =
         useState<DateTimeProps['isoValue']>(isoValue)
 
@@ -47,6 +48,8 @@ export const DateTime = (props: DateTimeProps): JSX.Element => {
         <Input
             {...restProps}
             type="datetime-local"
+            min={isoMin ? iso2LocalDateTime(isoMin) : min}
+            max={isoMax ? iso2LocalDateTime(isoMax) : max}
             value={isoDateTime ? iso2LocalDateTime(isoDateTime) : props.value}
             onChangeValue={(value) =>
                 typeof value === 'string'
@@ -65,6 +68,8 @@ export const DateTime = (props: DateTimeProps): JSX.Element => {
  *
  * @property {string} [isoValue] - The ISO date-time string value.
  * @property {(value: string) => void} [onChangeISOValue] - Callback function triggered when the ISO date-time value changes.
+ * @property {string} [isoMin] - The minimum date and time allowed in ISO 8601 format.
+ * @property {string} [isoMax] - The maximum date and time allowed in ISO 8601 format.
  */
 export interface DateTimeProps
     extends Omit<ComponentProps<typeof Input>, 'type'> {
@@ -78,4 +83,12 @@ export interface DateTimeProps
      * @param {string} value - The new ISO date-time value in format "YYYY-MM-DDTHH:MM:SS.sssZ".
      */
     onChangeISOValue?: (value: string) => void
+    /**
+     * The minimum date and time allowed in ISO 8601 format.
+     */
+    isoMin?: string
+    /**
+     * The maximum date and time allowed in ISO 8601 format.
+     */
+    isoMax?: string
 }

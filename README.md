@@ -222,6 +222,8 @@ A wrapper around `<input type="datetime-local" />` that handles ISO string conve
 |---------------------|-----------------------------------|------------------------------------------|
 | `isoValue`          | `string`                          | ISO 8601 datetime value                 |
 | `onChangeISOValue`  | `(iso: string) => void`           | Callback with ISO string                |
+| `isoMin`            | `string`                          | Minimum date/time in ISO 8601 format    |
+| `isoMax`            | `string`                          | Maximum date/time in ISO 8601 format    |
 | `...InputProps`     | All `<Input />` props             | Inherits all Input behavior             |
 
 ***
