@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "publish": "npm run publish:npm && npm run publish:jsr",
+    "publish": "npm run login:npm && npm run publish:npm && npm run publish:jsr",
     "build": "tsc --p ./tsconfig-build.json && vite build",
     "lint": "eslint ./lib  --fix",
     "release:sync": "sh ./sync-version.sh",
@@ -27,6 +27,7 @@
     "test:coverage": "npm run test -- --coverage",
     "test:ui": "npm run test:coverage -- --ui",
     "prepublish": "npm run release:sync && npm run build",
+    "login:npm": "npm login",
     "publish:jsr": "jsr publish --allow-dirty",
     "publish:npm": "npm publish",
     "prepare": "husky"

@@ -338,14 +338,6 @@
 - should return normalized language code from navigator.language
 - should return normalized language code from navigator.languages[0]
 
-## Module: <AsyncBlock />
-- should clean up properly on unmount
-- should handle timeout
-- should reload the promise when reload is called
-- should render error state and call onError
-- should render pending state
-- should render success state and call onSuccess
-
 ## Module: <DateTime />
 - should call onChange & onChangeISOValue when user changes date input
 - should pass debounceDelay prop to Input (inherited)
@@ -393,15 +385,13 @@
 - should transform value to uppercase when transform prop is provided
 - should work with empty array
 
-## Module: LazyRender Component
-- should pass IntersectionObserver options correctly
-- should pass root prop to IntersectionObserver
-- should pass rootMargin prop to IntersectionObserver
-- should render children when it appears in view
-- should render placeholder by default (when not visible)
-- should unrender children and show placeholder when it disappears from view
-- should use the default div wrapper when not specified
-- should use the specified wrapper element
+## Module: <AsyncBlock />
+- should clean up properly on unmount
+- should handle timeout
+- should reload the promise when reload is called
+- should render error state and call onError
+- should render pending state
+- should render success state and call onSuccess
 
 ## Module: Observer Component
 - should call IntersectionObserver with the provided options
@@ -418,4 +408,14 @@
 - should unobserve when unmounted
 - should use the default div wrapper when not specified
 - should use the latest callback even if it changes after mount
+- should use the specified wrapper element
+
+## Module: LazyRender Component
+- should pass IntersectionObserver options correctly
+- should pass root prop to IntersectionObserver
+- should pass rootMargin prop to IntersectionObserver
+- should render children when it appears in view
+- should render placeholder by default (when not visible)
+- should unrender children and show placeholder when it disappears from view
+- should use the default div wrapper when not specified
 - should use the specified wrapper element
