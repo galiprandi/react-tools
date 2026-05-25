@@ -65,11 +65,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         if (onChangeDebounce) onChangeDebounce(valueDebounce)
     }, [valueDebounce, onChangeDebounce])
 
-    // Update the value
-    useEffect(() => {
-        if (onChangeValue) onChangeValue(value)
-    }, [value, onChangeValue])
-
     // Handle the input change
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = event.target.value
@@ -77,6 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         if (transformFn) inputValue = transformFn(inputValue)
         if (props.onChange) props.onChange(event)
         setValue(inputValue)
+        if (onChangeValue) onChangeValue(inputValue)
     }
 
     return (
@@ -99,6 +95,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         </LabeledContainer>
     )
 })
+
+Input.displayName = 'Input'
 
 const LabeledContainer = ({
     label,

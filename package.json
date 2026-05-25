@@ -7,6 +7,28 @@
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "hooks",
+    "components",
+    "utilities",
+    "typescript",
+    "ai",
+    "browser-ai",
+    "chrome-ai",
+    "gemini-nano",
+    "accessibility",
+    "lightweight",
+    "zero-dependencies",
+    "form",
+    "debounce",
+    "throttle",
+    "intersection-observer",
+    "dialog",
+    "modal",
+    "lazy-loading",
+    "async"
+  ],
   "files": [
     "dist"
   ],

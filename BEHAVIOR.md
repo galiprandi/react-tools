@@ -346,10 +346,33 @@
 - should render pending state
 - should render success state and call onSuccess
 
+## Module: <DateTime />
+- should call onChange & onChangeISOValue when user changes date input
+- should forward ref to the underlying input element
+- should pass debounceDelay prop to Input (inherited)
+- should pass transform prop to Input (inherited)
+- should pass transformFn prop to Input (inherited)
+- should render datalist prop (inherited from Input)
+- should render label prop (inherited from Input)
+- should render the DateTime component
+- should support ISO strings for min and max props
+- should update the input value when props.isoValue changes (controlled component support)
+
 ## Module: DateTime Security
 - should not crash if invalid date is provided via props
 - should not crash if invalid date is provided via user input
 - should still work for valid dates
+
+## Module: Dialog
+- should call close when isOpen changes to false
+- should call onClose callback when closed
+- should call onOpen callback when opened
+- should call show when isOpen is true and behavior is dialog
+- should call showModal when isOpen is true and behavior is modal
+- should not redundantly call native methods when re-rendered with new callback instances
+- should pass native dialog element props via spread
+- should render correctly with children
+- should toggle dialog when opener is clicked
 
 ## Module: Form Component
 - should call onSubmit with form values on submit
@@ -375,16 +398,15 @@
 - should update the input value when props.value changes (controlled component support)
 - should work with empty array
 
-## Module: Dialog
-- should call close when isOpen changes to false
-- should call onClose callback when closed
-- should call onOpen callback when opened
-- should call show when isOpen is true and behavior is dialog
-- should call showModal when isOpen is true and behavior is modal
-- should not redundantly call native methods when re-rendered with new callback instances
-- should pass native dialog element props via spread
-- should render correctly with children
-- should toggle dialog when opener is clicked
+## Module: LazyRender Component
+- should pass IntersectionObserver options correctly
+- should pass root prop to IntersectionObserver
+- should pass rootMargin prop to IntersectionObserver
+- should render children when it appears in view
+- should render placeholder by default (when not visible)
+- should unrender children and show placeholder when it disappears from view
+- should use the default div wrapper when not specified
+- should use the specified wrapper element
 
 ## Module: Observer Component
 - should call IntersectionObserver with the provided options
@@ -401,14 +423,4 @@
 - should unobserve when unmounted
 - should use the default div wrapper when not specified
 - should use the latest callback even if it changes after mount
-- should use the specified wrapper element
-
-## Module: LazyRender Component
-- should pass IntersectionObserver options correctly
-- should pass root prop to IntersectionObserver
-- should pass rootMargin prop to IntersectionObserver
-- should render children when it appears in view
-- should render placeholder by default (when not visible)
-- should unrender children and show placeholder when it disappears from view
-- should use the default div wrapper when not specified
 - should use the specified wrapper element
