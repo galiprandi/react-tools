@@ -175,8 +175,8 @@ export function useAIRewriter(options: UseAIRewriterOptions = {}): UseAIRewriter
           const stream = rewriter.rewriteStreaming(text, options);
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            // The Rewriter API returns cumulative chunks, replace state to avoid DoS
-            setData(chunk);
+            // The Rewriter API may return incremental chunks, accumulate them
+            setData(prev => prev + chunk);
           }
           setStatus('success');
         } else {

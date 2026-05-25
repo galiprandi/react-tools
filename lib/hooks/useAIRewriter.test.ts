@@ -53,7 +53,8 @@ describe('useAIRewriter', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['part1', 'part1part2', 'full text'];
+    // Chrome Rewriter API returns incremental chunks, hook accumulates them
+    const chunks = ['full ', 'text'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {

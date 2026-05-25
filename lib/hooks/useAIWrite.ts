@@ -172,8 +172,8 @@ export function useAIWrite(options: UseAIWriteOptions = {}): UseAIWriteReturn {
           const stream = writer.writeStreaming(prompt, options);
           // @ts-expect-error - ReadableStream is async iterable in many environments
           for await (const chunk of stream) {
-            // The Writer API returns cumulative chunks, replace state to avoid DoS
-            setData(chunk);
+            // The Writer API may return incremental chunks, accumulate them
+            setData(prev => prev + chunk);
           }
           setStatus('success');
         } else {
