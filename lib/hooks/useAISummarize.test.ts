@@ -57,7 +57,8 @@ describe('useAISummarize', () => {
   });
 
   it('should handle streaming', async () => {
-    const chunks = ['part1', 'part1part2', 'full summary'];
+    // Chrome API returns incremental chunks, hook accumulates them
+    const chunks = ['full ', 'summary'];
     const mockStream = {
       [Symbol.asyncIterator]: async function* () {
         for (const chunk of chunks) {
