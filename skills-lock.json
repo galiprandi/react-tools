@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "context-organizer": {
+      "source": "galiprandi/skills",
+      "sourceType": "github",
+      "skillPath": "context-organizer/SKILL.md",
+      "computedHash": "b5ff3abb6732c2dc0767f8727b2163d1ad8ae5f3d2103bada959d803bec4abef"
+    },
     "react-tools": {
       "source": "galiprandi/react-tools",
       "sourceType": "github",
