@@ -49,7 +49,9 @@ export function Input(props: InputProps): JSX.Element {
 
     // Generate a unique id for the datalist
     const baseId = props.id ?? useId()
-    const did = `datalist-${baseId}`
+    // Sanitize ID to be valid as CSS selector (replace special chars with dashes)
+    const sanitizedId = baseId.replace(/[^a-zA-Z0-9-_]/g, '-')
+    const did = `datalist-${sanitizedId}`
 
     // Update the debounced value
     useEffect(() => {

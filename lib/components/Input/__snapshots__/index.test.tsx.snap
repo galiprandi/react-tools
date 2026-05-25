@@ -1,46 +1,18 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Input /> > should be render a datalist with options 1`] = `
-<div>
-  <label>
-    Enter your name:
-    <input
-      data-testid="test-3"
-      list="datalist-:r0:"
-      name="name"
-      type="text"
-      value=""
-    />
-    <datalist
-      id="datalist-:r0:"
-    >
-      <option
-        value="John Doe"
-      />
-      <option
-        value="Jane Doe"
-      />
-      <option
-        value="John Smith"
-      />
-    </datalist>
-  </label>
-</div>
-`;
-
 exports[`<Input /> > should render a datalist with options when provided 1`] = `
 <div>
   <label>
     Enter your name:
     <input
       data-testid="test-3"
-      list="datalist-:r0:"
+      list="datalist--r0-"
       name="name"
       type="text"
       value=""
     />
     <datalist
-      id="datalist-:r0:"
+      id="datalist--r0-"
     >
       <option
         value="John Doe"
