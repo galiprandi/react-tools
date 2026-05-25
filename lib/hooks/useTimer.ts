@@ -102,6 +102,10 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
         }
     }, [onCancelTimer, clearProgressTracking])
 
+    // Store clear in ref to avoid useEffect dependency issues
+    const clearRef = useRef(clear)
+    clearRef.current = clear
+
     const setupProgressTracking = useCallback(
         (totalDuration: number) => {
             if (totalDuration <= 0 || !onProgress) return
@@ -302,9 +306,9 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
 
     useEffect(() => {
         return () => {
-            clear()
+            clearRef.current()
         }
-    }, [clear])
+    }, [])
 
     return {
         setTimeout,
