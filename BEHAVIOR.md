@@ -338,36 +338,24 @@
 - should return normalized language code from navigator.language
 - should return normalized language code from navigator.languages[0]
 
-## Module: <DateTime />
-- should call onChange & onChangeISOValue when user changes date input
-- should pass debounceDelay prop to Input (inherited)
-- should pass transform prop to Input (inherited)
-- should pass transformFn prop to Input (inherited)
-- should render datalist prop (inherited from Input)
-- should render label prop (inherited from Input)
-- should render the DateTime component
-- should support ISO strings for min and max props
+## Module: <AsyncBlock />
+- should clean up properly on unmount
+- should handle timeout
+- should reload the promise when reload is called
+- should render error state and call onError
+- should render pending state
+- should render success state and call onSuccess
 
 ## Module: DateTime Security
 - should not crash if invalid date is provided via props
 - should not crash if invalid date is provided via user input
 - should still work for valid dates
 
-## Module: Dialog
-- should call close when isOpen changes to false
-- should call onClose callback when closed
-- should call onOpen callback when opened
-- should call show when isOpen is true and behavior is dialog
-- should call showModal when isOpen is true and behavior is modal
-- should not redundantly call native methods when re-rendered with new callback instances
-- should pass native dialog element props via spread
-- should render correctly with children
-- should toggle dialog when opener is clicked
-
 ## Module: Form Component
 - should call onSubmit with form values on submit
 - should call onSubmitValues with form values on submit
 - should filter out restricted keys to prevent prototype pollution and injection
+- should forward ref to the form element
 - should include empty values if filterEmptyValues is false
 - should render the form and its children
 
@@ -379,19 +367,24 @@
 - should apply multiple transforms in sequence
 - should call onChange, onChangeValue & onChangeDebounce when input value changes
 - should call transformFn when provided
+- should forward ref to the input element
 - should render a datalist with options when provided
 - should render a label when provided
 - should render an input element
 - should transform value to uppercase when transform prop is provided
+- should update the input value when props.value changes (controlled component support)
 - should work with empty array
 
-## Module: <AsyncBlock />
-- should clean up properly on unmount
-- should handle timeout
-- should reload the promise when reload is called
-- should render error state and call onError
-- should render pending state
-- should render success state and call onSuccess
+## Module: Dialog
+- should call close when isOpen changes to false
+- should call onClose callback when closed
+- should call onOpen callback when opened
+- should call show when isOpen is true and behavior is dialog
+- should call showModal when isOpen is true and behavior is modal
+- should not redundantly call native methods when re-rendered with new callback instances
+- should pass native dialog element props via spread
+- should render correctly with children
+- should toggle dialog when opener is clicked
 
 ## Module: Observer Component
 - should call IntersectionObserver with the provided options

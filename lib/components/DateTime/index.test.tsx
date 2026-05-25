@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, cleanup, fireEvent } from '@testing-library/react'
 import { DateTime } from '../../main.ts'
+import { iso2LocalDateTime } from '../../utilities/dates'
 
 describe('<DateTime />', () => {
     beforeEach(cleanup)
@@ -123,5 +124,26 @@ describe('<DateTime />', () => {
         expect(input.max).toBe('2021-12-31T23:59')
 
         tzSpy.mockRestore()
+    })
+
+    it('should forward ref to the underlying input element', () => {
+        const ref = { current: null as HTMLInputElement | null }
+        render(<DateTime ref={ref} data-testid="datetime-ref" />)
+        expect(ref.current).not.toBeNull()
+        expect(ref.current?.tagName).toBe('INPUT')
+        expect(ref.current?.type).toBe('datetime-local')
+    })
+
+    it('should update the input value when props.isoValue changes (controlled component support)', () => {
+        const { getByTestId, rerender } = render(<DateTime isoValue="2021-01-01T01:00:00Z" data-testid="controlled-datetime" />)
+        const input = getByTestId('controlled-datetime') as HTMLInputElement
+        
+        // Match the timezone local string representation
+        const expectedInitialLocal = iso2LocalDateTime('2021-01-01T01:00:00Z')
+        expect(input.value).toBe(expectedInitialLocal)
+
+        rerender(<DateTime isoValue="2021-01-02T01:00:00Z" data-testid="controlled-datetime" />)
+        const expectedUpdatedLocal = iso2LocalDateTime('2021-01-02T01:00:00Z')
+        expect(input.value).toBe(expectedUpdatedLocal)
     })
 })

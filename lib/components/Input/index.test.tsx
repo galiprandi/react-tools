@@ -189,4 +189,20 @@ describe('<Input />', () => {
 
         expect(onChangeValue).toHaveBeenCalledWith('test value')
     })
+
+    it('should forward ref to the input element', () => {
+        const ref = { current: null as HTMLInputElement | null }
+        render(<Input ref={ref} data-testid="input-ref" />)
+        expect(ref.current).not.toBeNull()
+        expect(ref.current?.tagName).toBe('INPUT')
+    })
+
+    it('should update the input value when props.value changes (controlled component support)', () => {
+        const { getByTestId, rerender } = render(<Input value="initial" data-testid="controlled-input" />)
+        const input = getByTestId('controlled-input') as HTMLInputElement
+        expect(input.value).toBe('initial')
+
+        rerender(<Input value="updated" data-testid="controlled-input" />)
+        expect(input.value).toBe('updated')
+    })
 })

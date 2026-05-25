@@ -175,4 +175,11 @@ describe('Form Component', () => {
 
         formDataSpy.mockRestore()
     })
+
+    it('should forward ref to the form element', () => {
+        const ref = { current: null as HTMLFormElement | null }
+        render(<Form onSubmitValues={vi.fn()} ref={ref} data-testid="form-ref" />)
+        expect(ref.current).not.toBeNull()
+        expect(ref.current?.tagName).toBe('FORM')
+    })
 })

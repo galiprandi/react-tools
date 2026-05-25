@@ -31,9 +31,13 @@
  * </Form>
  * ```
  */
+import { forwardRef, ForwardedRef } from 'react'
 import { isRestrictedKey } from '../../utilities/security'
 
-export const Form = <T,>(props: FormProps<T>): JSX.Element => {
+const FormInner = <T,>(
+    props: FormProps<T>,
+    ref: ForwardedRef<HTMLFormElement>
+): JSX.Element => {
     const { onSubmitValues, filterEmptyValues, ...restProps } = props
 
     /**
@@ -62,17 +66,21 @@ export const Form = <T,>(props: FormProps<T>): JSX.Element => {
         }
         props.onSubmit && props.onSubmit(event)
     }
-    return <form onSubmit={onSubmit} {...restProps} />
+    return <form ref={ref} onSubmit={onSubmit} {...restProps} />
 }
+
+export const Form = forwardRef(FormInner) as <T>(
+    props: FormProps<T> & React.RefAttributes<HTMLFormElement>
+) => JSX.Element
 
 /**
  * The properties for the Form component.
  *
  * @template T
- * @extends {React.InputHTMLAttributes<HTMLFormElement>}
+ * @extends {React.FormHTMLAttributes<HTMLFormElement>}
  */
 export interface FormProps<T>
-    extends React.InputHTMLAttributes<HTMLFormElement> {
+    extends React.FormHTMLAttributes<HTMLFormElement> {
     /**
      * Callback function that is triggered when form values are submitted and receives an object with the values of the form as a parameter.
      *

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useId, useState } from 'react'
+import { ReactNode, useEffect, useId, useState, forwardRef } from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { valueTransforms } from '../../utilities/strings'
 
@@ -33,7 +33,7 @@ import { valueTransforms } from '../../utilities/strings'
  * />;
  * ```
  */
-export function Input(props: InputProps): JSX.Element {
+export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const {
         label,
         datalist,
@@ -52,6 +52,13 @@ export function Input(props: InputProps): JSX.Element {
     // Sanitize ID to be valid as CSS selector (replace special chars with dashes)
     const sanitizedId = baseId.replace(/[^a-zA-Z0-9-_]/g, '-')
     const did = `datalist-${sanitizedId}`
+
+    // Update the value state when props.value changes (controlled component support)
+    useEffect(() => {
+        if (props.value !== undefined) {
+            setValue(props.value)
+        }
+    }, [props.value])
 
     // Update the debounced value
     useEffect(() => {
@@ -76,6 +83,7 @@ export function Input(props: InputProps): JSX.Element {
         <LabeledContainer label={label}>
             <input
                 {...restProps}
+                ref={ref}
                 value={value}
                 onChange={handleOnChange}
                 list={did}
@@ -90,7 +98,7 @@ export function Input(props: InputProps): JSX.Element {
             )}
         </LabeledContainer>
     )
-}
+})
 
 const LabeledContainer = ({
     label,

@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState, forwardRef } from 'react'
 import { iso2LocalDateTime } from '../../utilities/dates'
 
 import { Input } from '../Input'
@@ -30,11 +30,18 @@ import { Input } from '../Input'
  * };
  * ```
  */
-export const DateTime = (props: DateTimeProps): JSX.Element => {
+export const DateTime = forwardRef<HTMLInputElement, DateTimeProps>((props, ref) => {
     const { isoValue, onChangeISOValue, isoMin, isoMax, min, max, ...restProps } =
         props
     const [isoDateTime, setIsoDateTime] =
         useState<DateTimeProps['isoValue']>(isoValue)
+
+    // Update state when props.isoValue changes (controlled component support)
+    useEffect(() => {
+        if (props.isoValue !== undefined) {
+            setIsoDateTime(props.isoValue)
+        }
+    }, [props.isoValue])
 
     useEffect(() => {
         if (!isoDateTime || !onChangeISOValue) return
@@ -47,6 +54,7 @@ export const DateTime = (props: DateTimeProps): JSX.Element => {
     return (
         <Input
             {...restProps}
+            ref={ref}
             type="datetime-local"
             min={isoMin ? iso2LocalDateTime(isoMin) : min}
             max={isoMax ? iso2LocalDateTime(isoMax) : max}
@@ -58,7 +66,7 @@ export const DateTime = (props: DateTimeProps): JSX.Element => {
             }
         />
     )
-}
+})
 
 /**
  * The properties for the DateTime component.
