@@ -63,6 +63,10 @@ interface AIWriter {
  * This hook provides a React interface to Chrome's native AI Writer API.
  * It handles model initialization, download progress, streaming support, and automatic cleanup on unmount.
  *
+ * @warning Streaming behavior: The Chrome Writer API returns incremental chunks
+ * (each chunk contains only new text). This hook automatically accumulates them
+ * to build the complete response. Do not manually concatenate chunks.
+ *
  * @param options - Configuration for the writer
  * @param options.tone - Writing tone: 'formal', 'neutral' (default), or 'casual'
  * @param options.format - Output format: 'markdown' (default) or 'plain-text'

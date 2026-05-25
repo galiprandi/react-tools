@@ -127,6 +127,10 @@ export interface UseAIPromptResult {
  * This hook provides a React interface to Chrome's native Prompt API.
  * It handles session creation, model download progress, streaming, and cleanup.
  *
+ * @warning Streaming behavior: The Chrome Prompt API returns incremental chunks
+ * (each chunk contains only new text). This hook automatically accumulates them
+ * to build the complete response. Do not manually concatenate chunks.
+ *
  * @example
  * ```tsx
  * const { data, prompt, status } = useAIPrompt({

@@ -141,6 +141,10 @@ interface AISummarizer {
  * This hook provides a React interface to Chrome's native AI Summarizer API.
  * It handles model initialization, download progress, streaming support, and automatic cleanup on unmount.
  *
+ * @warning Streaming behavior: The Chrome Summarizer API returns cumulative chunks
+ * (each chunk contains the complete summary up to that point). This hook automatically
+ * replaces the state with each chunk to show the latest version. Do not manually accumulate chunks.
+ *
  * @param options - Configuration for the summarizer
  * @param options.type - Type of summary: 'tldr', 'key-points', 'teaser', or 'headline'
  * @param options.format - Output format: 'plain-text' or 'markdown'

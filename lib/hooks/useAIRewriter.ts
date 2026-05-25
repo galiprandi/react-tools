@@ -63,6 +63,10 @@ interface AIRewriter {
  * This hook provides a React interface to Chrome's native AI Rewriter API.
  * It handles model initialization, download progress, streaming support, and automatic cleanup on unmount.
  *
+ * @warning Streaming behavior: The Chrome Rewriter API returns incremental chunks
+ * (each chunk contains only new text). This hook automatically accumulates them
+ * to build the complete response. Do not manually concatenate chunks.
+ *
  * @param options - Configuration for the rewriter
  * @param options.tone - Writing tone: 'more-formal', 'as-is' (default), or 'more-casual'
  * @param options.format - Output format: 'as-is' (default), 'markdown', or 'plain-text'
