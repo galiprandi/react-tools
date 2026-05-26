@@ -27,9 +27,9 @@ export interface AIPromptContentInternal {
  */
 function inferContentType(value: AIPromptContentSimple): 'text' | 'audio' | 'image' {
   if (typeof value === 'string') return 'text';
-  
+
   // Audio types
-  if (value instanceof AudioBuffer) return 'audio';
+  if (typeof AudioBuffer !== 'undefined' && value instanceof AudioBuffer) return 'audio';
   if (value instanceof ArrayBuffer || ArrayBuffer.isView(value)) return 'audio';
   
   // Blob: check MIME type
