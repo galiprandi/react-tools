@@ -34,9 +34,13 @@
 
 ## Module: useAIPrompt
 - should call destroy on unmount
+- should handle append method correctly
 - should handle availability "after-download"
+- should handle contextoverflow event
 - should handle download progress
 - should handle errors during prompting
+- should handle errors in append method
+- should handle multimodal input in prompt
 - should handle streaming with cumulative chunks
 - should handle user activation check (commented out for warmup compatibility)
 - should initialize with idle status
@@ -365,10 +369,12 @@
 
 ## Module: Dialog
 - should call close when isOpen changes to false
-- should call onClose callback when closed
+- should call onClose and update internal state when closed via native event
+- should call onClose callback when closed via prop change
 - should call onOpen callback when opened
 - should call show when isOpen is true and behavior is dialog
 - should call showModal when isOpen is true and behavior is modal
+- should close on backdrop click when closeOnBackdropClick is true
 - should not redundantly call native methods when re-rendered with new callback instances
 - should pass native dialog element props via spread
 - should render correctly with children

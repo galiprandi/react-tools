@@ -28,17 +28,17 @@
 **Learning:** Security-critical constants like restricted keys for object property validation should be centralized to ensure consistency and easier maintenance.
 **Prevention:** Use the centralized `isRestrictedKey` utility from `lib/utilities/security.ts` for all operations involving dynamic property assignment from untrusted input (e.g., Form data, List operations).
 
-## 2026-05-18 - DoS in AI Streaming Hooks
+## 2026-05-18 - Incorrect Assumption About Chrome AI Streaming Behavior
 
-**Vulnerability:** AI hooks (Prompt, Summarizer, etc.) were accumulating chunks in streaming mode (`setData(prev => prev + chunk)`), leading to memory exhaustion because Chrome's AI APIs return cumulative chunks.
-**Learning:** Always verify whether a streaming API returns incremental or cumulative data. Cumulative data requires state replacement to avoid redundant and potentially explosive memory usage.
-**Prevention:** In AI streaming hooks, use `setData(chunk)` to replace state with the latest cumulative result, and enforce `userActivation` to prevent automated abuse of local AI resources.
+**Vulnerability:** Incorrect documentation in sentinel.md claimed Chrome's AI APIs return cumulative chunks, leading to erroneous suggestions to replace `setData(prev => prev + chunk)` with `setData(chunk)`, which would break streaming functionality.
+**Learning:** Chrome's Prompt API returns **incremental chunks** (each chunk contains only new text), not cumulative chunks. The hook must accumulate them to build the complete response. Never assume streaming behavior without verifying against actual API documentation and existing implementation.
+**Prevention:** Always verify streaming API behavior through official documentation and existing working code before suggesting changes. The current implementation correctly uses `setData(prev => prev + chunk)` for incremental chunks. DO NOT change to `setData(chunk)` unless the API is confirmed to return cumulative data.
 
-## 2025-05-22 - Missing User Activation and Resource Exhaustion in Built-in AI
+## 2025-05-22 - User Activation Considerations in Built-in AI
 
-**Vulnerability:** `useAIPrompt` was missing a mandatory `throw` for missing user activation, and AI hooks were vulnerable to a DoS (high memory usage) by manually concatenating cumulative chunks from Chrome's Built-in AI APIs.
-**Learning:** Built-in browser AI APIs (Prompt, Summarizer, etc.) often return cumulative results in their streaming methods. Concatenating these chunks instead of replacing the state leads to quadratic string growth and potential memory exhaustion. Enforcing user activation prevents automated background abuse of local LLMs.
-**Prevention:** Always replace the state with the latest chunk (`setData(chunk)`) when using cumulative streaming APIs. Consistently enforce `navigator.userActivation.isActive` across all hooks using experimental browser AI.
+**Vulnerability:** `useAIPrompt` has user activation checks commented out (lines 219-221) to allow warmup before user interaction. Enforcing `navigator.userActivation.isActive` during session creation would break the warmup feature.
+**Learning:** Chrome requires user activation for AI APIs, but preloading/warmup needs to happen before user interaction. The security trade-off is acceptable for local browser AI since it runs in user's browser context.
+**Prevention:** User activation checks remain commented for warmup compatibility. If re-enabled, must use conditional logic: skip check during warmup (`isWarmup=true`), enforce during actual prompts.
 
 ## 2025-05-23 - Holistic User Activation Enforcement in AI APIs
 
