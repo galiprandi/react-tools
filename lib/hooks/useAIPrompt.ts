@@ -270,7 +270,10 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       if (streaming) {
         const stream = session.promptStreaming(normalizedInput, { signal: abortControllerRef.current.signal });
         for await (const chunk of stream) {
-          // The Prompt API may return incremental chunks, accumulate them
+          // Chrome Prompt API returns INCREMENTAL chunks (each chunk = new text only)
+          // We MUST accumulate them: setData(prev => prev + chunk)
+          // DO NOT change to setData(chunk) - this would break streaming!
+          // See .axioma/sentinel.md for context on incorrect assumptions
           setData(prev => prev + chunk);
           setContextUsage(session.contextUsage || 0);
         }
