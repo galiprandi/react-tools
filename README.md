@@ -255,6 +255,7 @@ Accessible dialog/modal component built on top of the native `<dialog>` element.
 | `onClose`   | `() => void`                  | Triggered on close                         |
 | `opener`    | `ReactNode`                   | Element to trigger opening                 |
 | `children`  | `ReactNode`                   | Content inside the dialog                  |
+| `closeOnBackdropClick` | `boolean` (default: `false`) | Whether to close when clicking the backdrop |
 | `...dialogProps` | All native `<dialog>` props | Inherits all HTML dialog element attributes |
 
 ***

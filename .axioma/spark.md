@@ -25,3 +25,7 @@
 ## 2025-05-26 - [Shadowing standard props for ISO transforms]
 **Learning:** For components that wrap native HTML inputs, adding `iso*` variants of standard props (like `isoMin` for `min`) allows the component to handle standard data formats while gracefully falling back to native behavior when the specialized prop is absent.
 **Pattern:** Implement specialized props with an `iso` prefix and use a ternary in the render function to prioritize the transformed ISO value: `min={isoMin ? iso2LocalDateTime(isoMin) : min}`.
+
+## 2026-05-26 - [Syncing React State with Native Events]
+**Learning:** For components wrapping native elements with their own internal state (like `<dialog>`), synchronizing React state via native event listeners (like `onClose`) is critical. This ensures the component remains in sync when the state changes via browser shortcuts (ESC key) or other non-React means.
+**Pattern:** Use native event handlers on the underlying element to trigger React state updates, rather than relying solely on imperative method calls (like `dialog.close()`) to drive the `onClose` logic.

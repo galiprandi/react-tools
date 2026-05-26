@@ -36,6 +36,7 @@ export const Dialog = (props: DialogProps): JSX.Element => {
     const {
         isOpen = false,
         behavior = 'modal',
+        closeOnBackdropClick = false,
         opener,
         onOpen,
         onClose,
@@ -62,17 +63,41 @@ export const Dialog = (props: DialogProps): JSX.Element => {
         } else {
             if (dialogElement.open) {
                 dialogElement.close()
-                onClose?.()
             }
         }
-    }, [open, behavior, onOpen, onClose])
+    }, [open, behavior, onOpen])
+
+    const handleNativeClose = () => {
+        setOpen(false)
+        onClose?.()
+    }
+
+    const handleClick = (event: React.MouseEvent<HTMLDialogElement>) => {
+        if (!closeOnBackdropClick || behavior !== 'modal') return
+
+        const rect = event.currentTarget.getBoundingClientRect()
+        const isInDialog =
+            rect.top <= event.clientY &&
+            event.clientY <= rect.bottom &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.right
+
+        if (!isInDialog) {
+            dialog.current?.close()
+        }
+    }
 
     const handleToggle = () => setOpen((prev) => !prev)
 
     return (
         <>
             {opener && cloneElement(opener, { onClick: handleToggle })}
-            <dialog ref={dialog} {...restProps} />
+            <dialog
+                ref={dialog}
+                {...restProps}
+                onClose={handleNativeClose}
+                onClick={handleClick}
+            />
         </>
     )
 }
@@ -104,4 +129,11 @@ export interface DialogProps extends React.HTMLAttributes<HTMLDialogElement> {
      * The element that triggers the dialog to open or close.
      */
     opener?: ReactElement
+    /**
+     * Whether the dialog should close when clicking on the backdrop.
+     * Only applies when behavior is 'modal'.
+     *
+     * @default false
+     */
+    closeOnBackdropClick?: boolean
 }
