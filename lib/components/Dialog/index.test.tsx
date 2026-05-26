@@ -13,7 +13,10 @@ describe('Dialog', () => {
             this.setAttribute('open', '')
         })
         vi.spyOn(HTMLDialogElement.prototype, 'close').mockImplementation(function (this: HTMLDialogElement) {
-            this.removeAttribute('open')
+            if (this.hasAttribute('open')) {
+                this.removeAttribute('open')
+                this.dispatchEvent(new Event('close'))
+            }
         })
     })
 
@@ -70,7 +73,7 @@ describe('Dialog', () => {
         expect(onOpen).toHaveBeenCalled()
     })
 
-    it('should call onClose callback when closed', () => {
+    it('should call onClose callback when closed via prop change', () => {
         const onClose = vi.fn()
         const { rerender } = render(
             <Dialog isOpen={true} onClose={onClose}>
@@ -84,7 +87,55 @@ describe('Dialog', () => {
             </Dialog>
         )
 
+        // The component calls dialog.close() which triggers the onClose event handler
         expect(onClose).toHaveBeenCalled()
+    })
+
+    it('should call onClose and update internal state when closed via native event', () => {
+        const onClose = vi.fn()
+        const { container } = render(
+            <Dialog isOpen={true} onClose={onClose}>
+                <p>Content</p>
+            </Dialog>
+        )
+
+        const dialog = container.querySelector('dialog')
+        // Dispatching native close event
+        fireEvent(dialog!, new Event('close'))
+
+        expect(onClose).toHaveBeenCalled()
+    })
+
+    it('should close on backdrop click when closeOnBackdropClick is true', () => {
+        // Mock getBoundingClientRect for the dialog
+        vi.spyOn(HTMLDialogElement.prototype, 'getBoundingClientRect').mockReturnValue({
+            top: 100,
+            bottom: 400,
+            left: 100,
+            right: 400,
+            width: 300,
+            height: 300,
+            x: 100,
+            y: 100,
+            toJSON: () => {}
+        })
+
+        const onClose = vi.fn()
+        const { container } = render(
+            <Dialog isOpen={true} closeOnBackdropClick={true} onClose={onClose}>
+                <p>Content</p>
+            </Dialog>
+        )
+
+        const dialog = container.querySelector('dialog')
+
+        // Click inside the dialog (should not close)
+        fireEvent.click(dialog!, { clientX: 200, clientY: 200 })
+        expect(HTMLDialogElement.prototype.close).not.toHaveBeenCalled()
+
+        // Click outside the dialog (backdrop)
+        fireEvent.click(dialog!, { clientX: 50, clientY: 50 })
+        expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
     })
 
     it('should toggle dialog when opener is clicked', () => {
