@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useAIPrompt } from './useAIPrompt';
+import { useAIPrompt, AIPromptMessage } from './useAIPrompt';
 
 describe('useAIPrompt', () => {
   const mockSession = {
     prompt: vi.fn(),
     promptStreaming: vi.fn(),
+    append: vi.fn(),
     destroy: vi.fn(),
     addEventListener: vi.fn(),
     contextUsage: 10,
@@ -146,6 +147,70 @@ describe('useAIPrompt', () => {
 
     expect(result.current.data).toBe('');
     expect(result.current.status).toBe('idle');
+    expect(mockSession.destroy).toHaveBeenCalled();
+  });
+
+  it('should handle append method correctly', async () => {
+    const { result } = renderHook(() => useAIPrompt());
+    const messages: AIPromptMessage[] = [
+      { role: 'user', content: 'context message' }
+    ];
+
+    await act(async () => {
+      await result.current.append(messages);
+    });
+
+    expect(mockSession.append).toHaveBeenCalledWith([
+      {
+        role: 'user',
+        content: [{ type: 'text', value: 'context message' }]
+      }
+    ]);
+  });
+
+  it('should handle errors in append method', async () => {
+    const error = new Error('Append failed');
+    mockSession.append.mockRejectedValue(error);
+    const { result } = renderHook(() => useAIPrompt());
+
+    await act(async () => {
+      await result.current.append([{ role: 'user', content: 'test' }]);
+    });
+
+    expect(result.current.status).toBe('error');
+    expect(result.current.error).toBe(error);
+  });
+
+  it('should handle multimodal input in prompt', async () => {
+    mockSession.prompt.mockResolvedValue('I see an image');
+    const { result } = renderHook(() => useAIPrompt({ warmup: false }));
+
+    const blob = new Blob(['image data'], { type: 'image/png' });
+    const messages: AIPromptMessage[] = [
+      {
+        role: 'user',
+        content: ['What is in this image?', blob]
+      }
+    ];
+
+    await act(async () => {
+      await result.current.prompt(messages);
+    });
+
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    expect(mockSession.prompt).toHaveBeenCalledWith(
+      [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', value: 'What is in this image?' },
+            { type: 'image', value: blob }
+          ]
+        }
+      ],
+      expect.any(Object)
+    );
   });
 
   it('should handle user activation check (commented out for warmup compatibility)', async () => {
@@ -201,5 +266,18 @@ describe('useAIPrompt', () => {
     });
 
     expect(result.current.progress).toEqual({ loaded: 50, total: 100 });
+  });
+
+  it('should handle contextoverflow event', async () => {
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    renderHook(() => useAIPrompt({ warmup: true }));
+
+    await waitFor(() => expect(mockSession.addEventListener).toHaveBeenCalledWith('contextoverflow', expect.any(Function)));
+
+    const overflowCallback = mockSession.addEventListener.mock.calls.find(call => call[0] === 'contextoverflow')[1];
+    overflowCallback();
+
+    expect(consoleSpy).toHaveBeenCalledWith('AI Prompt context window overflowed');
+    consoleSpy.mockRestore();
   });
 });

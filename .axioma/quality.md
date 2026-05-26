@@ -37,3 +37,11 @@
 ## 2024-06-05 - [Mocking Dialog State in Tests]
 **Learning:** In 'happy-dom', when mocking `HTMLDialogElement` methods, it's crucial to also update the `open` attribute of the element within the mock (e.g., `this.setAttribute('open', '')`). Otherwise, any component logic that checks `dialog.open` after calling a method will receive stale information, leading to incorrect test results.
 **Action:** Ensure mocks for native methods also update the underlying DOM state that the component depends on.
+
+## 2024-06-06 - [Safe Instanceof Checks for Browser APIs]
+**Learning:** Internal functions for AI content inference must check if browser-specific types like `AudioBuffer` exist using `typeof ... !== 'undefined'` before performing `instanceof` checks to prevent `ReferenceError` in non-browser test environments (like Vitest with happy-dom if not all APIs are polyfilled) or SSR.
+**Action:** Always wrap `instanceof` checks for experimental or environment-specific APIs in a `typeof` check.
+
+## 2024-06-06 - [Testing Hooks with Async Warmup]
+**Learning:** When testing hooks with async `warmup` features (like `useAIPrompt`), use `waitFor` to ensure the hook reaches an `idle` state before executing actions, or explicitly disable `warmup` in tests that focus on subsequent interactions to avoid race conditions with session initialization.
+**Action:** Coordinate test actions with the hook's initialization status to ensure deterministic results.
