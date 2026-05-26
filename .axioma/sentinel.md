@@ -75,3 +75,9 @@
 **Vulnerability:** The `useAI` hook could incorrectly identify APIs as available if a global property with a matching name was a plain object, array, or basic function, as long as it didn't match the `Object` constructor.
 **Learning:** Checking against only the `Object` constructor is insufficient for dynamic global property resolution. Other built-in constructors like `Array` and `Function` can also produce false positives.
 **Prevention:** Explicitly exclude `Object`, `Array`, and `Function` constructors, and enforce a "fail-secure" check by requiring the presence of specific expected methods (like `create` or `availability`) on the global object itself before reporting it as available.
+
+## 2025-06-01 - Quadratic Memory Growth and Missing Activation in useAIPrompt
+
+**Vulnerability:** `useAIPrompt` was incorrectly concatenating cumulative chunks from Chrome's Prompt API, leading to potential DoS. It also failed to enforce `userActivation` for session creation.
+**Learning:** Built-in AI APIs like Prompt API return the full response in every streaming chunk. Treating them as incremental causes redundant data processing and exponential string growth. Furthermore, Chrome mandates user activation to prevent background resource abuse.
+**Prevention:** Always replace state with the latest chunk (`setData(chunk)`) when handling cumulative streaming responses. Enforce `navigator.userActivation.isActive` for all non-warmup AI session creations.
