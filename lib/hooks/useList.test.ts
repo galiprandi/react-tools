@@ -1080,8 +1080,7 @@ describe('useList', () => {
 
         it('should push null and undefined values to the end of the list', () => {
             const { result } = renderHook(() =>
-                // @ts-expect-error - Testing with null/undefined values
-                useList(['b', null, 'a', undefined, 'c']),
+                useList(['b', null, 'a', undefined, 'c'] as unknown as string[]),
             )
             act(() => {
                 result.current.sort()
