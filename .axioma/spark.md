@@ -29,3 +29,11 @@
 ## 2026-05-26 - [Syncing React State with Native Events]
 **Learning:** For components wrapping native elements with their own internal state (like `<dialog>`), synchronizing React state via native event listeners (like `onClose`) is critical. This ensures the component remains in sync when the state changes via browser shortcuts (ESC key) or other non-React means.
 **Pattern:** Use native event handlers on the underlying element to trigger React state updates, rather than relying solely on imperative method calls (like `dialog.close()`) to drive the `onClose` logic.
+
+## 2026-05-27 - [Robust Slugification Pattern]
+**Learning:** Implementing a robust  transform without external dependencies requires careful handling of diacritics using Unicode normalization (`NFD`) and range replacement (`[̀-ͯ]`) to ensure international characters are simplified rather than just removed.
+**Pattern:** When adding string transformations that simplify input for URLs or IDs, use `val.normalize("NFD").replace(/[̀-ͯ]/g, "")` followed by lowercase conversion and non-alphanumeric replacement to create clean, accessible results.
+
+## 2026-05-27 - [Robust Slugification Pattern]
+**Learning:** Implementing a robust `slugify` transform without external dependencies requires careful handling of diacritics using Unicode normalization (`NFD`) and range replacement (`[\u0300-\u036f]`) to ensure international characters are simplified rather than just removed.
+**Pattern:** When adding string transformations that simplify input for URLs or IDs, use `val.normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\")` followed by lowercase conversion and non-alphanumeric replacement to create clean, accessible results.

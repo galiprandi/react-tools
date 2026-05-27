@@ -39,7 +39,8 @@ export type TransformType =
   | "onlyNumbers"
   | "onlyLetters"
   | "onlyEmail"
-  | "onlyAlphanumeric";
+  | "onlyAlphanumeric"
+  | "slugify";
 
 export const valueTransforms = (
   value: string,
@@ -86,6 +87,15 @@ export const valueTransforms = (
         return val.replace(/[^a-zA-Z0-9@._-]/g, "");
       case "onlyAlphanumeric":
         return val.replace(/[^a-zA-Z0-9]/g, "");
+      case "slugify":
+        return val
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s_-]/g, "")
+          .replace(/[\s_-]+/g, "-")
+          .replace(/^-+|-+$/g, "");
       default:
         return val;
     }

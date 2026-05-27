@@ -59,6 +59,20 @@ describe('valueTransforms', () => {
         expect(valueTransforms('a1b2c3!@#', 'onlyAlphanumeric')).toBe('a1b2c3')
     })
 
+    it('should transform to slug case', () => {
+        expect(valueTransforms('Hello World', 'slugify')).toBe('hello-world')
+        expect(valueTransforms('Héllo World', 'slugify')).toBe('hello-world')
+        expect(valueTransforms('  Hello   World  ', 'slugify')).toBe(
+            'hello-world',
+        )
+        expect(valueTransforms('Hello_World', 'slugify')).toBe('hello-world')
+        expect(valueTransforms('Hello-World', 'slugify')).toBe('hello-world')
+        expect(valueTransforms('Hello & World!', 'slugify')).toBe('hello-world')
+        expect(valueTransforms('123 Hello World 456', 'slugify')).toBe(
+            '123-hello-world-456',
+        )
+    })
+
     it('should return the original value if no transform is provided', () => {
         expect(valueTransforms('hello')).toBe('hello')
     })
