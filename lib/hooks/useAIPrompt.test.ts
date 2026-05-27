@@ -19,6 +19,10 @@ describe('useAIPrompt', () => {
   };
 
   beforeEach(() => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
+
     vi.stubGlobal('ai', {
       languageModel: mockLanguageModel,
     });
@@ -213,9 +217,7 @@ describe('useAIPrompt', () => {
     );
   });
 
-  it('should handle user activation check (commented out for warmup compatibility)', async () => {
-    // User activation check is commented out to allow warmup before user interaction
-    // The check can be re-enabled if needed for security, but would require warmup=false
+  it('should fail when user activation is missing', async () => {
     vi.stubGlobal('navigator', {
       userActivation: { isActive: false },
     })
@@ -226,8 +228,8 @@ describe('useAIPrompt', () => {
       await result.current.prompt('hello')
     })
 
-    // Since user activation check is disabled, prompt should succeed
-    expect(result.current.status).toBe('success')
+    expect(result.current.status).toBe('error')
+    expect(result.current.error?.message).toContain('User activation required')
   })
 
   it('should handle download progress', async () => {

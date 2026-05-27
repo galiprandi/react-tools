@@ -13,6 +13,10 @@ describe('useAISummarize', () => {
   const mockAvailability = vi.fn();
 
   beforeEach(() => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
+
     vi.mock('../utilities/userLanguage', () => ({
       getUserLanguage: vi.fn(() => 'en'),
     }));
@@ -381,5 +385,20 @@ describe('useAISummarize', () => {
         preference: 'capability',
       })
     );
+  });
+
+  it('should fail when user activation is missing', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: false },
+    });
+
+    const { result } = renderHook(() => useAISummarize({ warmup: false }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(result.current.status).toBe('error');
+    expect(result.current.error?.message).toContain('User activation required');
   });
 });

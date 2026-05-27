@@ -75,3 +75,8 @@
 **Vulnerability:** The `useAI` hook could incorrectly identify APIs as available if a global property with a matching name was a plain object, array, or basic function, as long as it didn't match the `Object` constructor.
 **Learning:** Checking against only the `Object` constructor is insufficient for dynamic global property resolution. Other built-in constructors like `Array` and `Function` can also produce false positives.
 **Prevention:** Explicitly exclude `Object`, `Array`, and `Function` constructors, and enforce a "fail-secure" check by requiring the presence of specific expected methods (like `create` or `availability`) on the global object itself before reporting it as available.
+
+## 2025-05-30 - Enforcement of User Activation in Warmup Patterns
+**Vulnerability:** Allowing AI model "warmup" to bypass user activation checks created a loophole where models could be initialized in the background without user consent.
+**Learning:** While pre-loading models improves UX, security requirements for experimental browser AI APIs (like Chrome's Built-in AI) mandatory user activation cannot be safely bypassed for "warmup" without creating fingerprinting or resource exhaustion risks.
+**Prevention:** Fail-securely by enforcing `navigator.userActivation.isActive` in all model initialization paths, even if it means warmup fails until the first user interaction.

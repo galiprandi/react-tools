@@ -201,6 +201,11 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       throw new Error('Prompt API not supported in this browser');
     }
 
+    // Fail-secure: ensure we're not dealing with base constructors
+    if (LanguageModel === Object || LanguageModel === Array || LanguageModel === Function) {
+      throw new Error('Invalid Prompt API implementation');
+    }
+
     // Check availability
     if (typeof LanguageModel.availability === 'function') {
       const avail = await LanguageModel.availability();
@@ -215,10 +220,9 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     }
 
     // Check user activation (required by Chrome for built-in AI APIs)
-    // Skip this check during warmup - let the actual prompt call handle activation
-    // if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as any).userActivation?.isActive) {
-    //   throw new Error('User activation required. Please interact with the page first.');
-    // }
+    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as any).userActivation?.isActive) {
+      throw new Error('User activation required. Please interact with the page first.');
+    }
 
     const instance = await LanguageModel.create({
       initialPrompts,
