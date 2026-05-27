@@ -192,7 +192,7 @@ Custom input component supporting transformations, debounce, datalist, and more.
 | Prop                | Type                                | Description                             |
 |---------------------|-------------------------------------|------------------------------------------|
 | `label`             | `string`                            | Optional label                          |
-| `transform`         | `string \| string[]` (`"camelCase"`, `"pascalCase"`, `"kebabCase"`, `"titleCase"`, `"onlyEmail"`...) | Built-in value transforms (single or array for sequential application)         |
+| `transform`         | `string \| string[]` (`"camelCase"`, `"pascalCase"`, `"kebabCase"`, `"titleCase"`, `"slugify"`, `"onlyEmail"`...) | Built-in value transforms (single or array for sequential application)         |
 | `transformFn`       | `(value: string) => string`         | Custom value transform                   |
 | `onChangeValue`     | `(value: string) => void`           | Fires on value change                    |
 | `onChangeDebounce`  | `(value: string) => void`           | Fires after debounce                     |
