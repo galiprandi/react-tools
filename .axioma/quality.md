@@ -45,3 +45,7 @@
 ## 2024-06-06 - [Testing Hooks with Async Warmup]
 **Learning:** When testing hooks with async `warmup` features (like `useAIPrompt`), use `waitFor` to ensure the hook reaches an `idle` state before executing actions, or explicitly disable `warmup` in tests that focus on subsequent interactions to avoid race conditions with session initialization.
 **Action:** Coordinate test actions with the hook's initialization status to ensure deterministic results.
+
+## 2024-06-12 - [Testing List Sorting Edge Cases]
+**Learning:** Testing sorting logic requires covering not only the happy path (ascending/descending) but also edge cases like duplicate values and the presence of `null` or `undefined`. In this codebase, the `useList` hook's sorting logic explicitly pushes nullish values to the end, which must be verified to ensure predictable UI behavior.
+**Action:** Always include tests for equal values and null/undefined values when implementing or improving sorting utilities.

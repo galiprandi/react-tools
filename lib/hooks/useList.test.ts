@@ -1069,6 +1069,33 @@ describe('useList', () => {
             })
             expect(result.current.list).toEqual([])
         })
+
+        it('should handle equal values during sort', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'a']))
+            act(() => {
+                result.current.sort()
+            })
+            expect(result.current.list).toEqual(['a', 'a', 'b'])
+        })
+
+        it('should push null and undefined values to the end of the list', () => {
+            const { result } = renderHook(() =>
+                // @ts-expect-error - Testing with null/undefined values
+                useList(['b', null, 'a', undefined, 'c']),
+            )
+            act(() => {
+                result.current.sort()
+            })
+            // null and undefined should be at the end
+            expect(result.current.list.slice(0, 3)).toEqual(['a', 'b', 'c'])
+            expect(result.current.list).toContain(null)
+            expect(result.current.list).toContain(undefined)
+            expect(result.current.list.length).toBe(5)
+            // Verify specific positions if possible, though null vs undefined order might be implementation dependent
+            // current logic: if (valA === undefined || valA === null) return 1; if (valB === undefined || valB === null) return -1;
+            expect(result.current.list[3]).toBe(null)
+            expect(result.current.list[4]).toBe(undefined)
+        })
     })
 
     describe('shuffle', () => {
