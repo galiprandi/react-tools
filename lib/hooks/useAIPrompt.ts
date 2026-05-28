@@ -39,14 +39,14 @@ function inferContentType(value: AIPromptContentSimple): 'text' | 'audio' | 'ima
   }
   
   // Visual elements
-  if (value instanceof HTMLImageElement) return 'image';
-  if (value instanceof SVGImageElement) return 'image';
-  if (value instanceof HTMLVideoElement) return 'image';
-  if (value instanceof HTMLCanvasElement) return 'image';
-  if (value instanceof ImageBitmap) return 'image';
+  if (typeof HTMLImageElement !== 'undefined' && value instanceof HTMLImageElement) return 'image';
+  if (typeof SVGImageElement !== 'undefined' && value instanceof SVGImageElement) return 'image';
+  if (typeof HTMLVideoElement !== 'undefined' && value instanceof HTMLVideoElement) return 'image';
+  if (typeof HTMLCanvasElement !== 'undefined' && value instanceof HTMLCanvasElement) return 'image';
+  if (typeof ImageBitmap !== 'undefined' && value instanceof ImageBitmap) return 'image';
   if (typeof OffscreenCanvas !== 'undefined' && value instanceof OffscreenCanvas) return 'image';
   if (typeof VideoFrame !== 'undefined' && value instanceof VideoFrame) return 'image';
-  if (value instanceof ImageData) return 'image';
+  if (typeof ImageData !== 'undefined' && value instanceof ImageData) return 'image';
   
   return 'text';
 }
@@ -201,6 +201,15 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       throw new Error('Prompt API not supported in this browser');
     }
 
+    // Ensure we're not dealing with base constructors
+    if (
+      LanguageModel === Object ||
+      LanguageModel === Array ||
+      LanguageModel === Function
+    ) {
+      throw new Error('Prompt API is not available');
+    }
+
     // Check availability
     if (typeof LanguageModel.availability === 'function') {
       const avail = await LanguageModel.availability();
@@ -215,10 +224,9 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     }
 
     // Check user activation (required by Chrome for built-in AI APIs)
-    // Skip this check during warmup - let the actual prompt call handle activation
-    // if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as any).userActivation?.isActive) {
-    //   throw new Error('User activation required. Please interact with the page first.');
-    // }
+    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as any).userActivation?.isActive) {
+      throw new Error('User activation required. Please interact with the page first.');
+    }
 
     const instance = await LanguageModel.create({
       initialPrompts,

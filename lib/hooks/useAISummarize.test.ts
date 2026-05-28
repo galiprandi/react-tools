@@ -17,6 +17,10 @@ describe('useAISummarize', () => {
       getUserLanguage: vi.fn(() => 'en'),
     }));
 
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
+
     const SummarizerConstructor = function () {} as unknown as { availability: typeof mockAvailability; create: typeof mockSummarizerCreate };
     SummarizerConstructor.availability = mockAvailability;
     SummarizerConstructor.create = mockSummarizerCreate;
@@ -189,6 +193,9 @@ describe('useAISummarize', () => {
   });
 
   it('should handle outputLanguage "auto" by detecting language from text', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     const mockLanguageDetector = {
       detect: vi.fn().mockResolvedValue([{ detectedLanguage: 'fr', confidence: 0.99 }]),
       destroy: vi.fn(),
@@ -254,6 +261,9 @@ describe('useAISummarize', () => {
   });
 
   it('should default to "auto" for outputLanguage', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     const mockLanguageDetector = {
       detect: vi.fn().mockResolvedValue([{ detectedLanguage: 'en', confidence: 0.99 }]),
       destroy: vi.fn(),
@@ -381,5 +391,20 @@ describe('useAISummarize', () => {
         preference: 'capability',
       })
     );
+  });
+
+  it('should fail if user activation is missing', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: false },
+    });
+
+    const { result } = renderHook(() => useAISummarize({ warmup: false }));
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(result.current.status).toBe('error');
+    expect(result.current.error?.message).toContain('User activation required');
   });
 });
