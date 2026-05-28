@@ -547,6 +547,118 @@ describe('useList', () => {
         })
     })
 
+    describe('removeWhere', () => {
+        it('should remove items matching the predicate', () => {
+            const { result } = renderHook(() => useList([1, 2, 3, 4, 5]))
+            act(() => {
+                result.current.removeWhere((n) => n % 2 === 0)
+            })
+            expect(result.current.list).toEqual([1, 3, 5])
+        })
+
+        it('should remove items based on index', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.removeWhere((_, i) => i === 1)
+            })
+            expect(result.current.list).toEqual(['a', 'c'])
+        })
+
+        it('should do nothing if no item matches the predicate', () => {
+            const initialList = [1, 3, 5]
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.removeWhere((n) => n % 2 === 0)
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+    })
+
+    describe('updateWhere', () => {
+        it('should update items matching the predicate', () => {
+            const { result } = renderHook(() => useList([1, 2, 3, 4, 5]))
+            act(() => {
+                result.current.updateWhere(
+                    (n) => n % 2 === 0,
+                    (n) => n * 10,
+                )
+            })
+            expect(result.current.list).toEqual([1, 20, 3, 40, 5])
+        })
+
+        it('should update items based on index', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.updateWhere(
+                    (_, i) => i === 1,
+                    (val) => val.toUpperCase(),
+                )
+            })
+            expect(result.current.list).toEqual(['a', 'B', 'c'])
+        })
+
+        it('should do nothing if no item matches the predicate', () => {
+            const initialList = [1, 3, 5]
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.updateWhere(
+                    (n) => n % 2 === 0,
+                    (n) => n * 10,
+                )
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+    })
+
+    describe('unique', () => {
+        it('should remove duplicate primitives', () => {
+            const { result } = renderHook(() => useList([1, 2, 2, 3, 1, 4]))
+            act(() => {
+                result.current.unique()
+            })
+            expect(result.current.list).toEqual([1, 2, 3, 4])
+        })
+
+        it('should remove duplicate objects by reference', () => {
+            const obj1 = { id: 1 }
+            const obj2 = { id: 2 }
+            const { result } = renderHook(() => useList([obj1, obj2, obj1]))
+            act(() => {
+                result.current.unique()
+            })
+            expect(result.current.list).toEqual([obj1, obj2])
+        })
+
+        it('should remove duplicate objects by key', () => {
+            const { result } = renderHook(() =>
+                useList([
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                    { id: 1, name: 'c' },
+                ]),
+            )
+            act(() => {
+                result.current.unique('id')
+            })
+            expect(result.current.list).toEqual([
+                { id: 1, name: 'a' },
+                { id: 2, name: 'b' },
+            ])
+        })
+
+        it('should do nothing if all items are already unique', () => {
+            const initialList = [1, 2, 3]
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.unique()
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+    })
+
     describe('clearList', () => {
         it('should remove all items from the list', () => {
             const { result } = renderHook(() => useList(['a', 'b']))
