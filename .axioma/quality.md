@@ -49,3 +49,7 @@
 ## 2024-06-12 - [Testing List Sorting Edge Cases]
 **Learning:** Testing sorting logic requires covering not only the happy path (ascending/descending) but also edge cases like duplicate values and the presence of `null` or `undefined`. In this codebase, the `useList` hook's sorting logic explicitly pushes nullish values to the end, which must be verified to ensure predictable UI behavior.
 **Action:** Always include tests for equal values and null/undefined values when implementing or improving sorting utilities.
+
+## 2024-06-15 - [Exhaustive Coverage for Date Safeguards]
+**Learning:** Date utilities like `iso2LocalDateTime` require exhaustive testing of their error safeguards, such as the `catch` block for `toISOString` RangeErrors. Achieving 100% branch coverage often involves mocking prototype methods to throw or using boundary dates (e.g., `8.64e15`) that fail after timezone adjustment.
+**Action:** Use `vi.spyOn(Date.prototype, 'toISOString').mockImplementation()` to verify fallback behavior and always rely on `afterEach(() => vi.restoreAllMocks())` for robust cleanup.

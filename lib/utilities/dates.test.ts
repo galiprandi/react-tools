@@ -42,4 +42,25 @@ describe('iso2LocalDateTime', () => {
         const expectedLocalString = '2024-12-31T20:59'
         expect(iso2LocalDateTime(isoString)).toBe(expectedLocalString)
     })
+
+    it('should return the original date if toISOString fails', () => {
+        const isoString = '2024-05-14T13:00:00.000Z'
+        vi.spyOn(Date.prototype, 'toISOString').mockImplementation(() => {
+            throw new Error('toISOString failed')
+        })
+
+        expect(iso2LocalDateTime(isoString)).toBe(isoString)
+    })
+
+    it('should return the original date if the adjusted date is invalid', () => {
+        // Using a date that is valid but becomes invalid after timezone adjustment
+        // The max date is 8.64e15 milliseconds from 1970-01-01
+        const maxDate = new Date(8.64e15).toISOString()
+
+        // Mock timezone offset to a negative value to push the date past the limit.
+        // Note: vi.restoreAllMocks() in afterEach ensures this is cleaned up.
+        vi.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-1)
+
+        expect(iso2LocalDateTime(maxDate)).toBe(maxDate)
+    })
 })
