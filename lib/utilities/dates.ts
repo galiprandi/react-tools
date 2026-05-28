@@ -1,10 +1,14 @@
 import { DateTimeProps } from '../main'
 
 /**
- * Converts an ISO date-time string to a local date-time string.
+ * Converts an ISO date-time string to a local date-time string in 'YYYY-MM-DDTHH:mm' format.
  *
- * @param date - The ISO date-time string
- * @returns The local date-time string or undefined if input is invalid
+ * This function handles timezone adjustments and includes safeguards against invalid dates
+ * or range errors. If the input is not a string, is an invalid date, or if the adjusted
+ * date falls outside the valid ISO range, the original input is returned.
+ *
+ * @param date - The ISO date-time string (e.g., from an API or Date.toISOString())
+ * @returns The local date-time string or the original input if conversion is not possible
  *
  * @example
  * ```ts
