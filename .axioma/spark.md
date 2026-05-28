@@ -37,3 +37,7 @@
 ## 2026-05-27 - [Robust Slugification Pattern]
 **Learning:** Implementing a robust `slugify` transform without external dependencies requires careful handling of diacritics using Unicode normalization (`NFD`) and range replacement (`[\u0300-\u036f]`) to ensure international characters are simplified rather than just removed.
 **Pattern:** When adding string transformations that simplify input for URLs or IDs, use `val.normalize(\"NFD\").replace(/[\u0300-\u036f]/g, \"\")` followed by lowercase conversion and non-alphanumeric replacement to create clean, accessible results.
+
+## 2026-05-28 - [Predicate-Based List Manipulation]
+**Learning:** Adding functional methods like `removeWhere` and `updateWhere` to a list management hook (`useList`) significantly increases its expressiveness compared to index-based or property-based operations alone. By using a stable `setListCallback`, these methods maintain high performance and prevent unnecessary re-renders when no matches are found.
+**Pattern:** Implement functional list operations by wrapping `filter` and `map` with predicate checks, and always perform a length or equality check before calling the state setter to ensure a no-op when no items are affected.

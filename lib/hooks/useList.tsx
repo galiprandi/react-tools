@@ -183,6 +183,62 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         [setListCallback],
     )
 
+    const removeWhere = useCallback(
+        (predicate: (item: T, index: number) => boolean) => {
+            setListCallback((currentList) => {
+                const newList = currentList.filter(
+                    (item, index) => !predicate(item, index),
+                )
+                if (newList.length === currentList.length) {
+                    return currentList
+                }
+                return newList
+            })
+        },
+        [setListCallback],
+    )
+
+    const updateWhere = useCallback(
+        (
+            predicate: (item: T, index: number) => boolean,
+            updateFn: (item: T) => T,
+        ) => {
+            setListCallback((currentList) => {
+                let updated = false
+                const newList = currentList.map((item, index) => {
+                    if (predicate(item, index)) {
+                        updated = true
+                        return updateFn(item)
+                    }
+                    return item
+                })
+                return updated ? newList : currentList
+            })
+        },
+        [setListCallback],
+    )
+
+    const unique = useCallback(
+        (key?: string | undefined | null) => {
+            setListCallback((currentList) => {
+                const seen = new Set()
+                const newList = currentList.filter((item) => {
+                    const value = getValueToCompare(item, key)
+                    if (seen.has(value)) {
+                        return false
+                    }
+                    seen.add(value)
+                    return true
+                })
+                if (newList.length === currentList.length) {
+                    return currentList
+                }
+                return newList
+            })
+        },
+        [setListCallback],
+    )
+
     const clearList = useCallback(() => {
         setListCallback((currentList) => {
             if (currentList.length === 0) {
@@ -387,6 +443,9 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         count,
         toggle,
         upsert,
+        removeWhere,
+        updateWhere,
+        unique,
         move,
         sort,
         shuffle,
@@ -429,6 +488,15 @@ interface UseListReturn<T> {
         value: any,
         updateFn: (item: T) => T,
     ) => void
+    /** Removes all items that match a predicate function. */
+    removeWhere: (predicate: (item: T, index: number) => boolean) => void
+    /** Updates all items that match a predicate function. */
+    updateWhere: (
+        predicate: (item: T, index: number) => boolean,
+        updateFn: (item: T) => T,
+    ) => void
+    /** Removes duplicate items from the list based on a key or reference comparison. */
+    unique: (key?: string | undefined | null) => void
     /** Removes all items from the list. */
     clearList: () => void
     /** Replaces the entire list array or updates it with a function. */
