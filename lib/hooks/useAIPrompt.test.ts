@@ -87,6 +87,9 @@ describe('useAIPrompt', () => {
   });
 
   it('should call destroy on unmount', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     const { unmount } = renderHook(() => useAIPrompt({ warmup: true }));
     await waitFor(() => expect(mockLanguageModel.create).toHaveBeenCalled());
     unmount();
@@ -127,6 +130,9 @@ describe('useAIPrompt', () => {
   });
 
   it('should respect warmup option', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     renderHook(() => useAIPrompt({ warmup: true }));
     await waitFor(() => expect(mockLanguageModel.create).toHaveBeenCalled());
   });
@@ -213,22 +219,20 @@ describe('useAIPrompt', () => {
     );
   });
 
-  it('should handle user activation check (commented out for warmup compatibility)', async () => {
-    // User activation check is commented out to allow warmup before user interaction
-    // The check can be re-enabled if needed for security, but would require warmup=false
+  it('should fail if user activation is missing', async () => {
     vi.stubGlobal('navigator', {
       userActivation: { isActive: false },
-    })
+    });
 
-    const { result } = renderHook(() => useAIPrompt({ warmup: false }))
+    const { result } = renderHook(() => useAIPrompt({ warmup: false }));
 
     await act(async () => {
-      await result.current.prompt('hello')
-    })
+      await result.current.prompt('hello');
+    });
 
-    // Since user activation check is disabled, prompt should succeed
-    expect(result.current.status).toBe('success')
-  })
+    expect(result.current.status).toBe('error');
+    expect(result.current.error?.message).toContain('User activation required');
+  });
 
   it('should handle download progress', async () => {
     mockLanguageModel.availability.mockResolvedValue('after-download');
@@ -269,6 +273,9 @@ describe('useAIPrompt', () => {
   });
 
   it('should handle contextoverflow event', async () => {
+    vi.stubGlobal('navigator', {
+      userActivation: { isActive: true },
+    });
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     renderHook(() => useAIPrompt({ warmup: true }));
 

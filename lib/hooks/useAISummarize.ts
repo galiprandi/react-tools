@@ -47,6 +47,15 @@ async function detectLanguageFromText(text: string): Promise<string> {
 
   const LanguageDetector = (window as unknown as { LanguageDetector: { availability?: () => Promise<Availability>; create?: (options?: LanguageDetectorCreateOptions) => Promise<LanguageDetector> } }).LanguageDetector;
 
+  // Ensure we're not dealing with base constructors
+  if (
+    LanguageDetector === (Object as any) ||
+    LanguageDetector === (Array as any) ||
+    LanguageDetector === (Function as any)
+  ) {
+    return 'en';
+  }
+
   // Check availability
   if (typeof LanguageDetector.availability === 'function') {
     const avail = await LanguageDetector.availability();
@@ -189,6 +198,15 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
 
     const Summarizer = (window as unknown as { Summarizer: { availability?: () => Promise<Availability>; create?: (options: SummarizerCreateOptions) => Promise<AISummarizer> } }).Summarizer;
 
+    // Ensure we're not dealing with base constructors
+    if (
+      Summarizer === (Object as any) ||
+      Summarizer === (Array as any) ||
+      Summarizer === (Function as any)
+    ) {
+      throw new Error('Summarizer is not available');
+    }
+
     // Check availability
     if (typeof Summarizer.availability === 'function') {
       const avail = await Summarizer.availability();
@@ -203,10 +221,9 @@ export function useAISummarize(options: UseAISummarizeOptions = {}): UseAISummar
     }
 
     // Check user activation (required by Chrome)
-    // Skip this check during warmup - let the actual summarize call handle activation
-    // if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
-    //   throw new Error('User activation required. Please interact with the page first.');
-    // }
+    if (typeof navigator !== 'undefined' && 'userActivation' in navigator && !(navigator as unknown as { userActivation?: { isActive: boolean } }).userActivation?.isActive) {
+      throw new Error('User activation required. Please interact with the page first.');
+    }
 
     if (typeof Summarizer.create !== 'function') {
       throw new Error('Summarizer.create is not available');
