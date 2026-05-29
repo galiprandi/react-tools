@@ -53,3 +53,7 @@
 ## 2024-06-15 - [Exhaustive Coverage for Date Safeguards]
 **Learning:** Date utilities like `iso2LocalDateTime` require exhaustive testing of their error safeguards, such as the `catch` block for `toISOString` RangeErrors. Achieving 100% branch coverage often involves mocking prototype methods to throw or using boundary dates (e.g., `8.64e15`) that fail after timezone adjustment.
 **Action:** Use `vi.spyOn(Date.prototype, 'toISOString').mockImplementation()` to verify fallback behavior and always rely on `afterEach(() => vi.restoreAllMocks())` for robust cleanup.
+
+## 2024-06-20 - [Achieving Full Branch Coverage with Default Parameters]
+**Learning:** To achieve 100% branch coverage in hooks or functions that use default parameters (e.g., `useThrottle(value, limit = 500)`), unit tests must explicitly invoke the function without the optional arguments. Simply relying on tests that provide values for all arguments leaves the default assignment branch uncovered.
+**Action:** Always include a test case that omits optional arguments to ensure default parameter logic is verified and coverage is maximized.
