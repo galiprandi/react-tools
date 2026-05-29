@@ -34,6 +34,7 @@
 
 ## Module: useAIPrompt
 - should call destroy on unmount
+- should fail if user activation is missing
 - should handle append method correctly
 - should handle availability "after-download"
 - should handle contextoverflow event
@@ -42,7 +43,6 @@
 - should handle errors in append method
 - should handle multimodal input in prompt
 - should handle streaming with cumulative chunks
-- should handle user activation check (commented out for warmup compatibility)
 - should initialize with idle status
 - should pass through prompting status when calling prompt
 - should reset state correctly
@@ -85,6 +85,7 @@
 ## Module: useAISummarize
 - should call destroy on unmount
 - should default to "auto" for outputLanguage
+- should fail if user activation is missing
 - should fall back to "en" when language detection is unavailable
 - should handle download progress
 - should handle errors
@@ -162,12 +163,15 @@
 - should add multiple items to the end of the list
 - should always add if key is restricted
 - should do nothing and keep same reference for empty list
+- should do nothing and keep same reference for offset 0
 - should do nothing and keep same reference for single item list
+- should do nothing if all items are already unique
 - should do nothing if any index is out of bounds
 - should do nothing if fromIndex is out of bounds
 - should do nothing if indices are identical
 - should do nothing if key is provided but item is not an object
 - should do nothing if no item matches the condition
+- should do nothing if no item matches the predicate
 - should do nothing if the index is out of bounds
 - should do nothing if the input array is empty or not an array
 - should do nothing if toIndex is out of bounds
@@ -180,6 +184,8 @@
 - should find the index of the first item matching value for primitives when key is null/undefined
 - should handle a single item list
 - should handle an empty list
+- should handle equal values during sort
+- should handle offset larger than list length
 - should initialize with an empty list if no initial list is provided
 - should initialize with the provided initial list
 - should insert an item at the specified index
@@ -191,12 +197,18 @@
 - should move an item backward in the list
 - should move an item forward in the list
 - should move an item to the same position without change
+- should push null and undefined values to the end of the list
 - should remove a primitive item if it is in the list
 - should remove all items from the list
 - should remove all items matching key and value for objects
 - should remove all items matching value for primitives when key is null/undefined
 - should remove an object if it is in the list (by key)
 - should remove an object if it is in the list (by reference)
+- should remove duplicate objects by key
+- should remove duplicate objects by reference
+- should remove duplicate primitives
+- should remove items based on index
+- should remove items matching the predicate
 - should remove the first item (index 0)
 - should remove the first item matching key and value for objects
 - should remove the first item matching value for primitives when key is null/undefined
@@ -220,6 +232,7 @@
 - should return a new list instance if any match was found, even if updateFn returns original item for some or all matches
 - should return a new list instance on successful swap
 - should return a new list instance when reversed
+- should return a new list instance when rotated
 - should return an empty array if no item matches the condition
 - should return an empty array on an empty list
 - should return false if no item matches the condition
@@ -232,6 +245,8 @@
 - should return undefined on an empty list
 - should reverse a list of objects
 - should reverse the order of items in the list
+- should rotate the list items to the left with a negative offset
+- should rotate the list items to the right with a positive offset
 - should sort the list by key in ascending order
 - should sort the list by key in descending order
 - should sort the list in descending order for primitives
@@ -243,6 +258,8 @@
 - should update all items matching value for primitives when key is null/undefined
 - should update an object if it is in the list (by key)
 - should update an object if it is in the list (by reference)
+- should update items based on index
+- should update items matching the predicate
 - should update the first item matching key and value for objects
 - should update the first item matching value for primitives when key is null/undefined
 - should update the item at index 0 for primitives
@@ -254,6 +271,7 @@
 - should throttle updates
 - should update immediately if the limit has passed
 - should update the value immediately on the first call
+- should use default limit of 500ms when not provided
 
 ## Module: useTimer security reproduction
 - should handle invalid Date in setTimeout and not cause infinite loop/NaN progress
@@ -303,6 +321,8 @@
 - should return 'invalid date string' for invalid input: invalid date string
 - should return 'null' for invalid input: null
 - should return 'undefined' for invalid input: undefined
+- should return the original date if the adjusted date is invalid
+- should return the original date if toISOString fails
 
 ## Module: isRestrictedKey
 - should be case sensitive
@@ -328,6 +348,7 @@
 - should transform to kebab case
 - should transform to lower case
 - should transform to pascal case
+- should transform to slug case
 - should transform to snake case
 - should transform to title case
 - should transform to upper case
@@ -404,16 +425,6 @@
 - should update the input value when props.value changes (controlled component support)
 - should work with empty array
 
-## Module: LazyRender Component
-- should pass IntersectionObserver options correctly
-- should pass root prop to IntersectionObserver
-- should pass rootMargin prop to IntersectionObserver
-- should render children when it appears in view
-- should render placeholder by default (when not visible)
-- should unrender children and show placeholder when it disappears from view
-- should use the default div wrapper when not specified
-- should use the specified wrapper element
-
 ## Module: Observer Component
 - should call IntersectionObserver with the provided options
 - should call onAppear when element enters viewport
@@ -429,4 +440,14 @@
 - should unobserve when unmounted
 - should use the default div wrapper when not specified
 - should use the latest callback even if it changes after mount
+- should use the specified wrapper element
+
+## Module: LazyRender Component
+- should pass IntersectionObserver options correctly
+- should pass root prop to IntersectionObserver
+- should pass rootMargin prop to IntersectionObserver
+- should render children when it appears in view
+- should render placeholder by default (when not visible)
+- should unrender children and show placeholder when it disappears from view
+- should use the default div wrapper when not specified
 - should use the specified wrapper element

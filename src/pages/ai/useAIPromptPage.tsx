@@ -30,12 +30,16 @@ export const UseAIPromptPage = () => {
         temperature: 0.7,
         topK: 40,
         streaming: true,
-        warmup: true,
+        warmup: false,
         expectedInputs: [{ type: 'text' }, { type: 'image' }, { type: 'audio' }],
         expectedOutputs: [{ type: 'text' }],
     })
     const prompt = useAIPrompt(options)
     const debouncedPromptStatus = useDebounce(prompt.status, 300)
+
+    const handleActivate = () => {
+        setOptions(prev => ({ ...prev, warmup: true }))
+    }
 
     const handleSend = async () => {
         if (!input.trim() || prompt.status === 'prompting') return
@@ -434,8 +438,18 @@ export const UseAIPromptPage = () => {
                     )}
                 </section>
 
+                {/* Activation Required */}
+                {prompt.error?.message?.includes('User activation required') && (
+                    <article role="alert" style={{ marginBottom: '10px', color: 'orange' }}>
+                        <strong>Activation required:</strong> Click anywhere on this page or press the button below to enable the AI features.
+                        <button onClick={handleActivate} style={{ marginLeft: '10px' }}>
+                            Activate AI
+                        </button>
+                    </article>
+                )}
+
                 {/* Error */}
-                {prompt.error && (
+                {prompt.error && !prompt.error.message?.includes('User activation required') && (
                     <article role="alert" style={{ marginBottom: '10px', color: 'red' }}>
                         <strong>Error:</strong> {prompt.error.message}
                     </article>

@@ -305,6 +305,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     if (warmup) {
       createSession().then(() => setStatus('idle')).catch((err) => {
         console.error('Failed to warmup AI Prompt:', err);
+        setStatus('idle');
       });
     }
 
