@@ -93,4 +93,28 @@ describe('useThrottle', () => {
         rerender({ val: 'updated 1', limit: 0 })
         expect(result.current).toBe('updated 1')
     })
+
+    it('should use default limit of 500ms when not provided', () => {
+        const { result, rerender } = renderHook(({ val }) => useThrottle(val), {
+            initialProps: { val: 'initial' },
+        })
+
+        expect(result.current).toBe('initial')
+
+        // Update value within default limit
+        rerender({ val: 'updated 1' })
+        expect(result.current).toBe('initial')
+
+        // Advance timers by less than the default limit
+        act(() => {
+            vi.advanceTimersByTime(400)
+        })
+        expect(result.current).toBe('initial')
+
+        // Advance timers to the default limit
+        act(() => {
+            vi.advanceTimersByTime(100)
+        })
+        expect(result.current).toBe('updated 1')
+    })
 })
