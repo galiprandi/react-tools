@@ -41,3 +41,7 @@
 ## 2026-05-28 - [Predicate-Based List Manipulation]
 **Learning:** Adding functional methods like `removeWhere` and `updateWhere` to a list management hook (`useList`) significantly increases its expressiveness compared to index-based or property-based operations alone. By using a stable `setListCallback`, these methods maintain high performance and prevent unnecessary re-renders when no matches are found.
 **Pattern:** Implement functional list operations by wrapping `filter` and `map` with predicate checks, and always perform a length or equality check before calling the state setter to ensure a no-op when no items are affected.
+
+## 2026-05-29 - [Normalized Circular Operations]
+**Learning:** When implementing circular operations like `rotate` on arrays, using a double-modulo pattern `((offset % length) + length) % length` ensures the offset is correctly normalized to a positive value regardless of whether the input is positive or negative, simplifying the slicing logic.
+**Pattern:** Normalize directional offsets with `((n % len) + len) % len` before performing immutable array manipulations to robustly handle both "forward" and "backward" operations with a single logic path.
