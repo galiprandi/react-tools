@@ -401,6 +401,24 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         })
     }, [setListCallback])
 
+    const rotate = useCallback(
+        (offset: number) => {
+            setListCallback((currentList) => {
+                const length = currentList.length
+                if (length <= 1) return currentList
+
+                const normalizedOffset = ((offset % length) + length) % length
+                if (normalizedOffset === 0) return currentList
+
+                return [
+                    ...currentList.slice(length - normalizedOffset),
+                    ...currentList.slice(0, length - normalizedOffset),
+                ]
+            })
+        },
+        [setListCallback],
+    )
+
     const upsert = useCallback(
         (item: T, key?: string | undefined | null) => {
             const value = getValueToCompare(item, key)
@@ -451,6 +469,7 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
         shuffle,
         swap,
         reverse,
+        rotate,
     }
 }
 
@@ -529,4 +548,6 @@ interface UseListReturn<T> {
     swap: (indexA: number, indexB: number) => void
     /** Reverses the order of the items in the list immutably. */
     reverse: () => void
+    /** Rotates the list items by a given offset immutably. */
+    rotate: (offset: number) => void
 }

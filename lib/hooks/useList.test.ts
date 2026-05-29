@@ -1349,4 +1349,93 @@ describe('useList', () => {
             expect(result.current.list).not.toBe(originalList)
         })
     })
+
+    describe('rotate', () => {
+        it('should rotate the list items to the right with a positive offset', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c', 'd']))
+            act(() => {
+                result.current.rotate(1)
+            })
+            expect(result.current.list).toEqual(['d', 'a', 'b', 'c'])
+
+            act(() => {
+                result.current.rotate(1)
+            })
+            expect(result.current.list).toEqual(['c', 'd', 'a', 'b'])
+        })
+
+        it('should rotate the list items to the left with a negative offset', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c', 'd']))
+            act(() => {
+                result.current.rotate(-1)
+            })
+            expect(result.current.list).toEqual(['b', 'c', 'd', 'a'])
+
+            act(() => {
+                result.current.rotate(-1)
+            })
+            expect(result.current.list).toEqual(['c', 'd', 'a', 'b'])
+        })
+
+        it('should handle offset larger than list length', () => {
+            const { result } = renderHook(() => useList(['a', 'b', 'c']))
+            act(() => {
+                result.current.rotate(4) // same as rotate(1)
+            })
+            expect(result.current.list).toEqual(['c', 'a', 'b'])
+
+            act(() => {
+                result.current.rotate(-4) // same as rotate(-1)
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should do nothing and keep same reference for offset 0', () => {
+            const initialList = ['a', 'b', 'c']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.rotate(0)
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).toBe(originalList)
+
+            act(() => {
+                result.current.rotate(3) // offset equals length
+            })
+            expect(result.current.list).toEqual(initialList)
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing and keep same reference for empty list', () => {
+            const { result } = renderHook(() => useList<string>([]))
+            const originalList = result.current.list
+            act(() => {
+                result.current.rotate(1)
+            })
+            expect(result.current.list).toEqual([])
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should do nothing and keep same reference for single item list', () => {
+            const { result } = renderHook(() => useList(['a']))
+            const originalList = result.current.list
+            act(() => {
+                result.current.rotate(1)
+            })
+            expect(result.current.list).toEqual(['a'])
+            expect(result.current.list).toBe(originalList)
+        })
+
+        it('should return a new list instance when rotated', () => {
+            const initialList = ['a', 'b']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+            act(() => {
+                result.current.rotate(1)
+            })
+            expect(result.current.list).toEqual(['b', 'a'])
+            expect(result.current.list).not.toBe(originalList)
+        })
+    })
 })
