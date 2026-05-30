@@ -78,9 +78,34 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     )
 
     const insertMany = useCallback(
+        (items: T[], index?: number) => {
+            if (!Array.isArray(items) || items.length === 0) return
+            setListCallback((currentList) => {
+                const safeIndex =
+                    index === undefined
+                        ? currentList.length
+                        : Math.max(0, Math.min(currentList.length, index))
+                return [
+                    ...currentList.slice(0, safeIndex),
+                    ...items,
+                    ...currentList.slice(safeIndex),
+                ]
+            })
+        },
+        [setListCallback],
+    )
+
+    const prepend = useCallback(
+        (item: T) => {
+            setListCallback((currentList) => [item, ...currentList])
+        },
+        [setListCallback],
+    )
+
+    const prependMany = useCallback(
         (items: T[]) => {
-            if (!Array.isArray(items) || items.length === 0) return // Check if items is a non-empty array
-            setListCallback((currentList) => [...currentList, ...items])
+            if (!Array.isArray(items) || items.length === 0) return
+            setListCallback((currentList) => [...items, ...currentList])
         },
         [setListCallback],
     )
@@ -443,6 +468,8 @@ export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     return {
         list,
         addItem,
+        prepend,
+        prependMany,
         insert,
         insertMany,
         removeByIdx,
@@ -483,10 +510,14 @@ interface UseListReturn<T> {
     list: T[]
     /** Adds an item to the end of the list. */
     addItem: (item: T) => void
+    /** Adds an item to the beginning of the list. */
+    prepend: (item: T) => void
+    /** Adds multiple items to the beginning of the list. */
+    prependMany: (items: T[]) => void
     /** Inserts an item at a specific index. */
     insert: (index: number, item: T) => void
-    /** Adds multiple items to the end of the list. */
-    insertMany: (items: T[]) => void
+    /** Inserts multiple items at a specific index (defaults to the end). */
+    insertMany: (items: T[], index?: number) => void
     /** Removes the item at a specific index. */
     removeByIdx: (index: number) => void
     /** Removes the first item matching a key/value pair (or value if key is null/undefined). */
