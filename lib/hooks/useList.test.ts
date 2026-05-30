@@ -51,6 +51,58 @@ describe('useList', () => {
         })
     })
 
+    describe('prepend', () => {
+        it('should add an item to the beginning of the list', () => {
+            const { result } = renderHook(() => useList(['b', 'c']))
+            act(() => {
+                result.current.prepend('a')
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c'])
+        })
+
+        it('should add an item to an empty list', () => {
+            const { result } = renderHook(() => useList<string>())
+            act(() => {
+                result.current.prepend('first')
+            })
+            expect(result.current.list).toEqual(['first'])
+        })
+    })
+
+    describe('prependMany', () => {
+        it('should add multiple items to the beginning of the list', () => {
+            const { result } = renderHook(() => useList(['c', 'd']))
+            act(() => {
+                result.current.prependMany(['a', 'b'])
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
+        })
+
+        it('should add multiple items to an empty list', () => {
+            const { result } = renderHook(() => useList<string>())
+            act(() => {
+                result.current.prependMany(['a', 'b'])
+            })
+            expect(result.current.list).toEqual(['a', 'b'])
+        })
+
+        it('should do nothing if the input array is empty or not an array', () => {
+            const initialList = ['a', 'b']
+            const { result } = renderHook(() => useList(initialList))
+            const originalList = result.current.list
+
+            act(() => {
+                result.current.prependMany(null as any)
+            })
+            expect(result.current.list).toBe(originalList)
+
+            act(() => {
+                result.current.prependMany([])
+            })
+            expect(result.current.list).toBe(originalList)
+        })
+    })
+
     describe('insert', () => {
         it('should insert an item at the specified index', () => {
             const { result } = renderHook(() => useList(['a', 'c']))
@@ -102,10 +154,42 @@ describe('useList', () => {
     })
 
     describe('insertMany', () => {
-        it('should add multiple items to the end of the list', () => {
+        it('should add multiple items to the end of the list by default', () => {
             const { result } = renderHook(() => useList(['a', 'b']))
             act(() => {
                 result.current.insertMany(['c', 'd'])
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
+        })
+
+        it('should insert multiple items at the specified index', () => {
+            const { result } = renderHook(() => useList(['a', 'd']))
+            act(() => {
+                result.current.insertMany(['b', 'c'], 1)
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
+        })
+
+        it('should insert multiple items at the beginning (index 0)', () => {
+            const { result } = renderHook(() => useList(['c', 'd']))
+            act(() => {
+                result.current.insertMany(['a', 'b'], 0)
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
+        })
+
+        it('should insert at the beginning if index is less than 0', () => {
+            const { result } = renderHook(() => useList(['c', 'd']))
+            act(() => {
+                result.current.insertMany(['a', 'b'], -1)
+            })
+            expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
+        })
+
+        it('should insert at the end if index is greater than length', () => {
+            const { result } = renderHook(() => useList(['a', 'b']))
+            act(() => {
+                result.current.insertMany(['c', 'd'], 100)
             })
             expect(result.current.list).toEqual(['a', 'b', 'c', 'd'])
         })
