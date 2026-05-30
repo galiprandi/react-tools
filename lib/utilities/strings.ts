@@ -1,4 +1,22 @@
 /**
+ * Available transformation types for strings.
+ */
+export type TransformType =
+  | "toUpperCase"
+  | "toLowerCase"
+  | "capitalize"
+  | "titleCase"
+  | "snakeCase"
+  | "camelCase"
+  | "pascalCase"
+  | "kebabCase"
+  | "onlyNumbers"
+  | "onlyLetters"
+  | "onlyEmail"
+  | "onlyAlphanumeric"
+  | "slugify";
+
+/**
  * Transforms a string based on the specified transformation type.
  *
  * @param value - The string to transform.
@@ -23,25 +41,6 @@
  * console.log(multiple); // "HELLOWORLD123"
  * ```
  */
-
-/**
- * Available transformation types for strings.
- */
-export type TransformType =
-  | "toUpperCase"
-  | "toLowerCase"
-  | "capitalize"
-  | "titleCase"
-  | "snakeCase"
-  | "camelCase"
-  | "pascalCase"
-  | "kebabCase"
-  | "onlyNumbers"
-  | "onlyLetters"
-  | "onlyEmail"
-  | "onlyAlphanumeric"
-  | "slugify";
-
 export const valueTransforms = (
   value: string,
   transform?: TransformType | TransformType[],
@@ -57,7 +56,12 @@ export const valueTransforms = (
       case "titleCase":
         return val.toLowerCase().replace(/\b\w/g, (ch) => ch.toUpperCase());
       case "snakeCase":
-        return val.toLowerCase().trim().replace(/\s+/g, "_");
+        return val
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/[_-]/g, " ")
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "_");
       case "camelCase":
         return val
           .replace(/([a-z])([A-Z])/g, "$1 $2")
@@ -76,9 +80,11 @@ export const valueTransforms = (
           .replace(/\s+/g, "");
       case "kebabCase":
         return val
-          .replace(/([a-z])([A-Z])/g, "$1-$2")
-          .replace(/[\s_]+/g, "-")
-          .toLowerCase();
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/[_-]/g, " ")
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "-");
       case "onlyNumbers":
         return val.replace(/\D/g, "");
       case "onlyLetters":

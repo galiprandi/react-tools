@@ -20,6 +20,11 @@ describe('valueTransforms', () => {
 
     it('should transform to snake case', () => {
         expect(valueTransforms('hello world', 'snakeCase')).toBe('hello_world')
+        expect(valueTransforms('helloWorld', 'snakeCase')).toBe('hello_world')
+        expect(valueTransforms('hello-world', 'snakeCase')).toBe('hello_world')
+        expect(valueTransforms('  Hello   World  ', 'snakeCase')).toBe(
+            'hello_world',
+        )
     })
 
     it('should transform to camel case', () => {
@@ -39,6 +44,9 @@ describe('valueTransforms', () => {
         expect(valueTransforms('hello world', 'kebabCase')).toBe('hello-world')
         expect(valueTransforms('helloWorld', 'kebabCase')).toBe('hello-world')
         expect(valueTransforms('hello_world', 'kebabCase')).toBe('hello-world')
+        expect(valueTransforms('  Hello   World  ', 'kebabCase')).toBe(
+            'hello-world',
+        )
     })
 
     it('should remove all non-numeric characters', () => {
