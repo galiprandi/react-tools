@@ -66,6 +66,30 @@ interface AIProofreader {
  * @param options.expectedInputLanguages - Expected input languages (BCP 47 format)
  * @param options.warmup - Preload model on mount for faster first proofread (default: true)
  * @returns An object with data, corrections, status, progress, error, and functions to proofread or reset
+ *
+ * @example
+ * ```tsx
+ * const { data, corrections, proofread, status } = useAIProofreader();
+ *
+ * const handleProofread = () => {
+ *   proofread('I has a dream');
+ * };
+ *
+ * return (
+ *   <div>
+ *     <button onClick={handleProofread} disabled={status === 'proofreading'}>
+ *       Check
+ *     </button>
+ *     {status === 'proofreading' && <p>Checking...</p>}
+ *     <p>Corrected: {data}</p>
+ *     <ul>
+ *       {corrections.map((c, i) => (
+ *         <li key={i}>{c.explanation}</li>
+ *       ))}
+ *     </ul>
+ *   </div>
+ * );
+ * ```
  */
 export function useAIProofreader(options: UseAIProofreaderOptions = {}): UseAIProofreaderReturn {
   const { expectedInputLanguages, warmup = true } = options;
@@ -158,6 +182,7 @@ export function useAIProofreader(options: UseAIProofreaderOptions = {}): UseAIPr
         setStatus('success');
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
+          setStatus('idle');
           return;
         }
         setError(err instanceof Error ? err : new Error('Unknown error during proofreading'));

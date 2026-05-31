@@ -197,4 +197,18 @@ describe('useAIProofreader', () => {
     expect(result.current.error).toBe(null);
     expect(result.current.progress).toBe(null);
   });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    mockProofreader.proofread.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useAIProofreader());
+
+    await act(async () => {
+      await result.current.proofread('original text');
+    });
+
+    expect(result.current.status).toBe('idle');
+  });
 });
