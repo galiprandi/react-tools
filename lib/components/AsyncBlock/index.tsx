@@ -4,7 +4,6 @@ import {
     ReactNode,
     useRef,
     useCallback,
-    PropsWithChildren,
 } from 'react'
 
 /**
@@ -55,7 +54,7 @@ export const AsyncBlock = <T,>({
             setErr(null)
 
             let didTimeOut = false
-            let timer: NodeJS.Timeout | null = null
+            let timer: ReturnType<typeof setTimeout> | null = null
             const signal = abortController.signal
 
             if (timeOut) {
@@ -124,8 +123,8 @@ export const AsyncBlock = <T,>({
         return <>{error?.(err, reload)}</>
     }
 
-    if (state === 'success' && data !== null) {
-        return <>{success(data, reload)}</>
+    if (state === 'success') {
+        return <>{success(data as T, reload)}</>
     }
 
     return null
@@ -134,7 +133,7 @@ export const AsyncBlock = <T,>({
 /**
  * Props for the AsyncBlock component.
  */
-export interface AsyncBlockProps<T> extends PropsWithChildren {
+export interface AsyncBlockProps<T> {
     /**
      * A function that returns a Promise to be executed.
      * Optionally receives an AbortSignal that can be used to cancel the request.
@@ -162,14 +161,17 @@ export interface AsyncBlockProps<T> extends PropsWithChildren {
     /**
      * Dependencies to determine when to re-run the promise.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    deps?: any[]
+    deps?: unknown[]
     /**
-     * Optional side effect to execute on success.
+     * Optional side effect to execute when the promise resolves successfully.
+     *
+     * @param data - The data returned by the promise.
      */
     onSuccess?: (data: T) => void
     /**
-     * Optional side effect to execute on error.
+     * Optional side effect to execute when the promise is rejected or times out.
+     *
+     * @param err - The error that occurred.
      */
     onError?: (err: unknown) => void
 }
