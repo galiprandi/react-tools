@@ -57,3 +57,7 @@
 ## 2024-06-20 - [Achieving Full Branch Coverage with Default Parameters]
 **Learning:** To achieve 100% branch coverage in hooks or functions that use default parameters (e.g., `useThrottle(value, limit = 500)`), unit tests must explicitly invoke the function without the optional arguments. Simply relying on tests that provide values for all arguments leaves the default assignment branch uncovered.
 **Action:** Always include a test case that omits optional arguments to ensure default parameter logic is verified and coverage is maximized.
+
+## 2024-06-21 - [Testing Async Lifecycle and Unmount Safety]
+**Learning:** Testing components with asynchronous logic (like promises or timeouts) requires verifying that side-effect callbacks (e.g., `onSuccess`, `onError`) are NOT invoked if the component unmounts before the operation completes. This ensures the implementation correctly uses `isMounted` refs or `AbortController` to prevent state updates on unmounted components.
+**Action:** Always include "unmount during pending" and "unmount during timeout" test cases for components managing asynchronous lifecycles.

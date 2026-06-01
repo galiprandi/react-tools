@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, cleanup, screen, act } from '@testing-library/react'
+import { render, cleanup, screen, act, fireEvent } from '@testing-library/react'
 import { AsyncBlock } from './index'
 
 describe('<AsyncBlock />', () => {
@@ -132,5 +132,133 @@ describe('<AsyncBlock />', () => {
 
         await screen.findByText('Data 2')
         expect(promiseFn).toHaveBeenCalledTimes(2)
+    })
+
+    it('should handle pending state as a function', () => {
+        render(
+            <AsyncBlock
+                promiseFn={() => new Promise(() => {})}
+                pending={(reload) => <button onClick={reload}>Reloading</button>}
+                success={() => null}
+                error={() => null}
+            />,
+        )
+        expect(screen.getByText('Reloading')).toBeDefined()
+    })
+
+    it('should handle null as a valid success value', async () => {
+        const successContent = 'Resolved to null'
+        render(
+            <AsyncBlock
+                promiseFn={() => Promise.resolve(null)}
+                pending="Loading"
+                success={(data) => (data === null ? successContent : 'Error')}
+                error={() => null}
+            />,
+        )
+
+        await screen.findByText(successContent)
+    })
+
+    it('should not call onSuccess if unmounted before promise resolves', async () => {
+        const onSuccess = vi.fn()
+        let resolvePromise: (value: string) => void
+        const promise = new Promise<string>((resolve) => {
+            resolvePromise = resolve
+        })
+
+        const { unmount } = render(
+            <AsyncBlock
+                promiseFn={() => promise}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => null}
+                onSuccess={onSuccess}
+            />,
+        )
+
+        unmount()
+
+        await act(async () => {
+            resolvePromise!('done')
+        })
+
+        expect(onSuccess).not.toHaveBeenCalled()
+    })
+
+    it('should not call onError if unmounted before timeout expires', async () => {
+        vi.useFakeTimers()
+        const onError = vi.fn()
+
+        const { unmount } = render(
+            <AsyncBlock
+                promiseFn={() => new Promise(() => {})}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                timeOut={1000}
+                onError={onError}
+            />,
+        )
+
+        unmount()
+
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+
+        expect(onError).not.toHaveBeenCalled()
+        vi.useRealTimers()
+    })
+
+    it('should call reload when pending function is called', async () => {
+        let callCount = 0
+        const promiseFn = vi.fn(() => {
+            callCount++
+            return Promise.resolve(`Data ${callCount}`)
+        })
+
+        render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending={(reload) => (
+                    <button onClick={reload}>Manual Reload</button>
+                )}
+                success={(data) => <div>{data}</div>}
+                error={() => null}
+            />,
+        )
+
+        expect(promiseFn).toHaveBeenCalledTimes(1)
+        const button = screen.getByText('Manual Reload')
+
+        fireEvent.click(button)
+        expect(promiseFn).toHaveBeenCalledTimes(2)
+    })
+
+    it('should handle timeout error branch when unmounted', async () => {
+        vi.useFakeTimers()
+        const onError = vi.fn()
+        const { unmount } = render(
+            <AsyncBlock
+                promiseFn={() => new Promise(() => {})}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                timeOut={100}
+                onError={onError}
+            />,
+        )
+
+        // Mock isMounted.current to false manually is not possible via props,
+        // but unmount() sets it to false in useEffect cleanup.
+        unmount()
+
+        act(() => {
+            vi.advanceTimersByTime(100)
+        })
+
+        expect(onError).not.toHaveBeenCalled()
+        vi.useRealTimers()
     })
 })
