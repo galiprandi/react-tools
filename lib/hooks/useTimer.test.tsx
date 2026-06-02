@@ -501,4 +501,193 @@ describe('useTimer', () => {
         expect(callback).toHaveBeenCalledTimes(1)
         expect(result.current.isActive()).toBe(false)
     })
+
+    it('should handle NaN numeric delays in setTimeout by defaulting to 0ms', () => {
+        const callback = vi.fn()
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setTimeout(callback, NaN)
+        })
+
+        expect(callback).not.toHaveBeenCalled()
+
+        act(() => {
+            vi.advanceTimersByTime(0)
+        })
+
+        expect(callback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle invalid Date objects in setTimeoutDate by defaulting to 0ms', () => {
+        const callback = vi.fn()
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setTimeoutDate(callback, new Date('invalid'))
+        })
+
+        expect(callback).not.toHaveBeenCalled()
+
+        act(() => {
+            vi.advanceTimersByTime(0)
+        })
+
+        expect(callback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should warn and default to 1000ms if setLimitedInterval is called with a Date object', () => {
+        const callback = vi.fn()
+        const consoleWarnSpy = vi.spyOn(console, 'warn')
+
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            // @ts-expect-error: Date not supported for intervals
+            result.current.setLimitedInterval(callback, new Date(), 3)
+        })
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+        expect(consoleWarnSpy.mock.calls[0][0]).toContain(
+            'Date objects are not supported for intervals',
+        )
+
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+        expect(callback).toHaveBeenCalledTimes(1)
+
+        act(() => {
+            vi.advanceTimersByTime(2000)
+        })
+        expect(callback).toHaveBeenCalledTimes(3)
+
+        consoleWarnSpy.mockRestore()
+    })
+
+    it('should trigger onSetTimer callback in setLimitedInterval', () => {
+        const onSetTimer = vi.fn()
+        const { result } = renderHook(() => useTimer({ onSetTimer }))
+
+        act(() => {
+            result.current.setLimitedInterval(() => {}, 1000, 3)
+        })
+
+        expect(onSetTimer).toHaveBeenCalledTimes(1)
+        expect(onSetTimer.mock.calls[0][0]).toBeDefined()
+    })
+
+    it('should trigger onSetTimer callback in setInterval', () => {
+        const onSetTimer = vi.fn()
+        const { result } = renderHook(() => useTimer({ onSetTimer }))
+
+        act(() => {
+            result.current.setInterval(() => {}, 1000)
+        })
+
+        expect(onSetTimer).toHaveBeenCalledTimes(1)
+        expect(onSetTimer.mock.calls[0][0]).toBeDefined()
+    })
+
+    it('should warn and default to 1000ms if setInterval is called with NaN', () => {
+        const callback = vi.fn()
+        const consoleWarnSpy = vi.spyOn(console, 'warn')
+
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setInterval(callback, NaN)
+        })
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+        expect(consoleWarnSpy.mock.calls[0][0]).toContain(
+            'NaN provided as interval delay',
+        )
+
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        consoleWarnSpy.mockRestore()
+    })
+
+    it('should warn and default to 1000ms if setLimitedInterval is called with NaN', () => {
+        const callback = vi.fn()
+        const consoleWarnSpy = vi.spyOn(console, 'warn')
+
+        const { result } = renderHook(() => useTimer())
+
+        act(() => {
+            result.current.setLimitedInterval(callback, NaN, 3)
+        })
+
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+        expect(consoleWarnSpy.mock.calls[0][0]).toContain(
+            'NaN provided as interval delay',
+        )
+
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        consoleWarnSpy.mockRestore()
+    })
+
+    it('should call onCancelTimer when a limited interval completes naturally', () => {
+        const onCancelTimer = vi.fn()
+        const { result } = renderHook(() => useTimer({ onCancelTimer }))
+
+        let timerId: number | null = null
+        act(() => {
+            const id = result.current.setLimitedInterval(() => {}, 100, 2)
+            if (id !== null) timerId = id
+        })
+
+        act(() => {
+            vi.advanceTimersByTime(200)
+        })
+
+        expect(result.current.isActive()).toBe(false)
+        expect(onCancelTimer).toHaveBeenCalledTimes(1)
+        expect(onCancelTimer).toHaveBeenCalledWith(timerId)
+    })
+
+    it('should handle negative duration in setupProgressTracking', () => {
+        const onProgress = vi.fn()
+        const { result } = renderHook(() => useTimer({ onProgress }))
+
+        act(() => {
+            result.current.setTimeout(() => {}, -1000)
+        })
+
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+
+        expect(onProgress).not.toHaveBeenCalled()
+    })
+
+    it('should clear progress tracking if timer is cleared while progress is pending', () => {
+        const onProgress = vi.fn()
+        const { result } = renderHook(() => useTimer({ onProgress }))
+
+        act(() => {
+            result.current.setTimeout(() => {}, 10000)
+        })
+
+        act(() => {
+            vi.advanceTimersByTime(100) // Advance enough to start but not necessarily trigger interval
+            result.current.clearTimer()
+        })
+
+        // Now advance to when the progress interval would have fired
+        act(() => {
+            vi.advanceTimersByTime(1000)
+        })
+
+        // The interval should have been cleared by clearTimer or by the check inside the interval
+        expect(onProgress).not.toHaveBeenCalled()
+    })
 })

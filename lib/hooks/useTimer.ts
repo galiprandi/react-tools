@@ -16,7 +16,7 @@ function calculateDelay(delay: number | Date): number {
         const timeUntilTarget = targetTime - now.getTime()
         return Math.max(0, timeUntilTarget)
     }
-    return delay
+    return isNaN(delay) ? 0 : delay
 }
 
 /**
@@ -110,9 +110,8 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
         (totalDuration: number) => {
             if (totalDuration <= 0 || !onProgress) return
 
-            const startTime = timerRef.current.startTime || Date.now()
-            if (!timerRef.current.startTime)
-                timerRef.current.startTime = startTime
+            const startTime = timerRef.current.startTime ?? Date.now()
+            timerRef.current.startTime = startTime
 
             const progressCheckInterval = Math.max(
                 100,
@@ -211,6 +210,9 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
             if ((delay as unknown) instanceof Date) {
                 console.warn('Date objects are not supported for intervals.')
                 delay = 1000
+            } else if (isNaN(delay)) {
+                console.warn('NaN provided as interval delay, defaulting to 1000ms.')
+                delay = 1000
             }
 
             timerRef.current.startTime = Date.now()
@@ -256,6 +258,9 @@ export function useTimer(options: UseTimerProps = {}): UseTimerReturn {
 
             if ((delay as unknown) instanceof Date) {
                 console.warn('Date objects are not supported for intervals.')
+                delay = 1000
+            } else if (isNaN(delay)) {
+                console.warn('NaN provided as interval delay, defaulting to 1000ms.')
                 delay = 1000
             }
 
@@ -391,6 +396,11 @@ export interface UseTimerReturn {
      * @param callback - The function to execute
      * @param delay - The delay in milliseconds or a Date object
      * @returns The timer ID
+     *
+     * @example
+     * ```ts
+     * setTimeout(() => console.log('3s passed'), 3000);
+     * ```
      */
     setTimeout: (callback: () => void, delay: number | Date) => number | null
     /**
@@ -399,6 +409,11 @@ export interface UseTimerReturn {
      * @param callback - The function to execute
      * @param delay - The delay between executions in milliseconds
      * @returns The timer ID
+     *
+     * @example
+     * ```ts
+     * setInterval(() => console.log('Every 1s'), 1000);
+     * ```
      */
     setInterval: (callback: () => void, delay: number) => number | null
     /**
@@ -407,6 +422,11 @@ export interface UseTimerReturn {
      * @param callback - The function to execute
      * @param targetDate - The Date object when the callback should run
      * @returns The timer ID
+     *
+     * @example
+     * ```ts
+     * setTimeoutDate(() => console.log('Target date reached'), new Date('2025-12-31T23:59:59'));
+     * ```
      */
     setTimeoutDate: (callback: () => void, targetDate: Date) => number | null
     /**
@@ -416,6 +436,11 @@ export interface UseTimerReturn {
      * @param delay - The delay between executions in milliseconds
      * @param iterations - The number of times to execute the callback
      * @returns The timer ID
+     *
+     * @example
+     * ```ts
+     * setLimitedInterval(() => console.log('Tick'), 1000, 5); // Runs 5 times
+     * ```
      */
     setLimitedInterval: (
         callback: () => void,
@@ -424,6 +449,11 @@ export interface UseTimerReturn {
     ) => number | null
     /**
      * Clears the currently active timer.
+     *
+     * @example
+     * ```ts
+     * clearTimer();
+     * ```
      */
     clearTimer: () => void
 
@@ -431,24 +461,44 @@ export interface UseTimerReturn {
      * Checks if there is an active timer.
      *
      * @returns True if a timer is active, false otherwise
+     *
+     * @example
+     * ```ts
+     * if (isActive()) console.log('Timer is running');
+     * ```
      */
     isActive: () => boolean
     /**
      * Gets the ID of the currently active timer.
      *
      * @returns The timer ID or null if no timer is active
+     *
+     * @example
+     * ```ts
+     * const id = getCurrentTimerId();
+     * ```
      */
     getCurrentTimerId: () => number | null
     /**
      * Gets the number of iterations remaining for a limited interval.
      *
      * @returns The number of iterations or null if not applicable
+     *
+     * @example
+     * ```ts
+     * const remaining = getRemainingIterations();
+     * ```
      */
     getRemainingIterations: () => number | null
     /**
      * Gets the remaining time in milliseconds for the current timeout.
      *
      * @returns The remaining time in ms, or -1 if no timeout is active
+     *
+     * @example
+     * ```ts
+     * const ms = getRemainingTime();
+     * ```
      */
     getRemainingTime: () => number
 }
