@@ -58,6 +58,10 @@
 **Learning:** To achieve 100% branch coverage in hooks or functions that use default parameters (e.g., `useThrottle(value, limit = 500)`), unit tests must explicitly invoke the function without the optional arguments. Simply relying on tests that provide values for all arguments leaves the default assignment branch uncovered.
 **Action:** Always include a test case that omits optional arguments to ensure default parameter logic is verified and coverage is maximized.
 
+## 2024-06-25 - [Robust Timer Input Validation]
+**Learning:** Browser timer APIs like `setInterval` and `setTimeout` have inconsistent behaviors when receiving `NaN` or unexpected objects (like `Date` for intervals), often defaulting to 1ms or 0ms without warning. Explicitly validating these inputs and providing fallback values (e.g., 1000ms for intervals) with `console.warn` ensures predictable behavior and improves developer experience.
+**Action:** Implement defensive checks for numeric inputs in timer hooks and utilities, especially when they might be derived from dynamic or external sources.
+
 ## 2024-06-21 - [Testing Async Lifecycle and Unmount Safety]
 **Learning:** Testing components with asynchronous logic (like promises or timeouts) requires verifying that side-effect callbacks (e.g., `onSuccess`, `onError`) are NOT invoked if the component unmounts before the operation completes. This ensures the implementation correctly uses `isMounted` refs or `AbortController` to prevent state updates on unmounted components.
 **Action:** Always include "unmount during pending" and "unmount during timeout" test cases for components managing asynchronous lifecycles.
