@@ -1,3 +1,41 @@
+import { forwardRef, ForwardedRef } from 'react'
+import { isRestrictedKey } from '../../utilities/security'
+
+const FormInner = <T,>(
+    props: FormProps<T>,
+    ref: ForwardedRef<HTMLFormElement>,
+): JSX.Element => {
+    const { onSubmitValues, filterEmptyValues, ...restProps } = props
+
+    /**
+     * Handles the form submission event.
+     *
+     * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
+     */
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        if (onSubmitValues) {
+            const formData = new FormData(event.currentTarget)
+            const entries = formData.entries()
+            const values = Object.create(null) as T
+
+            for (const [key, value] of entries) {
+                // Security check: prevent prototype pollution and object property injection
+                if (isRestrictedKey(key)) {
+                    continue
+                }
+
+                if (filterEmptyValues && !value) continue
+                ;(values as Record<string, unknown>)[key] = value
+            }
+
+            onSubmitValues(values)
+        }
+        props.onSubmit && props.onSubmit(event)
+    }
+    return <form ref={ref} onSubmit={onSubmit} {...restProps} />
+}
+
 /**
  * A wrapper for the form element that provides additional functionality to handle form submissions.
  * It also provides a callback function that is triggered when form values are submitted.
@@ -31,46 +69,8 @@
  * </Form>
  * ```
  */
-import { forwardRef, ForwardedRef } from 'react'
-import { isRestrictedKey } from '../../utilities/security'
-
-const FormInner = <T,>(
-    props: FormProps<T>,
-    ref: ForwardedRef<HTMLFormElement>
-): JSX.Element => {
-    const { onSubmitValues, filterEmptyValues, ...restProps } = props
-
-    /**
-     * Handles the form submission event.
-     *
-     * @param {React.FormEvent<HTMLFormElement>} event - The form submission event.
-     */
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        if (onSubmitValues) {
-            const formData = new FormData(event.currentTarget)
-            const entries = formData.entries()
-            const values = Object.create(null) as T
-
-            for (const [key, value] of entries) {
-                // Security check: prevent prototype pollution and object property injection
-                if (isRestrictedKey(key)) {
-                    continue
-                }
-
-                if (filterEmptyValues && !value) continue
-                ;(values as Record<string, unknown>)[key] = value
-            }
-
-            onSubmitValues(values)
-        }
-        props.onSubmit && props.onSubmit(event)
-    }
-    return <form ref={ref} onSubmit={onSubmit} {...restProps} />
-}
-
 export const Form = forwardRef(FormInner) as <T>(
-    props: FormProps<T> & React.RefAttributes<HTMLFormElement>
+    props: FormProps<T> & React.RefAttributes<HTMLFormElement>,
 ) => JSX.Element
 
 /**
