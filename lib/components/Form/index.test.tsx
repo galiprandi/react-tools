@@ -99,7 +99,7 @@ describe('Form Component', () => {
         expect(onSubmit).toHaveBeenCalledTimes(1)
     })
 
-    it('should include empty values if filterEmptyValues is false', () => {
+    it('should filter out empty values if filterEmptyValues is true', () => {
         const onSubmit = vi.fn()
         const testId = 'test-4'
         render(
@@ -130,6 +130,33 @@ describe('Form Component', () => {
         expect(onSubmit).toHaveBeenCalledWith({ name: 'John Does' })
     })
 
+    it('should include empty values by default (filterEmptyValues is false)', () => {
+        const onSubmit = vi.fn()
+        const testId = 'test-default-empty'
+        render(
+            <Form<TestFormValues>
+                onSubmitValues={onSubmit}
+                data-testid={testId}
+            >
+                <label>
+                    Name:
+                    <input type="text" name="name" defaultValue="John Doe" />
+                </label>
+                <label>
+                    Email:
+                    <input type="email" name="email" defaultValue="" />
+                </label>
+                <button type="submit">Submit</button>
+            </Form>,
+        )
+
+        fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
+        expect(onSubmit).toHaveBeenCalledWith({
+            name: 'John Doe',
+            email: '',
+        })
+    })
+
     it('should filter out restricted keys to prevent prototype pollution and injection', () => {
         const onSubmit = vi.fn()
         const testId = 'test-security'
@@ -152,11 +179,12 @@ describe('Form Component', () => {
         )
 
         // Spy on FormData to return our mock entries including restricted ones
-        const formDataSpy = vi
-            .spyOn(window, 'FormData')
-            .mockImplementation(() => ({
-                entries: () => mockEntries[Symbol.iterator](),
-            } as unknown as FormData))
+        const formDataSpy = vi.spyOn(window, 'FormData').mockImplementation(
+            () =>
+                ({
+                    entries: () => mockEntries[Symbol.iterator](),
+                }) as unknown as FormData,
+        )
 
         fireEvent.submit(screen.getByTestId(testId) as HTMLFormElement)
 
@@ -178,7 +206,9 @@ describe('Form Component', () => {
 
     it('should forward ref to the form element', () => {
         const ref = { current: null as HTMLFormElement | null }
-        render(<Form onSubmitValues={vi.fn()} ref={ref} data-testid="form-ref" />)
+        render(
+            <Form onSubmitValues={vi.fn()} ref={ref} data-testid="form-ref" />,
+        )
         expect(ref.current).not.toBeNull()
         expect(ref.current?.tagName).toBe('FORM')
     })
