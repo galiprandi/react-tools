@@ -90,6 +90,8 @@ export interface UseAIPromptOptions {
   expectedInputs?: { type: 'text' | 'audio' | 'image'; languages?: string[] }[];
   /** Expected output types for multimodal support */
   expectedOutputs?: { type: 'text' | 'audio' | 'image'; languages?: string[] }[];
+  /** Output language for the model (e.g., 'en', 'es', 'ja') */
+  outputLanguage?: string;
 }
 
 /**
@@ -158,7 +160,7 @@ export interface UseAIPromptResult {
  * @returns An object with state and functions to interact with the model
  */
 export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult {
-  const { initialPrompts, temperature, topK, streaming = false, warmup = true, expectedInputs, expectedOutputs } = options;
+  const { initialPrompts, temperature, topK, streaming = false, warmup = true, expectedInputs, expectedOutputs, outputLanguage } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AIPromptStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
@@ -195,7 +197,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
 
     // Support both window.ai.languageModel and the global LanguageModel
     const ai = (window as any).ai;
-    const LanguageModel = (window as any).LanguageModel || ai?.languageModel;
+    const LanguageModel = (window as any).LanguageModel || ai?.languageModel || (window as any).ai?.LanguageModel;
 
     if (!LanguageModel) {
       throw new Error('Prompt API not supported in this browser');
@@ -213,10 +215,12 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     // Check availability
     if (typeof LanguageModel.availability === 'function') {
       const avail = await LanguageModel.availability();
-      if (avail === 'unavailable') {
+      // Handle both string responses and object responses
+      const availStatus = typeof avail === 'string' ? avail : (avail?.status || 'available');
+      if (availStatus === 'unavailable') {
         throw new Error('Prompt API is not available');
       }
-      if (avail === 'downloading' || avail === 'after-download') {
+      if (availStatus === 'downloading' || availStatus === 'after-download') {
         setStatus('downloading');
       } else {
         setStatus('initializing');
@@ -234,6 +238,7 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
       topK,
       expectedInputs,
       expectedOutputs,
+      outputLanguage,
       monitor(m: any) {
         m.addEventListener('downloadprogress', (e: any) => {
           setProgress({ loaded: e.loaded, total: e.total });

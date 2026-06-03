@@ -50,6 +50,7 @@
 
 ## Module: useAIProofreader
 - should call destroy on unmount
+- should handle AbortError by resetting to idle
 - should handle download progress
 - should handle errors
 - should initialize with idle status
@@ -156,11 +157,13 @@
 ## Module: useList
 - should add a primitive item if it is not in the list
 - should add an item to an empty list
+- should add an item to the beginning of the list
 - should add an item to the end of the list
 - should add an object if it is not in the list (by key)
 - should add an object if it is not in the list (by reference)
 - should add multiple items to an empty list
-- should add multiple items to the end of the list
+- should add multiple items to the beginning of the list
+- should add multiple items to the end of the list by default
 - should always add if key is restricted
 - should do nothing and keep same reference for empty list
 - should do nothing and keep same reference for offset 0
@@ -194,6 +197,8 @@
 - should insert at the end (index equals length)
 - should insert at the end if index is greater than length
 - should insert into an empty list
+- should insert multiple items at the beginning (index 0)
+- should insert multiple items at the specified index
 - should move an item backward in the list
 - should move an item forward in the list
 - should move an item to the same position without change
@@ -278,18 +283,28 @@
 
 ## Module: useTimer
 - should calculate remaining time correctly for setTimeout
+- should call onCancelTimer when a limited interval completes naturally
 - should clean up all timers on unmount
 - should clear a timer before it completes
+- should clear progress tracking if timer is cleared while progress is pending
 - should create a timer with setTimeout
 - should execute limited intervals the specified number of times
 - should execute setInterval repeatedly
+- should handle NaN numeric delays in setTimeout by defaulting to 0ms
+- should handle invalid Date objects in setTimeoutDate by defaulting to 0ms
 - should handle negative delays in setTimeout by executing immediately
+- should handle negative duration in setupProgressTracking
 - should handle setting a new timer while one is already active
 - should handle timeouts with Date objects
 - should not report progress if onProgress callback is not provided
 - should report progress for long timeouts
 - should return -1 for remaining time for non-active states or intervals
 - should return null for remaining iterations for non-limited intervals/timeouts
+- should trigger onSetTimer callback in setInterval
+- should trigger onSetTimer callback in setLimitedInterval
+- should warn and default to 1000ms if setInterval is called with NaN
+- should warn and default to 1000ms if setLimitedInterval is called with NaN
+- should warn and default to 1000ms if setLimitedInterval is called with a Date object
 - should warn but still work when providing Date object to setInterval
 - should warn if setLimitedInterval is called with invalid iterations
 
@@ -364,8 +379,14 @@
 - should return normalized language code from navigator.languages[0]
 
 ## Module: <AsyncBlock />
+- should call reload when pending function is called
 - should clean up properly on unmount
+- should handle null as a valid success value
+- should handle pending state as a function
 - should handle timeout
+- should handle timeout error branch when unmounted
+- should not call onError if unmounted before timeout expires
+- should not call onSuccess if unmounted before promise resolves
 - should reload the promise when reload is called
 - should render error state and call onError
 - should render pending state
@@ -404,9 +425,10 @@
 ## Module: Form Component
 - should call onSubmit with form values on submit
 - should call onSubmitValues with form values on submit
+- should filter out empty values if filterEmptyValues is true
 - should filter out restricted keys to prevent prototype pollution and injection
 - should forward ref to the form element
-- should include empty values if filterEmptyValues is false
+- should include empty values by default (filterEmptyValues is false)
 - should render the form and its children
 
 ## Module: Form Security
@@ -425,6 +447,16 @@
 - should update the input value when props.value changes (controlled component support)
 - should work with empty array
 
+## Module: LazyRender Component
+- should pass IntersectionObserver options correctly
+- should pass root prop to IntersectionObserver
+- should pass rootMargin prop to IntersectionObserver
+- should render children when it appears in view
+- should render placeholder by default (when not visible)
+- should unrender children and show placeholder when it disappears from view
+- should use the default div wrapper when not specified
+- should use the specified wrapper element
+
 ## Module: Observer Component
 - should call IntersectionObserver with the provided options
 - should call onAppear when element enters viewport
@@ -440,14 +472,4 @@
 - should unobserve when unmounted
 - should use the default div wrapper when not specified
 - should use the latest callback even if it changes after mount
-- should use the specified wrapper element
-
-## Module: LazyRender Component
-- should pass IntersectionObserver options correctly
-- should pass root prop to IntersectionObserver
-- should pass rootMargin prop to IntersectionObserver
-- should render children when it appears in view
-- should render placeholder by default (when not visible)
-- should unrender children and show placeholder when it disappears from view
-- should use the default div wrapper when not specified
 - should use the specified wrapper element
