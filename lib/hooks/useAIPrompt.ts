@@ -84,7 +84,7 @@ export interface UseAIPromptOptions {
   topK?: number;
   /** Enable streaming output for real-time results */
   streaming?: boolean;
-  /** Preload the model on component mount */
+  /** Preload the model on component mount (default: false) */
   warmup?: boolean;
   /** Expected input types for multimodal support */
   expectedInputs?: { type: 'text' | 'audio' | 'image'; languages?: string[] }[];
@@ -160,7 +160,7 @@ export interface UseAIPromptResult {
  * @returns An object with state and functions to interact with the model
  */
 export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult {
-  const { initialPrompts, temperature, topK, streaming = false, warmup = true, expectedInputs, expectedOutputs, outputLanguage } = options;
+  const { initialPrompts, temperature, topK, streaming = false, warmup = false, expectedInputs, expectedOutputs, outputLanguage } = options;
   const [data, setData] = useState<string>('');
   const [status, setStatus] = useState<AIPromptStatus>('idle');
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
