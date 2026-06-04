@@ -215,12 +215,12 @@ export function useAIPrompt(options: UseAIPromptOptions = {}): UseAIPromptResult
     // Check availability
     if (typeof LanguageModel.availability === 'function') {
       const avail = await LanguageModel.availability();
-      // Handle both string responses and object responses
-      const availStatus = typeof avail === 'string' ? avail : (avail?.status || 'available');
-      if (availStatus === 'unavailable') {
+      // Log availability result for debugging
+      console.log('LanguageModel.availability() result:', avail);
+      if (avail === 'unavailable') {
         throw new Error('Prompt API is not available');
       }
-      if (availStatus === 'downloading' || availStatus === 'after-download') {
+      if (avail === 'downloading' || avail === 'after-download') {
         setStatus('downloading');
       } else {
         setStatus('initializing');
