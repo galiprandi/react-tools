@@ -28,11 +28,11 @@ export type TransformType =
  * const upper = valueTransforms('hello', 'toUpperCase');
  * console.log(upper); // "HELLO"
  *
- * const capitalized = valueTransforms('hello world', 'capitalize');
+ * const capitalized = valueTransforms('  hello world  ', 'capitalize');
  * console.log(capitalized); // "Hello world"
  *
- * const title = valueTransforms('hello world', 'titleCase');
- * console.log(title); // "Hello World"
+ * const title = valueTransforms('hello_world-exampleHelloWorld', 'titleCase');
+ * console.log(title); // "Hello World Example Hello World"
  *
  * const pascal = valueTransforms('hello world', 'pascalCase');
  * console.log(pascal); // "HelloWorld"
@@ -51,10 +51,18 @@ export const valueTransforms = (
         return val.toUpperCase();
       case "toLowerCase":
         return val.toLowerCase();
-      case "capitalize":
-        return val.trim().charAt(0).toUpperCase() + val.trim().slice(1).toLowerCase();
+      case "capitalize": {
+        const trimmed = val.trim();
+        return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+      }
       case "titleCase":
-        return val.toLowerCase().replace(/\b\w/g, (ch) => ch.toUpperCase());
+        return val
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/[_-]/g, " ")
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, " ")
+          .replace(/\b\w/g, (ch) => ch.toUpperCase());
       case "snakeCase":
         return val
           .replace(/([a-z])([A-Z])/g, "$1 $2")

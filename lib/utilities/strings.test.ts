@@ -16,6 +16,12 @@ describe('valueTransforms', () => {
 
     it('should transform to title case', () => {
         expect(valueTransforms('hello world', 'titleCase')).toBe('Hello World')
+        expect(valueTransforms('hello_world', 'titleCase')).toBe('Hello World')
+        expect(valueTransforms('hello-world', 'titleCase')).toBe('Hello World')
+        expect(valueTransforms('helloWorld', 'titleCase')).toBe('Hello World')
+        expect(valueTransforms('  hello   world  ', 'titleCase')).toBe(
+            'Hello World',
+        )
     })
 
     it('should transform to snake case', () => {
@@ -101,6 +107,9 @@ describe('valueTransforms', () => {
             'hello_world',
         )
         expect(valueTransforms('  hello  ', 'capitalize')).toBe('Hello')
+        expect(valueTransforms('  hello world  ', 'capitalize')).toBe(
+            'Hello world',
+        )
     })
 
     it('should handle multiple words in capitalize (only first char of first word)', () => {
