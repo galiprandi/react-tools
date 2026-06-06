@@ -65,3 +65,7 @@
 ## 2024-06-21 - [Testing Async Lifecycle and Unmount Safety]
 **Learning:** Testing components with asynchronous logic (like promises or timeouts) requires verifying that side-effect callbacks (e.g., `onSuccess`, `onError`) are NOT invoked if the component unmounts before the operation completes. This ensures the implementation correctly uses `isMounted` refs or `AbortController` to prevent state updates on unmounted components.
 **Action:** Always include "unmount during pending" and "unmount during timeout" test cases for components managing asynchronous lifecycles.
+
+## 2024-06-26 - [Verifying Polymorphic Type Inference]
+**Learning:** Hooks that perform automatic type inference (like `useAIPrompt` for multimodal inputs) should have explicit unit tests for each supported input type (e.g., `ArrayBuffer`, `Blob`, `string[]`). Relying only on happy-path text tests can leave type-specific logic uncovered and prone to regressions.
+**Action:** Always include a dedicated test case for each supported input type in internal normalization or inference functions to ensure full branch coverage and robustness.
