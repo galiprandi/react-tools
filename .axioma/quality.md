@@ -69,3 +69,7 @@
 ## 2024-06-26 - [Verifying Polymorphic Type Inference]
 **Learning:** Hooks that perform automatic type inference (like `useAIPrompt` for multimodal inputs) should have explicit unit tests for each supported input type (e.g., `ArrayBuffer`, `Blob`, `string[]`). Relying only on happy-path text tests can leave type-specific logic uncovered and prone to regressions.
 **Action:** Always include a dedicated test case for each supported input type in internal normalization or inference functions to ensure full branch coverage and robustness.
+
+## 2026-06-07 - [Explicit AbortError State Management]
+**Learning:** When wrapping browser-native asynchronous APIs (like the Built-in AI APIs), it's critical to explicitly handle the `AbortError` in `catch` blocks by resetting the hook's status to `'idle'`. This ensures that if an operation is cancelled (e.g., via a signal or component unmount), the UI state doesn't remain "stuck" in a loading or active state, improving the robustness of state management across the application.
+**Action:** Always transition the status to `'idle'` when an `AbortError` is caught in AI-related hooks to maintain synchronization between the UI and the underlying API state.

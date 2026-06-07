@@ -407,4 +407,19 @@ describe('useAISummarize', () => {
     expect(result.current.status).toBe('error');
     expect(result.current.error?.message).toContain('User activation required');
   });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    mockSummarizer.summarize.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useAISummarize());
+
+    await act(async () => {
+      await result.current.summarize('input text');
+    });
+
+    expect(result.current.status).toBe('idle');
+    expect(result.current.error).toBeNull();
+  });
 });

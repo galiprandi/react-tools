@@ -187,6 +187,7 @@ export function useAIWrite(options: UseAIWriteOptions = {}): UseAIWriteReturn {
         }
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
+          setStatus('idle');
           return;
         }
         setError(err instanceof Error ? err : new Error('Unknown error during writing'));

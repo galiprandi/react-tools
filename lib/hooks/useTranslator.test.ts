@@ -247,4 +247,19 @@ describe('useTranslator', () => {
 
     expect(result.current.progress).toEqual({ loaded: 50, total: 100 });
   });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    mockTranslator.translate.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useTranslator({ sourceLanguage: 'en', targetLanguage: 'es', streaming: false, warmup: false }));
+
+    await act(async () => {
+      await result.current.translate('Hello world');
+    });
+
+    expect(result.current.status).toBe('idle');
+    expect(result.current.error).toBeNull();
+  });
 });

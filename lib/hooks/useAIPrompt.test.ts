@@ -370,4 +370,19 @@ describe('useAIPrompt', () => {
         )
         consoleSpy.mockRestore()
     })
+
+    it('should handle AbortError by resetting to idle', async () => {
+        const abortError = new Error('The operation was aborted')
+        abortError.name = 'AbortError'
+        mockSession.prompt.mockRejectedValue(abortError)
+
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.prompt('hello')
+        })
+
+        expect(result.current.status).toBe('idle')
+        expect(result.current.error).toBeNull()
+    })
 })

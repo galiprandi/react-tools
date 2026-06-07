@@ -297,4 +297,19 @@ describe('useAIWrite', () => {
     expect(result.current.error).toBe(null);
     expect(result.current.progress).toBe(null);
   });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    mockWriter.write.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useAIWrite());
+
+    await act(async () => {
+      await result.current.write('prompt');
+    });
+
+    expect(result.current.status).toBe('idle');
+    expect(result.current.error).toBeNull();
+  });
 });

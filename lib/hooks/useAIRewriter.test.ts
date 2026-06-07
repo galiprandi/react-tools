@@ -312,4 +312,19 @@ describe('useAIRewriter', () => {
     expect(result.current.error).toBe(null);
     expect(result.current.progress).toBe(null);
   });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('The operation was aborted');
+    abortError.name = 'AbortError';
+    mockRewriter.rewrite.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useAIRewriter());
+
+    await act(async () => {
+      await result.current.rewrite('original text');
+    });
+
+    expect(result.current.status).toBe('idle');
+    expect(result.current.error).toBeNull();
+  });
 });
