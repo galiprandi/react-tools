@@ -405,6 +405,7 @@ export function useAIPrompt(
                 }
             } catch (err) {
                 if (err instanceof Error && err.name === 'AbortError') {
+                    setStatus('idle')
                     return
                 }
                 setError(

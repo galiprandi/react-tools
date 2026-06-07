@@ -330,6 +330,7 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
         }
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
+          setStatus('idle');
           return;
         }
         setError(err instanceof Error ? err : new Error('Unknown error during translation'));
