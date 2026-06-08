@@ -73,3 +73,7 @@
 ## 2026-06-07 - [Explicit AbortError State Management]
 **Learning:** When wrapping browser-native asynchronous APIs (like the Built-in AI APIs), it's critical to explicitly handle the `AbortError` in `catch` blocks by resetting the hook's status to `'idle'`. This ensures that if an operation is cancelled (e.g., via a signal or component unmount), the UI state doesn't remain "stuck" in a loading or active state, improving the robustness of state management across the application.
 **Action:** Always transition the status to `'idle'` when an `AbortError` is caught in AI-related hooks to maintain synchronization between the UI and the underlying API state.
+
+## 2026-06-08 - Distinguishing Abort Reasons in Async Components
+**Learning:** When using `AbortController` in components that also implement a `timeOut`, it is critical to distinguish between a manual abort (e.g., due to dependency change or unmount) and a timeout abort. Indiscriminately ignoring all aborted promises in a `.catch` block can swallow legitimate timeout errors.
+**Action:** Use `signal.reason` to filter aborts in `.catch` blocks: `if (signal.aborted && signal.reason !== 'Timeout') return`. This ensures race conditions are prevented while still allowing the component to transition to an error state upon timeout.

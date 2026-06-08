@@ -9,10 +9,15 @@ import {
 /**
  * AsyncBlock component – Declaratively renders asynchronous content with pending, success, and error states.
  *
- * @param {AsyncBlockProps<T>} props - Props to control the behavior and rendering of the async operation.
- * @returns {JSX.Element | null} - Rendered result based on async state.
+ * This component manages the lifecycle of an asynchronous operation (e.g., a fetch request),
+ * automatically handling pending, success, and error states. It also supports timeouts,
+ * dependency-based re-execution, and manual reloads.
  *
- * Example usage:
+ * @template T - The type of data returned by the async operation.
+ * @param props - Props to control the behavior and rendering of the async operation.
+ * @returns Rendered result based on async state.
+ *
+ * @example
  *
  * ```tsx
  * <AsyncBlock
@@ -53,13 +58,11 @@ export const AsyncBlock = <T,>({
             setData(null)
             setErr(null)
 
-            let didTimeOut = false
             let timer: ReturnType<typeof setTimeout> | null = null
             const signal = abortController.signal
 
             if (timeOut) {
                 timer = setTimeout(() => {
-                    didTimeOut = true
                     abortController.abort('Timeout')
                     if (isMounted.current) {
                         setState('error')
@@ -83,7 +86,7 @@ export const AsyncBlock = <T,>({
                     }
                 })
                 .catch((e) => {
-                    if (signal.aborted && didTimeOut) return
+                    if (signal.aborted && signal.reason !== 'Timeout') return
 
                     if (isMounted.current) {
                         if (timer) clearTimeout(timer)
@@ -137,29 +140,43 @@ export interface AsyncBlockProps<T> {
     /**
      * A function that returns a Promise to be executed.
      * Optionally receives an AbortSignal that can be used to cancel the request.
+     *
+     * @param signal - An AbortSignal to handle request cancellation.
      */
     promiseFn: (signal?: AbortSignal) => Promise<T>
     /**
      * Element or function to render while the promise is pending.
      * Optionally receives a reload function to re-run the async operation.
+     *
+     * @param reload - Function to re-run the async operation.
      */
     pending: ReactNode | ((reload: () => void) => ReactNode)
     /**
      * Function to render if the promise resolves successfully.
      * Receives the data and a reload function.
+     *
+     * @param data - The data returned by the promise.
+     * @param reload - Function to re-run the async operation.
      */
     success: (data: T, reload: () => void) => ReactNode
     /**
      * Function to render if the promise is rejected or times out.
      * Receives the error and a reload function.
+     *
+     * @param err - The error returned by the promise or the timeout error.
+     * @param reload - Function to re-run the async operation.
      */
-    error: (err: unknown, reload: () => void) => ReactNode
+    error?: (err: unknown, reload: () => void) => ReactNode
     /**
      * Optional timeout in milliseconds before failing the promise.
+     *
+     * @default undefined
      */
     timeOut?: number
     /**
      * Dependencies to determine when to re-run the promise.
+     *
+     * @default []
      */
     deps?: unknown[]
     /**

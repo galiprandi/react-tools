@@ -1,9 +1,20 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+    describe,
+    it,
+    expect,
+    beforeEach,
+    afterEach,
+    vi,
+} from 'vitest'
 import { render, cleanup, screen, act, fireEvent } from '@testing-library/react'
 import { AsyncBlock } from './index'
 
 describe('<AsyncBlock />', () => {
     beforeEach(cleanup)
+
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
 
     it('should render pending state', () => {
         const pendingContent = 'Loading...'
@@ -260,5 +271,90 @@ describe('<AsyncBlock />', () => {
 
         expect(onError).not.toHaveBeenCalled()
         vi.useRealTimers()
+    })
+
+    it('should not update state if aborted due to dependency change (race condition)', async () => {
+        let rejectFirstPromise: (reason?: unknown) => void
+        const firstPromise = new Promise((_, reject) => {
+            rejectFirstPromise = reject
+        })
+
+        const secondPromise = Promise.resolve('Success 2')
+
+        const promiseFn = vi
+            .fn()
+            .mockReturnValueOnce(firstPromise)
+            .mockReturnValueOnce(secondPromise)
+
+        const onError = vi.fn()
+        const onSuccess = vi.fn()
+
+        const { rerender } = render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={(data) => <div>{data}</div>}
+                error={() => <div>Error</div>}
+                deps={[1]}
+                onSuccess={onSuccess}
+                onError={onError}
+            />,
+        )
+
+        expect(promiseFn).toHaveBeenCalledTimes(1)
+        expect(screen.getByText('Loading')).toBeDefined()
+
+        // Trigger dependency change, which aborts the first promise
+        rerender(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={(data) => <div>{data}</div>}
+                error={() => <div>Error</div>}
+                deps={[2]}
+                onSuccess={onSuccess}
+                onError={onError}
+            />,
+        )
+
+        expect(promiseFn).toHaveBeenCalledTimes(2)
+
+        // Now reject the first promise (which is already aborted)
+        await act(async () => {
+            rejectFirstPromise!(new Error('First promise failed'))
+        })
+
+        // It should NOT be in error state because the first promise was aborted
+        expect(screen.queryByText('Error')).toBeNull()
+        expect(onError).not.toHaveBeenCalled()
+
+        // Wait for the second promise to resolve
+        await screen.findByText('Success 2')
+        expect(onSuccess).toHaveBeenCalledWith('Success 2')
+    })
+
+    it('should render nothing if error occurs and no error component is provided', async () => {
+        const promiseFn = () => Promise.reject(new Error('Failed'))
+
+        const { container } = render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={() => 'Success'}
+                // error prop is missing
+            />,
+        )
+
+        // Wait for it to fail (it starts with "Loading")
+        await act(async () => {
+            try {
+                await promiseFn()
+            } catch {
+                // Ignore
+            }
+        })
+
+        // It should render nothing
+        expect(container.firstChild).toBeNull()
     })
 })
