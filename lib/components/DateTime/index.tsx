@@ -68,6 +68,8 @@ export const DateTime = forwardRef<HTMLInputElement, DateTimeProps>((props, ref)
     )
 })
 
+DateTime.displayName = 'DateTime'
+
 /**
  * The properties for the DateTime component.
  *

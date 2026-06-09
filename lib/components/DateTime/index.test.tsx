@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, cleanup, fireEvent } from '@testing-library/react'
-import { DateTime } from '../../main.ts'
+import { DateTime } from './index'
 import { iso2LocalDateTime } from '../../utilities/dates'
 
 describe('<DateTime />', () => {
@@ -145,5 +145,40 @@ describe('<DateTime />', () => {
         rerender(<DateTime isoValue="2021-01-02T01:00:00Z" data-testid="controlled-datetime" />)
         const expectedUpdatedLocal = iso2LocalDateTime('2021-01-02T01:00:00Z')
         expect(input.value).toBe(expectedUpdatedLocal)
+    })
+
+    it('should use standard min and max props when isoMin and isoMax are not provided', () => {
+        const { getByTestId } = render(
+            <DateTime
+                data-testid="test-minmax"
+                min="2021-01-01T00:00"
+                max="2021-12-31T23:59"
+            />,
+        )
+        const input = getByTestId('test-minmax') as HTMLInputElement
+        expect(input.min).toBe('2021-01-01T00:00')
+        expect(input.max).toBe('2021-12-31T23:59')
+    })
+
+    it('should use value prop when isoValue is not provided', () => {
+        const { getByTestId } = render(
+            <DateTime
+                data-testid="test-value"
+                value="2021-01-01T00:00"
+            />,
+        )
+        const input = getByTestId('test-value') as HTMLInputElement
+        expect(input.value).toBe('2021-01-01T00:00')
+    })
+
+    it('should handle invalid isoValue', () => {
+        const onChangeISOValue = vi.fn()
+        render(
+            <DateTime
+                isoValue="invalid-date"
+                onChangeISOValue={onChangeISOValue}
+            />,
+        )
+        expect(onChangeISOValue).not.toHaveBeenCalled()
     })
 })
