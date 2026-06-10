@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
  * @template T
  * @param value - The value to throttle.
  * @param limit - The limit in milliseconds to throttle the value.
+ * @default 500
  * @returns The throttled value.
  *
  * @example
@@ -41,7 +42,7 @@ export function useThrottle<T>(value: T, limit: number = 500): T {
             return
         }
 
-        if (limit <= 0) {
+        if (!limit || limit <= 0) {
             setThrottledValue(value)
             return
         }

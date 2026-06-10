@@ -94,6 +94,30 @@ describe('useThrottle', () => {
         expect(result.current).toBe('updated 1')
     })
 
+    it('should return the value immediately when limit is negative', () => {
+        const { result, rerender } = renderHook(
+            ({ val, limit }) => useThrottle(val, limit),
+            {
+                initialProps: { val: 'initial', limit: -100 },
+            },
+        )
+
+        rerender({ val: 'updated 1', limit: -100 })
+        expect(result.current).toBe('updated 1')
+    })
+
+    it('should return the value immediately when limit is NaN', () => {
+        const { result, rerender } = renderHook(
+            ({ val, limit }) => useThrottle(val, limit),
+            {
+                initialProps: { val: 'initial', limit: NaN },
+            },
+        )
+
+        rerender({ val: 'updated 1', limit: NaN })
+        expect(result.current).toBe('updated 1')
+    })
+
     it('should use default limit of 500ms when not provided', () => {
         const { result, rerender } = renderHook(({ val }) => useThrottle(val), {
             initialProps: { val: 'initial' },
