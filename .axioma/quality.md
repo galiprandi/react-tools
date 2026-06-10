@@ -77,3 +77,7 @@
 ## 2026-06-08 - Distinguishing Abort Reasons in Async Components
 **Learning:** When using `AbortController` in components that also implement a `timeOut`, it is critical to distinguish between a manual abort (e.g., due to dependency change or unmount) and a timeout abort. Indiscriminately ignoring all aborted promises in a `.catch` block can swallow legitimate timeout errors.
 **Action:** Use `signal.reason` to filter aborts in `.catch` blocks: `if (signal.aborted && signal.reason !== 'Timeout') return`. This ensures race conditions are prevented while still allowing the component to transition to an error state upon timeout.
+
+## 2026-06-10 - [Robust Hook Input Validation]
+**Learning:** React hooks that wrap timing-sensitive browser APIs (like `useThrottle`) should implement defensive checks for their numeric parameters (e.g., `limit`). Using a pattern like `if (!limit || limit <= 0)` covers `NaN`, `0`, and negative values, ensuring the hook falls back to an immediate update rather than passing invalid values to `setTimeout`.
+**Action:** Always validate numeric inputs in hooks that interact with browser timers or scheduling APIs to provide a safe and predictable fallback.
