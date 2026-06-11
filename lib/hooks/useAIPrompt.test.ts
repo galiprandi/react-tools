@@ -25,6 +25,7 @@ describe('useAIPrompt', () => {
 
         // Also mock window.ai for implementation that uses (window as any).ai
         if (typeof window !== 'undefined') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ;(window as any).ai = {
                 languageModel: mockLanguageModel,
             }
@@ -38,7 +39,9 @@ describe('useAIPrompt', () => {
         vi.unstubAllGlobals()
         vi.clearAllMocks()
         if (typeof window !== 'undefined') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             delete (window as any).ai
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             delete (window as any).LanguageModel
         }
     })
@@ -309,7 +312,9 @@ describe('useAIPrompt', () => {
     it('should handle download progress', async () => {
         mockLanguageModel.availability.mockResolvedValue('after-download')
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let monitorCallback: ((m: any) => void) | undefined
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mockLanguageModel.create.mockImplementation((options: any) => {
             monitorCallback = options.monitor
             return new Promise((resolve) => {
@@ -325,8 +330,10 @@ describe('useAIPrompt', () => {
 
         await waitFor(() => expect(result.current.status).toBe('downloading'))
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const eventListeners = new Map<string, (e: any) => void>()
         const mockMonitor = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             addEventListener: (event: string, callback: (e: any) => void) => {
                 eventListeners.set(event, callback)
             },
@@ -384,5 +391,231 @@ describe('useAIPrompt', () => {
 
         expect(result.current.status).toBe('idle')
         expect(result.current.error).toBeNull()
+    })
+
+    describe('inferContentType coverage', () => {
+        it('should correctly infer audio for AudioBuffer', async () => {
+            class MockAudioBuffer {}
+            vi.stubGlobal('AudioBuffer', MockAudioBuffer)
+            mockSession.prompt.mockResolvedValue('ok')
+            const { result } = renderHook(() => useAIPrompt())
+
+            const buffer = new MockAudioBuffer()
+            await act(async () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await result.current.prompt([{ role: 'user', content: buffer as any }])
+            })
+
+            expect(mockSession.prompt).toHaveBeenCalledWith(
+                [{ role: 'user', content: [{ type: 'audio', value: buffer }] }],
+                expect.any(Object),
+            )
+        })
+
+        it('should correctly infer audio for Uint8Array (ArrayBufferView)', async () => {
+            mockSession.prompt.mockResolvedValue('ok')
+            const { result } = renderHook(() => useAIPrompt())
+
+            const view = new Uint8Array(8)
+            await act(async () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await result.current.prompt([{ role: 'user', content: view as any }])
+            })
+
+            expect(mockSession.prompt).toHaveBeenCalledWith(
+                [{ role: 'user', content: [{ type: 'audio', value: view }] }],
+                expect.any(Object),
+            )
+        })
+
+        it('should correctly infer audio for audio/ Blobs', async () => {
+            mockSession.prompt.mockResolvedValue('ok')
+            const { result } = renderHook(() => useAIPrompt())
+
+            const audioBlob = new Blob(['data'], { type: 'audio/wav' })
+            await act(async () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await result.current.prompt([{ role: 'user', content: audioBlob as any }])
+            })
+
+            expect(mockSession.prompt).toHaveBeenCalledWith(
+                [{ role: 'user', content: [{ type: 'audio', value: audioBlob }] }],
+                expect.any(Object),
+            )
+        })
+
+        it('should correctly infer image for visual elements', async () => {
+            class MockHTMLImageElement {}
+            class MockSVGImageElement {}
+            class MockHTMLVideoElement {}
+            class MockHTMLCanvasElement {}
+            class MockImageBitmap {}
+            class MockOffscreenCanvas {}
+            class MockVideoFrame {}
+            class MockImageData {}
+
+            vi.stubGlobal('HTMLImageElement', MockHTMLImageElement)
+            vi.stubGlobal('SVGImageElement', MockSVGImageElement)
+            vi.stubGlobal('HTMLVideoElement', MockHTMLVideoElement)
+            vi.stubGlobal('HTMLCanvasElement', MockHTMLCanvasElement)
+            vi.stubGlobal('ImageBitmap', MockImageBitmap)
+            vi.stubGlobal('OffscreenCanvas', MockOffscreenCanvas)
+            vi.stubGlobal('VideoFrame', MockVideoFrame)
+            vi.stubGlobal('ImageData', MockImageData)
+
+            const elements = [
+                new MockHTMLImageElement(),
+                new MockSVGImageElement(),
+                new MockHTMLVideoElement(),
+                new MockHTMLCanvasElement(),
+                new MockImageBitmap(),
+                new MockOffscreenCanvas(),
+                new MockVideoFrame(),
+                new MockImageData(),
+            ]
+
+            mockSession.prompt.mockResolvedValue('ok')
+            const { result } = renderHook(() => useAIPrompt())
+
+            for (const el of elements) {
+                await act(async () => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    await result.current.prompt([{ role: 'user', content: el as any }])
+                })
+                expect(mockSession.prompt).toHaveBeenLastCalledWith(
+                    [{ role: 'user', content: [{ type: 'image', value: el }] }],
+                    expect.any(Object),
+                )
+            }
+        })
+
+        it('should fallback to text for unknown types', async () => {
+            mockSession.prompt.mockResolvedValue('ok')
+            const { result } = renderHook(() => useAIPrompt())
+
+            const unknown = { foo: 'bar' }
+            await act(async () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await result.current.prompt([{ role: 'user', content: unknown as any }])
+            })
+
+            expect(mockSession.prompt).toHaveBeenCalledWith(
+                [{ role: 'user', content: [{ type: 'text', value: unknown }] }],
+                expect.any(Object),
+            )
+        })
+    })
+
+    it('should throw error if LanguageModel is a base constructor', async () => {
+        vi.stubGlobal('LanguageModel', Object)
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.prompt('hello')
+        })
+
+        expect(result.current.status).toBe('error')
+        expect(result.current.error?.message).toBe('Prompt API is not available')
+    })
+
+    it('should handle non-Error rejection in prompt', async () => {
+        mockSession.prompt.mockRejectedValue('Something went wrong')
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.prompt('hello')
+        })
+
+        expect(result.current.status).toBe('error')
+        expect(result.current.error?.message).toBe('Unknown error during prompting')
+    })
+
+    it('should handle non-Error rejection in append', async () => {
+        mockSession.append.mockRejectedValue('Append failed')
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.append([{ role: 'user', content: 'test' }])
+        })
+
+        expect(result.current.status).toBe('error')
+        expect(result.current.error?.message).toBe('Unknown error during append')
+    })
+
+    it('should handle warmup failure and log error', async () => {
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+        const warmupError = new Error('Warmup failed')
+        mockLanguageModel.create.mockRejectedValue(warmupError)
+
+        renderHook(() => useAIPrompt({ warmup: true }))
+
+        await waitFor(() => {
+            expect(consoleSpy).toHaveBeenCalledWith('Failed to warmup AI Prompt:', warmupError)
+        })
+        consoleSpy.mockRestore()
+    })
+
+    it('should abort in-flight prompt on unmount', async () => {
+        let capturedSignal: AbortSignal | undefined
+        mockSession.prompt.mockImplementation((_, options) => {
+            capturedSignal = options.signal
+            return new Promise(() => {}) // Never resolves
+        })
+
+        const { result, unmount } = renderHook(() => useAIPrompt())
+
+        act(() => {
+            result.current.prompt('hello')
+        })
+
+        await waitFor(() => expect(capturedSignal).toBeDefined())
+        expect(capturedSignal?.aborted).toBe(false)
+
+        unmount()
+        expect(capturedSignal?.aborted).toBe(true)
+    })
+
+    it('should throw error when LanguageModel is missing', async () => {
+        vi.stubGlobal('ai', undefined)
+
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.prompt('hello')
+        })
+
+        expect(result.current.status).toBe('error')
+        expect(result.current.error?.message).toBe('Prompt API not supported in this browser')
+    })
+
+    it('should throw error when availability is "unavailable"', async () => {
+        mockLanguageModel.availability.mockResolvedValue('unavailable')
+        const { result } = renderHook(() => useAIPrompt())
+
+        await act(async () => {
+            await result.current.prompt('hello')
+        })
+
+        expect(result.current.status).toBe('error')
+        expect(result.current.error?.message).toBe('Prompt API is not available')
+    })
+
+    it('should return early if already prompting', async () => {
+        mockSession.prompt.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve('ok'), 100)))
+        const { result } = renderHook(() => useAIPrompt())
+
+        act(() => {
+            result.current.prompt('hello')
+        })
+
+        await waitFor(() => expect(result.current.status).toBe('prompting'))
+
+        // Call prompt again while prompting
+        await act(async () => {
+            await result.current.prompt('second call')
+        })
+
+        expect(mockSession.prompt).toHaveBeenCalledTimes(1)
+        expect(mockSession.prompt).not.toHaveBeenCalledWith('second call', expect.any(Object))
     })
 })

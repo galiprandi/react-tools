@@ -81,3 +81,7 @@
 ## 2026-06-10 - [Robust Hook Input Validation]
 **Learning:** React hooks that wrap timing-sensitive browser APIs (like `useThrottle`) should implement defensive checks for their numeric parameters (e.g., `limit`). Using a pattern like `if (!limit || limit <= 0)` covers `NaN`, `0`, and negative values, ensuring the hook falls back to an immediate update rather than passing invalid values to `setTimeout`.
 **Action:** Always validate numeric inputs in hooks that interact with browser timers or scheduling APIs to provide a safe and predictable fallback.
+
+## 2024-06-30 - [Mocking Global Types for Branch Coverage]
+**Learning:** To achieve 100% branch coverage in functions that use `typeof Type !== 'undefined' && value instanceof Type` (a common pattern for SSR-safe browser API checks), tests must explicitly mock both the presence and absence of the global `Type`. Using `vi.stubGlobal('Type', class {})` allows exercising the `instanceof` branch even in environments where the API is not natively available.
+**Action:** Always use `vi.stubGlobal` to provide mock constructors when testing branch logic that depends on environment-specific global types.
