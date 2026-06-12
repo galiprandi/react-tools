@@ -186,4 +186,43 @@ describe('useLanguageDetection', () => {
 
     expect(result.current.progress).toEqual({ loaded: 50, total: 100 });
   });
+
+  it('should fail if LanguageDetector is a base constructor', async () => {
+    vi.stubGlobal('LanguageDetector', Object);
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).LanguageDetector = Object;
+    }
+
+    const { result } = renderHook(() =>
+      useLanguageDetection({ text: 'test', warmup: false }),
+    );
+
+    await waitFor(() => expect(result.current.status).toBe('error'));
+    expect(result.current.error?.message).toBe('LanguageDetector is not available');
+  });
+
+  it('should handle AbortError by resetting to idle', async () => {
+    const abortError = new Error('Aborted');
+    abortError.name = 'AbortError';
+    mockDetector.detect.mockRejectedValue(abortError);
+
+    const { result } = renderHook(() => useLanguageDetection({ text: 'Hello' }));
+
+    await waitFor(() => expect(result.current.status).toBe('idle'));
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should handle warmup failure and log error', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    mockDetectorCreate.mockRejectedValue(new Error('Warmup failed'));
+
+    const { result } = renderHook(() => useLanguageDetection({ warmup: true }));
+
+    await waitFor(() => expect(consoleSpy).toHaveBeenCalled());
+    expect(consoleSpy.mock.calls[0][0]).toContain('Failed to warmup language detector');
+    expect(result.current.status).toBe('idle');
+
+    consoleSpy.mockRestore();
+  });
 });
