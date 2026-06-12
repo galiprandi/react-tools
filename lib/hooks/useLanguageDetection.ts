@@ -153,6 +153,18 @@ export function useLanguageDetection(options: UseLanguageDetectionOptions = {}):
 
     const LanguageDetector = (window as unknown as { LanguageDetector: { availability?: () => Promise<Availability>; create?: (options?: LanguageDetectorCreateOptions) => Promise<LanguageDetector> } }).LanguageDetector;
 
+    // Ensure we're not dealing with base constructors
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      LanguageDetector === (Object as any) ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      LanguageDetector === (Array as any) ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      LanguageDetector === (Function as any)
+    ) {
+      throw new Error('LanguageDetector is not available');
+    }
+
     // Check availability
     if (typeof LanguageDetector.availability === 'function') {
       const avail = await LanguageDetector.availability();
@@ -211,6 +223,10 @@ export function useLanguageDetection(options: UseLanguageDetectionOptions = {}):
         setAllLangs(limited);
         setStatus('success');
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          setStatus('idle');
+          return;
+        }
         setError(err instanceof Error ? err : new Error('Unknown error during language detection'));
         setStatus('error');
       }
@@ -227,7 +243,12 @@ export function useLanguageDetection(options: UseLanguageDetectionOptions = {}):
 
   useEffect(() => {
     if (warmup) {
-      createDetector().then(() => setStatus('idle')).catch(() => {});
+      createDetector()
+        .then(() => setStatus('idle'))
+        .catch((err) => {
+          console.error('Failed to warmup language detector:', err);
+          setStatus('idle');
+        });
     }
 
     return () => {

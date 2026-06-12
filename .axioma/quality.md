@@ -85,3 +85,7 @@
 ## 2024-06-30 - [Mocking Global Types for Branch Coverage]
 **Learning:** To achieve 100% branch coverage in functions that use `typeof Type !== 'undefined' && value instanceof Type` (a common pattern for SSR-safe browser API checks), tests must explicitly mock both the presence and absence of the global `Type`. Using `vi.stubGlobal('Type', class {})` allows exercising the `instanceof` branch even in environments where the API is not natively available.
 **Action:** Always use `vi.stubGlobal` to provide mock constructors when testing branch logic that depends on environment-specific global types.
+
+## 2024-06-30 - [Consistent AI Hook Error Recovery]
+**Learning:** AI hooks that implement async 'warmup' or cancellable operations must explicitly handle failures and AbortErrors to avoid "stuck" UI states. Transitioning status to 'idle' on AbortError and logging warmup failures while resetting status ensures the hook remains usable for subsequent interactions.
+**Action:** Always include AbortError handling in catch blocks and add error logging/state reset to warmup effects in all AI-related hooks.
