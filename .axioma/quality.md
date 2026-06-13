@@ -89,3 +89,7 @@
 ## 2024-06-30 - [Consistent AI Hook Error Recovery]
 **Learning:** AI hooks that implement async 'warmup' or cancellable operations must explicitly handle failures and AbortErrors to avoid "stuck" UI states. Transitioning status to 'idle' on AbortError and logging warmup failures while resetting status ensures the hook remains usable for subsequent interactions.
 **Action:** Always include AbortError handling in catch blocks and add error logging/state reset to warmup effects in all AI-related hooks.
+
+## 2024-07-01 - [Achieving 100% Branch Coverage for Optional Callbacks]
+**Learning:** To achieve 100% branch coverage in components that utilize optional callbacks (e.g., `Input`'s `onChangeValue`, `onChangeDebounce`), unit tests must trigger relevant events (like `fireEvent.change`) while intentionally omitting these optional props to exercise the 'falsy' branches of conditional logic.
+**Action:** Always include a test case that omits optional callback props when testing components with event handlers to ensure all logical paths are verified.
