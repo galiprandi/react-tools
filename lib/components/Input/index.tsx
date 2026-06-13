@@ -98,6 +98,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
 Input.displayName = 'Input'
 
+/**
+ * Internal component to wrap the input with a label if provided.
+ *
+ * @param props - The props for the LabeledContainer component.
+ * @param props.label - The label to display.
+ * @param props.className - Optional CSS class for the label element.
+ * @param props.children - The input element to be wrapped.
+ * @returns The wrapped input or just the input if no label is provided.
+ */
 const LabeledContainer = ({
     label,
     className,
@@ -116,6 +125,10 @@ const LabeledContainer = ({
         children
     )
 
+/**
+ * Props for the Input component.
+ * Extends standard HTML input attributes.
+ */
 export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
     /**
@@ -129,13 +142,13 @@ export interface InputProps
     /**
      * Callback function triggered on value change and receives the current value of the input field.
      *
-     * @param {TData} value - The current value of the input field.
+     * @param value - The current value of the input field.
      */
     onChangeValue?: (value: TData) => void
     /**
      * Callback function triggered on debounced value change. It receives the debounced value of the input field.
      *
-     * @param {TData} value - The debounced value of the input field.
+     * @param value - The debounced value of the input field.
      */
     onChangeDebounce?: (value: TData) => void
     /**
@@ -152,8 +165,8 @@ export interface InputProps
     /**
      * Custom transformation function for the input value. If provided, it will apply after the default transformation.
      *
-     * @param {string} value - The current value of the input field.
-     * @returns {string} - The transformed value of the input field.
+     * @param value - The current value of the input field.
+     * @returns The transformed value of the input field.
      */
     transformFn?: (value: string) => string
 }

@@ -205,4 +205,16 @@ describe('<Input />', () => {
         rerender(<Input value="updated" data-testid="controlled-input" />)
         expect(input.value).toBe('updated')
     })
+
+    it('should handle input change without optional callbacks', () => {
+        const testId = 'test-no-callbacks'
+        const { getByTestId } = render(
+            <Input id={testId} data-testid={testId} />,
+        )
+
+        const input = getByTestId(testId)
+        fireEvent.change(input, { target: { value: 'no callback' } })
+
+        expect((input as HTMLInputElement).value).toBe('no callback')
+    })
 })
