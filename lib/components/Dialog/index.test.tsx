@@ -6,25 +6,31 @@ describe('Dialog', () => {
     beforeEach(() => {
         // Mocking HTMLDialogElement methods as they are not implemented in happy-dom
         // We also need to mock the 'open' property behavior
-        vi.spyOn(HTMLDialogElement.prototype, 'show').mockImplementation(function (this: HTMLDialogElement) {
-            this.setAttribute('open', '')
-        })
-        vi.spyOn(HTMLDialogElement.prototype, 'showModal').mockImplementation(function (this: HTMLDialogElement) {
-            this.setAttribute('open', '')
-        })
-        vi.spyOn(HTMLDialogElement.prototype, 'close').mockImplementation(function (this: HTMLDialogElement) {
-            if (this.hasAttribute('open')) {
-                this.removeAttribute('open')
-                this.dispatchEvent(new Event('close'))
-            }
-        })
+        vi.spyOn(HTMLDialogElement.prototype, 'show').mockImplementation(
+            function (this: HTMLDialogElement) {
+                this.setAttribute('open', '')
+            },
+        )
+        vi.spyOn(HTMLDialogElement.prototype, 'showModal').mockImplementation(
+            function (this: HTMLDialogElement) {
+                this.setAttribute('open', '')
+            },
+        )
+        vi.spyOn(HTMLDialogElement.prototype, 'close').mockImplementation(
+            function (this: HTMLDialogElement) {
+                if (this.hasAttribute('open')) {
+                    this.removeAttribute('open')
+                    this.dispatchEvent(new Event('close'))
+                }
+            },
+        )
     })
 
     it('should render correctly with children', () => {
         render(
             <Dialog isOpen={false}>
                 <p>Dialog Content</p>
-            </Dialog>
+            </Dialog>,
         )
         expect(screen.getByText('Dialog Content')).toBeTruthy()
     })
@@ -33,7 +39,7 @@ describe('Dialog', () => {
         render(
             <Dialog isOpen={true} behavior="modal">
                 <p>Modal Content</p>
-            </Dialog>
+            </Dialog>,
         )
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled()
     })
@@ -42,7 +48,7 @@ describe('Dialog', () => {
         render(
             <Dialog isOpen={true} behavior="dialog">
                 <p>Dialog Content</p>
-            </Dialog>
+            </Dialog>,
         )
         expect(HTMLDialogElement.prototype.show).toHaveBeenCalled()
     })
@@ -51,13 +57,13 @@ describe('Dialog', () => {
         const { rerender } = render(
             <Dialog isOpen={true}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         rerender(
             <Dialog isOpen={false}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
@@ -68,7 +74,7 @@ describe('Dialog', () => {
         render(
             <Dialog isOpen={true} onOpen={onOpen}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
         expect(onOpen).toHaveBeenCalled()
     })
@@ -78,13 +84,13 @@ describe('Dialog', () => {
         const { rerender } = render(
             <Dialog isOpen={true} onClose={onClose}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         rerender(
             <Dialog isOpen={false} onClose={onClose}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         // The component calls dialog.close() which triggers the onClose event handler
@@ -96,7 +102,7 @@ describe('Dialog', () => {
         const { container } = render(
             <Dialog isOpen={true} onClose={onClose}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         const dialog = container.querySelector('dialog')
@@ -108,7 +114,10 @@ describe('Dialog', () => {
 
     it('should close on backdrop click when closeOnBackdropClick is true', () => {
         // Mock getBoundingClientRect for the dialog
-        vi.spyOn(HTMLDialogElement.prototype, 'getBoundingClientRect').mockReturnValue({
+        vi.spyOn(
+            HTMLDialogElement.prototype,
+            'getBoundingClientRect',
+        ).mockReturnValue({
             top: 100,
             bottom: 400,
             left: 100,
@@ -117,14 +126,14 @@ describe('Dialog', () => {
             height: 300,
             x: 100,
             y: 100,
-            toJSON: () => {}
+            toJSON: () => {},
         })
 
         const onClose = vi.fn()
         const { container } = render(
             <Dialog isOpen={true} closeOnBackdropClick={true} onClose={onClose}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         const dialog = container.querySelector('dialog')
@@ -140,11 +149,9 @@ describe('Dialog', () => {
 
     it('should toggle dialog when opener is clicked', () => {
         render(
-            <Dialog
-                opener={<button>Toggle</button>}
-            >
+            <Dialog opener={<button>Toggle</button>}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         const button = screen.getByText('Toggle')
@@ -167,7 +174,7 @@ describe('Dialog', () => {
                 aria-labelledby="dialog-title"
             >
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         const dialog = container.querySelector('dialog')
@@ -183,7 +190,7 @@ describe('Dialog', () => {
         const { rerender } = render(
             <Dialog isOpen={true} onOpen={onOpen1}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1)
@@ -191,10 +198,50 @@ describe('Dialog', () => {
         rerender(
             <Dialog isOpen={true} onOpen={onOpen2}>
                 <p>Content</p>
-            </Dialog>
+            </Dialog>,
         )
 
         // It should still be 1 because it's already open
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not throw if onOpen or onClose are omitted', () => {
+        const { rerender } = render(
+            <Dialog isOpen={true}>
+                <p>Content</p>
+            </Dialog>,
+        )
+        expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled()
+
+        rerender(
+            <Dialog isOpen={false}>
+                <p>Content</p>
+            </Dialog>,
+        )
+        expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
+    })
+
+    it('should not close on click if closeOnBackdropClick is false', () => {
+        const { container } = render(
+            <Dialog isOpen={true} closeOnBackdropClick={false}>
+                <p>Content</p>
+            </Dialog>,
+        )
+
+        const dialog = container.querySelector('dialog')
+        fireEvent.click(dialog!, { clientX: 50, clientY: 50 })
+        expect(HTMLDialogElement.prototype.close).not.toHaveBeenCalled()
+    })
+
+    it('should not close on click if behavior is dialog even if closeOnBackdropClick is true', () => {
+        const { container } = render(
+            <Dialog isOpen={true} behavior="dialog" closeOnBackdropClick={true}>
+                <p>Content</p>
+            </Dialog>,
+        )
+
+        const dialog = container.querySelector('dialog')
+        fireEvent.click(dialog!, { clientX: 50, clientY: 50 })
+        expect(HTMLDialogElement.prototype.close).not.toHaveBeenCalled()
     })
 })
