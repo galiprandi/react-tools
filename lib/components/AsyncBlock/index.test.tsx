@@ -14,6 +14,7 @@ describe('<AsyncBlock />', () => {
 
     afterEach(() => {
         vi.restoreAllMocks()
+        vi.useRealTimers()
     })
 
     it('should render pending state', () => {
@@ -219,7 +220,6 @@ describe('<AsyncBlock />', () => {
         })
 
         expect(onError).not.toHaveBeenCalled()
-        vi.useRealTimers()
     })
 
     it('should call reload when pending function is called', async () => {
@@ -270,7 +270,6 @@ describe('<AsyncBlock />', () => {
         })
 
         expect(onError).not.toHaveBeenCalled()
-        vi.useRealTimers()
     })
 
     it('should not update state if aborted due to dependency change (race condition)', async () => {
@@ -356,5 +355,125 @@ describe('<AsyncBlock />', () => {
 
         // It should render nothing
         expect(container.firstChild).toBeNull()
+    })
+
+    it('should clear timeout if promise resolves before timeout', async () => {
+        vi.useFakeTimers()
+        const spy = vi.spyOn(global, 'clearTimeout')
+
+        let resolvePromise: (val: string) => void
+        const promise = new Promise<string>((resolve) => {
+            resolvePromise = resolve
+        })
+
+        render(
+            <AsyncBlock
+                promiseFn={() => promise}
+                pending="Loading"
+                success={(data) => <div>{data}</div>}
+                timeOut={1000}
+            />,
+        )
+
+        await act(async () => {
+            resolvePromise!('Success')
+        })
+
+        expect(spy).toHaveBeenCalled()
+        spy.mockRestore()
+    })
+
+    it('should clear timeout if promise rejects before timeout', async () => {
+        vi.useFakeTimers()
+        const spy = vi.spyOn(global, 'clearTimeout')
+
+        let rejectPromise: (reason?: unknown) => void
+        const promise = new Promise<string>((_, reject) => {
+            rejectPromise = reject
+        })
+
+        render(
+            <AsyncBlock
+                promiseFn={() => promise}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                timeOut={1000}
+            />,
+        )
+
+        await act(async () => {
+            rejectPromise!(new Error('Failed'))
+        })
+
+        expect(spy).toHaveBeenCalled()
+        spy.mockRestore()
+    })
+
+    it('should not call onError if unmounted before promise rejects', async () => {
+        const onError = vi.fn()
+        let rejectPromise: (reason?: unknown) => void
+        const promise = new Promise<string>((_, reject) => {
+            rejectPromise = reject
+        })
+
+        const { unmount } = render(
+            <AsyncBlock
+                promiseFn={() => promise}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                onError={onError}
+            />,
+        )
+
+        unmount()
+
+        await act(async () => {
+            rejectPromise!(new Error('Failed'))
+        })
+
+        expect(onError).not.toHaveBeenCalled()
+    })
+
+    it('should not call onError if aborted due to dependency change', async () => {
+        let rejectFirstPromise: (reason?: unknown) => void
+        const firstPromise = new Promise((_, reject) => {
+            rejectFirstPromise = reject
+        })
+
+        const promiseFn = vi
+            .fn()
+            .mockReturnValueOnce(firstPromise)
+            .mockReturnValue(Promise.resolve())
+        const onError = vi.fn()
+
+        const { rerender } = render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                deps={[1]}
+                onError={onError}
+            />,
+        )
+
+        rerender(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={() => 'Success'}
+                error={() => 'Error'}
+                deps={[2]}
+                onError={onError}
+            />,
+        )
+
+        await act(async () => {
+            rejectFirstPromise!(new Error('Aborted'))
+        })
+
+        expect(onError).not.toHaveBeenCalled()
     })
 })
