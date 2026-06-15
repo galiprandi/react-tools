@@ -14,20 +14,40 @@ import {
  * dependency-based re-execution, and manual reloads.
  *
  * @template T - The type of data returned by the async operation.
- * @param props - Props to control the behavior and rendering of the async operation.
- * @returns Rendered result based on async state.
+ * @param {AsyncBlockProps<T>} props - Props to control the behavior and rendering of the async operation.
+ * @returns {JSX.Element | null} Rendered result based on async state.
  *
  * @example
- *
  * ```tsx
- * <AsyncBlock
- *   promiseFn={(signal) => fetch('/api/user', { signal }).then(res => res.json())}
- *   pending={<p>Loading...</p>}
- *   success={(data) => <UserProfile data={data} />}
- *   error={(err) => <p>Error: {err.message}</p>}
- *   timeOut={5000}
- *   deps={[userId]}
- * />
+ * import { AsyncBlock } from '@galiprandi/react-tools';
+ *
+ * const UserProfileWrapper = ({ userId }) => (
+ *   <AsyncBlock
+ *     promiseFn={(signal) => fetch(`/api/user/${userId}`, { signal }).then(res => res.json())}
+ *     pending={(reload) => (
+ *       <div>
+ *         <p>Loading user...</p>
+ *         <button onClick={reload}>Cancel and Retry</button>
+ *       </div>
+ *     )}
+ *     success={(user, reload) => (
+ *       <div>
+ *         <h1>{user.name}</h1>
+ *         <button onClick={reload}>Refresh Data</button>
+ *       </div>
+ *     )}
+ *     error={(err, reload) => (
+ *       <div>
+ *         <p>Error: {(err as Error).message}</p>
+ *         <button onClick={reload}>Try Again</button>
+ *       </div>
+ *     )}
+ *     timeOut={5000}
+ *     deps={[userId]}
+ *     onSuccess={(data) => console.log('Loaded:', data)}
+ *     onError={(err) => console.error('Failed:', err)}
+ *   />
+ * );
  * ```
  */
 export const AsyncBlock = <T,>({
