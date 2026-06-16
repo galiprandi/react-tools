@@ -74,9 +74,10 @@ const FormInner = <T,>(
  * </Form>
  * ```
  */
-export const Form = forwardRef(FormInner) as <T>(
-    props: FormProps<T> & React.RefAttributes<HTMLFormElement>,
-) => JSX.Element
+export const Form = forwardRef(FormInner) as {
+    <T>(props: FormProps<T> & React.RefAttributes<HTMLFormElement>): JSX.Element
+    displayName?: string
+}
 
 Form.displayName = 'Form'
 
