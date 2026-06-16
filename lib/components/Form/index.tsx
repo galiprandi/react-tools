@@ -5,7 +5,12 @@ const FormInner = <T,>(
     props: FormProps<T>,
     ref: ForwardedRef<HTMLFormElement>,
 ): JSX.Element => {
-    const { onSubmitValues, filterEmptyValues, ...restProps } = props
+    const {
+        onSubmitValues,
+        filterEmptyValues,
+        onSubmit: onSubmitProp,
+        ...restProps
+    } = props
 
     /**
      * Handles the form submission event.
@@ -31,9 +36,9 @@ const FormInner = <T,>(
 
             onSubmitValues(values)
         }
-        props.onSubmit && props.onSubmit(event)
+        onSubmitProp && onSubmitProp(event)
     }
-    return <form ref={ref} onSubmit={onSubmit} {...restProps} />
+    return <form ref={ref} {...restProps} onSubmit={onSubmit} />
 }
 
 /**
@@ -73,6 +78,8 @@ export const Form = forwardRef(FormInner) as <T>(
     props: FormProps<T> & React.RefAttributes<HTMLFormElement>,
 ) => JSX.Element
 
+Form.displayName = 'Form'
+
 /**
  * The properties for the Form component.
  *
@@ -99,8 +106,6 @@ export interface FormProps<T>
     onSubmitValues?: (values: T) => void
     /**
      * A flag to determine if empty values should be included in the form values.
-     *
-     * @param {boolean} filterEmptyValues - A flag to determine if empty values should be included in the form values.
      */
     filterEmptyValues?: boolean
 }

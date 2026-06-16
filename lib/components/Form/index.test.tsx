@@ -212,4 +212,28 @@ describe('Form Component', () => {
         expect(ref.current).not.toBeNull()
         expect(ref.current?.tagName).toBe('FORM')
     })
+
+    it('should call both onSubmitValues and onSubmit when both are provided', () => {
+        const onSubmitValues = vi.fn()
+        const onSubmit = vi.fn()
+        const testId = 'test-both-submits'
+
+        render(
+            <Form<TestFormValues>
+                onSubmitValues={onSubmitValues}
+                onSubmit={onSubmit}
+                data-testid={testId}
+            >
+                <input name="name" defaultValue="John" />
+                <button type="submit">Submit</button>
+            </Form>,
+        )
+
+        fireEvent.submit(screen.getByTestId(testId))
+
+        expect(onSubmitValues).toHaveBeenCalledWith({
+            name: 'John',
+        })
+        expect(onSubmit).toHaveBeenCalled()
+    })
 })

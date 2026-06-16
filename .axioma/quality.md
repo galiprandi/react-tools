@@ -93,3 +93,7 @@
 ## 2024-07-01 - [Achieving 100% Branch Coverage for Optional Callbacks]
 **Learning:** To achieve 100% branch coverage in components that utilize optional callbacks (e.g., `Input`'s `onChangeValue`, `onChangeDebounce`), unit tests must trigger relevant events (like `fireEvent.change`) while intentionally omitting these optional props to exercise the 'falsy' branches of conditional logic.
 **Action:** Always include a test case that omits optional callback props when testing components with event handlers to ensure all logical paths are verified.
+
+## 2024-07-05 - [Ensuring Internal Event Handlers Precedence]
+**Learning:** When creating wrapper components that spread `restProps` onto a native element, placing internal event handlers (like `onSubmit` or `onChange`) *after* the spread ensures they are not accidentally overwritten by user-provided props. Additionally, destructuring the specific handler from props allows it to be manually invoked within the internal handler, preserving both functionalities.
+**Action:** Always spread `restProps` before specifying internal event handlers in wrapper components to maintain control over the component's core logic while still supporting custom callbacks.
