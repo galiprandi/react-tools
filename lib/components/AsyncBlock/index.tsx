@@ -153,6 +153,8 @@ export const AsyncBlock = <T,>({
     return null
 }
 
+AsyncBlock.displayName = 'AsyncBlock'
+
 /**
  * Props for the AsyncBlock component.
  */

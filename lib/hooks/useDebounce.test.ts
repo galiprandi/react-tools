@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 
-import { useDebounce } from '../main.ts'
+import { useDebounce } from './useDebounce'
 
 describe('useDebounce', () => {
     beforeEach(() => {
@@ -71,7 +71,15 @@ describe('useDebounce', () => {
 
     it('should clear timeout on unmount', () => {
         const spy = vi.spyOn(global, 'clearTimeout')
-        const { unmount } = renderHook(() => useDebounce('test', 200))
+        const { unmount, rerender } = renderHook(
+            ({ val, delay }) => useDebounce(val, delay),
+            {
+                initialProps: { val: 'test', delay: 200 },
+            },
+        )
+
+        // Trigger an update to set the timeout
+        rerender({ val: 'updated', delay: 200 })
 
         unmount()
         expect(spy).toHaveBeenCalled()
@@ -102,6 +110,38 @@ describe('useDebounce', () => {
         act(() => {
             vi.advanceTimersByTime(1)
         })
+        expect(result.current).toBe('updated')
+    })
+
+    it('should not call setTimeout on initial mount', () => {
+        const spy = vi.spyOn(global, 'setTimeout')
+        renderHook(() => useDebounce('initial', 500))
+
+        expect(spy).not.toHaveBeenCalled()
+        spy.mockRestore()
+    })
+
+    it('should handle negative delay by treating it as 0 (immediate update)', () => {
+        const { result, rerender } = renderHook(
+            ({ val, delay }) => useDebounce(val, delay),
+            {
+                initialProps: { val: 'initial', delay: -100 },
+            },
+        )
+
+        rerender({ val: 'updated', delay: -100 })
+        expect(result.current).toBe('updated')
+    })
+
+    it('should handle NaN delay by treating it as 0 (immediate update)', () => {
+        const { result, rerender } = renderHook(
+            ({ val, delay }) => useDebounce(val, delay),
+            {
+                initialProps: { val: 'initial', delay: NaN },
+            },
+        )
+
+        rerender({ val: 'updated', delay: NaN })
         expect(result.current).toBe('updated')
     })
 })

@@ -80,6 +80,8 @@ export const Observer = (props: ObserverProps): ObserverReturn => {
     return createElement(wrapper, { ref, children })
 }
 
+Observer.displayName = 'Observer'
+
 /**
  * The properties for the Observer component.
  *
