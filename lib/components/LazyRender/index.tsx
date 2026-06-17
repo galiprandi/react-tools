@@ -36,6 +36,8 @@ import { Observer } from '../Observer'
     )
 }
 
+LazyRender.displayName = 'LazyRender'
+
 /**
  * LazyRenderProps – Props for the LazyRender component.
  *

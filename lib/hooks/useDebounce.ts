@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 /**
  * Custom hook that debounces a value by a specified delay.
@@ -32,9 +32,18 @@ import { useEffect, useState } from 'react'
  */
 export function useDebounce<T>(value: T, delay: number = 500): T {
     const [debouncedValue, setDebouncedValue] = useState<T>(value)
+    const isFirstRun = useRef(true)
 
     useEffect(() => {
-        if (!delay) return setDebouncedValue(value)
+        if (isFirstRun.current) {
+            isFirstRun.current = false
+            return
+        }
+
+        if (!delay || delay <= 0) {
+            setDebouncedValue(value)
+            return
+        }
 
         const handler = setTimeout(() => {
             setDebouncedValue(value)

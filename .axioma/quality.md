@@ -97,3 +97,7 @@
 ## 2024-07-05 - [Ensuring Internal Event Handlers Precedence]
 **Learning:** When creating wrapper components that spread `restProps` onto a native element, placing internal event handlers (like `onSubmit` or `onChange`) *after* the spread ensures they are not accidentally overwritten by user-provided props. Additionally, destructuring the specific handler from props allows it to be manually invoked within the internal handler, preserving both functionalities.
 **Action:** Always spread `restProps` before specifying internal event handlers in wrapper components to maintain control over the component's core logic while still supporting custom callbacks.
+
+## 2024-07-10 - [Initial Mount Optimization and Robust Input Validation in Hooks]
+**Learning:** React hooks managing timing-sensitive side effects (like `useDebounce` or `useThrottle`) should use an `isFirstRun` ref to skip redundant `setTimeout` calls on initial mount, as the state is already initialized with the starting value. Additionally, implementing defensive checks for numeric parameters (e.g., `delay <= 0` or `NaN`) ensures the hook falls back to an immediate update, providing a safe and predictable behavior across different edge cases.
+**Action:** Always use an `isFirstRun` guard for initialization-safe side effects and validate numeric inputs to provide immediate fallbacks for invalid or non-positive values.
