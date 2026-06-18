@@ -1,11 +1,4 @@
-import {
-    describe,
-    it,
-    expect,
-    beforeEach,
-    afterEach,
-    vi,
-} from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, cleanup, screen, act, fireEvent } from '@testing-library/react'
 import { AsyncBlock } from './index'
 
@@ -25,7 +18,7 @@ describe('<AsyncBlock />', () => {
                 pending={pendingContent}
                 success={() => null}
                 error={() => null}
-            />
+            />,
         )
         expect(screen.getByText(pendingContent)).toBeDefined()
     })
@@ -42,7 +35,7 @@ describe('<AsyncBlock />', () => {
                 success={() => successContent}
                 error={() => null}
                 onSuccess={onSuccess}
-            />
+            />,
         )
 
         await screen.findByText(successContent)
@@ -61,7 +54,7 @@ describe('<AsyncBlock />', () => {
                 success={() => null}
                 error={() => errorContent}
                 onError={onError}
-            />
+            />,
         )
 
         await screen.findByText(errorContent)
@@ -79,7 +72,7 @@ describe('<AsyncBlock />', () => {
                 success={() => null}
                 error={() => errorContent}
                 timeOut={timeout}
-            />
+            />,
         )
 
         await screen.findByText(errorContent)
@@ -92,7 +85,7 @@ describe('<AsyncBlock />', () => {
                 pending={() => null}
                 success={() => null}
                 error={() => null}
-            />
+            />,
         )
 
         unmount()
@@ -121,7 +114,7 @@ describe('<AsyncBlock />', () => {
                     </div>
                 )}
                 error={() => null}
-            />
+            />,
         )
 
         expect(screen.getByText('Loading')).toBeDefined()
@@ -150,7 +143,9 @@ describe('<AsyncBlock />', () => {
         render(
             <AsyncBlock
                 promiseFn={() => new Promise(() => {})}
-                pending={(reload) => <button onClick={reload}>Reloading</button>}
+                pending={(reload) => (
+                    <button onClick={reload}>Reloading</button>
+                )}
                 success={() => null}
                 error={() => null}
             />,
@@ -475,5 +470,23 @@ describe('<AsyncBlock />', () => {
         })
 
         expect(onError).not.toHaveBeenCalled()
+    })
+
+    it('should handle synchronous throws in promiseFn', async () => {
+        const error = new Error('Sync Error')
+        const promiseFn = () => {
+            throw error
+        }
+
+        render(
+            <AsyncBlock
+                promiseFn={promiseFn}
+                pending="Loading"
+                success={() => 'Success'}
+                error={(err) => <div>Error: {(err as Error).message}</div>}
+            />,
+        )
+
+        await screen.findByText('Error: Sync Error')
     })
 })
