@@ -67,4 +67,20 @@ describe('useList Security', () => {
         expect(result.current.list[0]).toEqual({ id: 1 })
         expect(result.current.list[1]).toEqual({ id: 2 })
     })
+
+    it('should NOT allow upserting items via restricted keys (it should always add)', () => {
+        const initialList = [{ id: 1 }]
+        const { result } = renderHook(() => useList(initialList))
+
+        act(() => {
+            // Upserting with 'constructor' should NOT match the existing item
+            // even if they both have 'constructor'. It should always add the new item.
+            result.current.upsert({ id: 2 }, 'constructor')
+        })
+
+        // It should have 2 items now (it should NOT have replaced {id: 1})
+        expect(result.current.list).toHaveLength(2)
+        expect(result.current.list[0]).toEqual({ id: 1 })
+        expect(result.current.list[1]).toEqual({ id: 2 })
+    })
 })

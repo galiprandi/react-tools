@@ -147,7 +147,7 @@ export interface UseAIResult {
  * const { isAvailable, apis, status } = useAI();
  *
  * // Check specific APIs
- * const { isAvailable, apis, preload } = useAI({ apis: ['translator', 'summarizer'] });
+ * const { isAvailable, apis, preload, getApiProgress } = useAI({ apis: ['translator', 'summarizer'] });
  *
  * // Preload models
  * useEffect(() => {
