@@ -476,4 +476,25 @@ describe('<AsyncBlock />', () => {
 
         expect(onError).not.toHaveBeenCalled()
     })
+
+    it('should handle synchronous errors in promiseFn', async () => {
+        const error = new Error('Sync error')
+        const onError = vi.fn()
+        const errorContent = 'Error'
+
+        render(
+            <AsyncBlock
+                promiseFn={() => {
+                    throw error
+                }}
+                pending="Loading"
+                success={() => null}
+                error={() => errorContent}
+                onError={onError}
+            />,
+        )
+
+        await screen.findByText(errorContent)
+        expect(onError).toHaveBeenCalledWith(error)
+    })
 })

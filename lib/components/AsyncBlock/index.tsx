@@ -1,10 +1,4 @@
-import {
-    useEffect,
-    useState,
-    ReactNode,
-    useRef,
-    useCallback,
-} from 'react'
+import { useEffect, useState, ReactNode, useRef, useCallback } from 'react'
 
 /**
  * AsyncBlock component – Declaratively renders asynchronous content with pending, success, and error states.
@@ -94,7 +88,14 @@ export const AsyncBlock = <T,>({
             }
 
             // Pass the signal to the promise function, but make it optional
-            promiseFn(signal)
+            let promise: Promise<T>
+            try {
+                promise = promiseFn(signal)
+            } catch (e) {
+                promise = Promise.reject(e)
+            }
+
+            promise
                 .then((result) => {
                     if (signal.aborted) return
 

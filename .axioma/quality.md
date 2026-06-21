@@ -101,3 +101,7 @@
 ## 2024-07-10 - [Initial Mount Optimization and Robust Input Validation in Hooks]
 **Learning:** React hooks managing timing-sensitive side effects (like `useDebounce` or `useThrottle`) should use an `isFirstRun` ref to skip redundant `setTimeout` calls on initial mount, as the state is already initialized with the starting value. Additionally, implementing defensive checks for numeric parameters (e.g., `delay <= 0` or `NaN`) ensures the hook falls back to an immediate update, providing a safe and predictable behavior across different edge cases.
 **Action:** Always use an `isFirstRun` guard for initialization-safe side effects and validate numeric inputs to provide immediate fallbacks for invalid or non-positive values.
+
+## 2024-07-15 - [Synchronous Error Handling in Async Components]
+**Learning:** Wrapping a function call in `Promise.resolve().then()` introduces a micro-task delay. This can break tests that expect the initial state of a component (like `pending`) to be set synchronously upon mount. For components managing async operations, using a `try...catch` around the initial function call and converting synchronous errors into a rejected promise (`promise = Promise.reject(e)`) ensures both sync and async errors are handled by the same pipeline without breaking synchronous test expectations.
+**Action:** Use `try...catch` around initial calls to functions expected to return promises to robustly handle synchronous exceptions without introducing micro-task delays.
