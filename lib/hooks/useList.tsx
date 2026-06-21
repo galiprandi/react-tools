@@ -25,6 +25,20 @@ function getValueToCompare<T>(item: T, key: string | undefined | null): any {
  * @template T The type of elements in the list array.
  * @param {T[]} [initialList=[]] The initial array state.
  * @returns {UseListReturn<T>} An object containing the current array state and helper functions to modify it immutably.
+ *
+ * @example
+ * ```tsx
+ * const { list, addItem, removeBy, updateByIdx } = useList<{ id: number; name: string }>([]);
+ *
+ * // Add an item
+ * addItem({ id: 1, name: 'John Doe' });
+ *
+ * // Remove item by a specific property
+ * removeBy('id', 1);
+ *
+ * // Update item at index 0
+ * updateByIdx(0, (item) => ({ ...item, name: 'Jane Doe' }));
+ * ```
  */
 export function useList<T>(initialList: T[] = []): UseListReturn<T> {
     const [list, setList] = useState<T[]>(initialList)
