@@ -92,7 +92,13 @@ export const AsyncBlock = <T,>({
             try {
                 promise = promiseFn(signal)
             } catch (e) {
-                promise = Promise.reject(e)
+                if (isMounted.current) {
+                    if (timer) clearTimeout(timer)
+                    setErr(e)
+                    setState('error')
+                    onError?.(e)
+                }
+                return
             }
 
             promise
