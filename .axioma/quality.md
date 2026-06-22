@@ -135,3 +135,13 @@
 ## 2024-07-15 - [Synchronous Error Handling in Async Components]
 **Learning:** Wrapping a function call in `Promise.resolve().then()` introduces a micro-task delay. This can break tests that expect the initial state of a component (like `pending`) to be set synchronously upon mount. For components managing async operations, using a `try...catch` around the initial function call and converting synchronous errors into a rejected promise (`promise = Promise.reject(e)`) ensures both sync and async errors are handled by the same pipeline without breaking synchronous test expectations.
 **Action:** Use `try...catch` around initial calls to functions expected to return promises to robustly handle synchronous exceptions without introducing micro-task delays.
+
+## 2024-07-20 - [Defensive API Status Access]
+
+**Learning:** When a hook manages state for a dynamic set of keys (e.g., AI API types in `useAI`), accessing those keys in derived state calculations (like `allApisAvailable`) should use optional chaining (`?.`). This provides a critical safety layer when the hook is used with custom or unrecognized keys that might not yet be initialized in the state record, preventing runtime crashes.
+**Action:** Always use optional chaining when accessing record-based state using keys that might be externally provided or dynamically generated.
+
+## 2024-07-20 - [Comprehensive JSDoc for Hook Return Types]
+
+**Learning:** Documenting the return interface of complex hooks with `@example` blocks for each property significantly improves the developer experience. It allows IDEs to provide immediate visual feedback on the expected shape and values of the returned state (e.g., `status` or `apis` mapping), reducing the need for developers to context-switch to the source code.
+**Action:** Include `@example` tags for all properties in hook return interfaces to enhance IDE IntelliSense and documentation clarity.
