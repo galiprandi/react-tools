@@ -87,18 +87,22 @@ export interface UseAIOptions {
 export interface UseAIResult {
     /**
      * Whether all requested APIs (if provided) or at least one default API is available.
+     * @example true
      */
     isAvailable: boolean
     /**
-     * The current status of the availability check.
+     * The current status of the availability check ('idle', 'loading', 'ready', 'error').
+     * @example 'ready'
      */
     status: AIAvailabilityStatus
     /**
-     * Error object if the check failed.
+     * Global error object if the overall check or a critical initialization failed.
+     * @example null
      */
     error: Error | null
     /**
-     * Status of each API.
+     * Status of each supported AI API (summarizer, translator, etc.).
+     * @example { summarizer: { availability: 'available' } }
      */
     apis: Record<AIApiType, AIApiStatus>
     /**
@@ -562,11 +566,11 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
     const allApisAvailable =
         stableApisToCheck.current && stableApisToCheck.current.length > 0
             ? stableApisToCheck.current.every(
-                  (api) => apiStatuses[api].availability === 'available',
+                  (api) => apiStatuses[api]?.availability === 'available',
               )
             : ['summarizer', 'translator', 'languageDetector'].some(
                   (api) =>
-                      apiStatuses[api as AIApiType].availability ===
+                      apiStatuses[api as AIApiType]?.availability ===
                       'available',
               )
 
