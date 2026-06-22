@@ -132,3 +132,6 @@
 
 **Learning:** Functions provided as props that are expected to return a Promise (like `promiseFn` in `AsyncBlock`) might throw an error synchronously before the Promise is even created. Wrapping the call in a `try...catch` block ensures that the component can transition to an error state gracefully, rather than causing an unhandled exception or getting stuck in a pending state.
 **Action:** Always wrap invocations of user-provided "promise-returning" functions in a `try...catch` block to handle potential synchronous failures.
+## 2024-07-15 - [Synchronous Error Handling in Async Components]
+**Learning:** Wrapping a function call in `Promise.resolve().then()` introduces a micro-task delay. This can break tests that expect the initial state of a component (like `pending`) to be set synchronously upon mount. For components managing async operations, using a `try...catch` around the initial function call and converting synchronous errors into a rejected promise (`promise = Promise.reject(e)`) ensures both sync and async errors are handled by the same pipeline without breaking synchronous test expectations.
+**Action:** Use `try...catch` around initial calls to functions expected to return promises to robustly handle synchronous exceptions without introducing micro-task delays.

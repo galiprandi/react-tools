@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
  * Custom hook that throttles a value by a specified limit.
  * Ensuring the value updates at most once every specified limit.
  *
- * @template T
+ * @template T - The type of the value being throttled.
  * @param value - The value to throttle.
  * @param limit - The limit in milliseconds to throttle the value.
  * @default 500

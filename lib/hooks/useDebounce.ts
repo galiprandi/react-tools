@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 /**
  * Custom hook that debounces a value by a specified delay.
  *
- * @template T
+ * @template T - The type of the value being debounced.
  * @param value - The value to debounce.
  * @param delay - The delay in milliseconds to debounce the value.
  * @default 500
