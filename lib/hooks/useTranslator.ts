@@ -13,6 +13,16 @@ export type SupportedLanguage =
   | 'uk' | 'vi' | 'zh' | 'zh-Hant';
 
 /**
+ * List of supported languages for translation.
+ */
+const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
+  'ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr',
+  'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl',
+  'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr',
+  'uk', 'vi', 'zh', 'zh-Hant',
+];
+
+/**
  * Configuration options for the Translator hook.
  */
 export interface UseTranslatorOptions {
@@ -173,7 +183,29 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
         try {
           if (typeof window !== 'undefined' && typeof (window as unknown as { LanguageDetector?: unknown }).LanguageDetector === 'function') {
             const LanguageDetector = (window as unknown as { LanguageDetector: { availability?: () => Promise<Availability>; create?: (options?: { monitor?: (m: { addEventListener: (event: string, callback: (e: ProgressEvent) => void) => void }) => void }) => Promise<{ detect: (text: string) => Promise<{ detectedLanguage: string; confidence: number }[]>; destroy: () => void }> } }).LanguageDetector;
-            
+
+            // Ensure we're not dealing with base constructors
+            if (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              LanguageDetector === (Object as any) ||
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              LanguageDetector === (Array as any) ||
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              LanguageDetector === (Function as any)
+            ) {
+              resolvedSource = 'en';
+              // Resolve target before returning
+              if (targetLanguage === 'user') {
+                const userLang = getUserLanguage() as SupportedLanguage;
+                resolvedTarget = SUPPORTED_LANGUAGES.includes(userLang) ? userLang : 'en';
+                setResolvedTargetLanguage(resolvedTarget);
+              } else {
+                resolvedTarget = targetLanguage;
+                setResolvedTargetLanguage(targetLanguage);
+              }
+              return { source: resolvedSource, target: resolvedTarget };
+            }
+
             if (typeof LanguageDetector.availability === 'function') {
               const avail = await LanguageDetector.availability();
 
@@ -188,8 +220,7 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
                 if (results.length > 0) {
                   const detected = results[0].detectedLanguage.split('-')[0] as SupportedLanguage;
                   // Check if detected language is supported
-                  const supportedLanguages: SupportedLanguage[] = ['ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh', 'zh-Hant'];
-                  if (supportedLanguages.includes(detected)) {
+                  if (SUPPORTED_LANGUAGES.includes(detected)) {
                     resolvedSource = detected;
                     setDetectedSourceLanguage(detected);
                   } else {
@@ -218,8 +249,7 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
     // Resolve target language
     if (targetLanguage === 'user') {
       const userLang = getUserLanguage() as SupportedLanguage;
-      const supportedLanguages: SupportedLanguage[] = ['ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr', 'hi', 'hr', 'hu', 'id', 'it', 'iw', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh', 'zh-Hant'];
-      if (supportedLanguages.includes(userLang)) {
+      if (SUPPORTED_LANGUAGES.includes(userLang)) {
         resolvedTarget = userLang;
       } else {
         resolvedTarget = 'en';
@@ -253,6 +283,18 @@ export function useTranslator(options: UseTranslatorOptions = {}): UseTranslator
     }
 
     const Translator = (window as unknown as { Translator: { availability?: (options: TranslatorAvailabilityOptions) => Promise<Availability>; create?: (options: TranslatorCreateOptions) => Promise<Translator> } }).Translator;
+
+    // Ensure we're not dealing with base constructors
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Translator === (Object as any) ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Translator === (Array as any) ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Translator === (Function as any)
+    ) {
+      throw new Error('Translator is not available');
+    }
 
     // Check availability for the specific language pair
     if (typeof Translator.availability === 'function') {
