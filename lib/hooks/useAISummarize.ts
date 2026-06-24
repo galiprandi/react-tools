@@ -101,12 +101,67 @@ export interface UseAISummarizeOptions {
 
 export type AISummarizeStatus = 'idle' | 'initializing' | 'downloading' | 'summarizing' | 'success' | 'error';
 
+/**
+ * Result object returned by the useAISummarize hook.
+ */
 export interface UseAISummarizeReturn {
+  /**
+   * The summarized text result.
+   *
+   * @example
+   * ```ts
+   * console.log(data); // "The article discusses..."
+   * ```
+   */
   data: string;
+  /**
+   * Current status of the summarization process.
+   *
+   * @example
+   * ```ts
+   * if (status === 'summarizing') console.log('Working...');
+   * ```
+   */
   status: AISummarizeStatus;
+  /**
+   * Download progress of the summarizer model, if applicable.
+   *
+   * @example
+   * ```ts
+   * if (progress) console.log(`Downloaded ${progress.loaded}/${progress.total}`);
+   * ```
+   */
   progress: { loaded: number; total: number } | null;
+  /**
+   * Error object if the summarization fails.
+   *
+   * @example
+   * ```ts
+   * if (error) console.error('Summarization failed:', error.message);
+   * ```
+   */
   error: Error | null;
+  /**
+   * Function to start the summarization process.
+   *
+   * @param text - The text to summarize
+   * @param context - Optional context to provide to the summarizer
+   * @returns A promise that resolves when the summarization starts (or completes if not streaming)
+   *
+   * @example
+   * ```ts
+   * await summarize("Long text to be summarized...");
+   * ```
+   */
   summarize: (text: string, context?: string) => Promise<void>;
+  /**
+   * Resets the hook's state and aborts any ongoing summarization.
+   *
+   * @example
+   * ```ts
+   * reset();
+   * ```
+   */
   reset: () => void;
 }
 
