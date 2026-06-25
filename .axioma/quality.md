@@ -73,6 +73,11 @@
 **Learning:** To achieve 100% branch coverage in hooks or functions that use default parameters (e.g., `useThrottle(value, limit = 500)`), unit tests must explicitly invoke the function without the optional arguments. Simply relying on tests that provide values for all arguments leaves the default assignment branch uncovered.
 **Action:** Always include a test case that omits optional arguments to ensure default parameter logic is verified and coverage is maximized.
 
+## 2024-06-20 - [Consistent Code Formatting and Micro-Improvements]
+
+**Learning:** The project's `.prettierrc.json` (4 spaces, no semicolons) may conflict with the existing style of some older files (2 spaces, semicolons). Running global formatters on these files can create large diffs that exceed "micro-improvement" constraints (e.g., 50-line limit).
+**Action:** When performing micro-improvements, prefer manual formatting that matches the file's current style if a full reformat would exceed the line-count limit, or ensure reformatting is justified by the project's official config.
+
 ## 2024-06-25 - [Robust Timer Input Validation]
 
 **Learning:** Browser timer APIs like `setInterval` and `setTimeout` have inconsistent behaviors when receiving `NaN` or unexpected objects (like `Date` for intervals), often defaulting to 1ms or 0ms without warning. Explicitly validating these inputs and providing fallback values (e.g., 1000ms for intervals) with `console.warn` ensures predictable behavior and improves developer experience.
