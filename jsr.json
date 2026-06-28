@@ -1,6 +1,6 @@
 {
   "name": "@galiprandi/react-tools",
-  "version": "3.8.1",
+  "version": "3.10.0",
   "license": "MIT",
   "exports": "./lib/main.ts"
 }

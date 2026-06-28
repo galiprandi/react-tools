@@ -51,6 +51,32 @@ This provides comprehensive guidance for using @galiprandi/react-tools with AI a
 
 ## ✨ What's New
 
+### 3.10.0
+
+**Bug Fixes**
+- **useAI**: Fixed `isApiAvailable('prompt')` returning `false` in Chrome 140+ — the `'prompt'` API type now maps to `window.LanguageModel` (the actual Chrome global) with legacy fallbacks (`window.ai.languageModel`, `window.ai.LanguageModel`, `window.PromptAPI`) for older Chrome versions. The global lookup is now centralized in a single `resolveGlobalApi` helper, eliminating the duplicated switch that caused the bug. ([#104](https://github.com/galiprandi/react-tools/issues/104))
+- **Form**: Fixed the `onSubmit` prop being overwritten by the internal handler — user-provided `onSubmit` is now preserved and called correctly.
+- **AsyncBlock**: Synchronous errors thrown by `promiseFn` are now caught and routed to the `error` state instead of crashing. Timeout detection now uses `signal.reason` for more accurate abort-vs-timeout discrimination.
+- **useAIRewriter / useAIWrite / useLanguageDetection**: `AbortError` no longer leaks the `'error'` status — these hooks now reset to `'idle'` on abort, consistent with the other AI hooks.
+- **useDebounce**: Fixed incorrect debounce behavior on the first run by tracking `isFirstRun`.
+
+**Security Hardening**
+- **useAIProofreader**: Added base-constructor validation (`Object`/`Array`/`Function`) to prevent false-positive API detection from polyfills or prototype tampering.
+- **useTranslator**: Added base-constructor validation for both `Translator` and `LanguageDetector` globals, and extracted the supported-languages list into a `SUPPORTED_LANGUAGES` constant (eliminating duplication).
+- **useLanguageDetection**: Added base-constructor validation for `LanguageDetector`.
+
+**API Change**
+- **AsyncBlock**: The `error` prop is now optional (`error?`). Previously required, it is now consistent with the `pending` prop which was already optional when using a function form.
+
+**Developer Experience**
+- Added `displayName` to all components (AsyncBlock, DateTime, Form, Input, Observer, LazyRender) for better React DevTools introspection.
+- Improved JSDoc across `useAI`, `useAIPrompt`, `useAIProofreader`, `useAISummarize`, `useList`, `AsyncBlock`, and `Input`.
+- Added dedicated coverage test files for `useAISummarize`, `useAIProofreader`, and expanded coverage for `useTranslator`.
+
+---
+
+### Previous: AI Hooks
+
 **AI Hooks** - New hooks for browser-native AI features using Chrome's AI API:
 
 - **useAI** - Check and manage availability of browser's AI APIs
