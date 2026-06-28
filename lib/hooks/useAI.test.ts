@@ -9,6 +9,9 @@ describe('useAI', () => {
       delete (window as unknown as { Summarizer?: unknown }).Summarizer;
       delete (window as unknown as { Translator?: unknown }).Translator;
       delete (window as unknown as { LanguageDetector?: unknown }).LanguageDetector;
+      delete (window as unknown as { LanguageModel?: unknown }).LanguageModel;
+      delete (window as unknown as { PromptAPI?: unknown }).PromptAPI;
+      delete (window as unknown as { ai?: unknown }).ai;
     }
   });
 
@@ -18,6 +21,9 @@ describe('useAI', () => {
       delete (window as unknown as { Summarizer?: unknown }).Summarizer;
       delete (window as unknown as { Translator?: unknown }).Translator;
       delete (window as unknown as { LanguageDetector?: unknown }).LanguageDetector;
+      delete (window as unknown as { LanguageModel?: unknown }).LanguageModel;
+      delete (window as unknown as { PromptAPI?: unknown }).PromptAPI;
+      delete (window as unknown as { ai?: unknown }).ai;
     }
   });
 
@@ -246,12 +252,30 @@ describe('useAI', () => {
 
   it('should detect experimental APIs availability', async () => {
     const mockAvailability = vi.fn().mockResolvedValue('available');
-    const PromptAPIConstructor = function () {} as unknown as { availability: typeof mockAvailability };
-    PromptAPIConstructor.availability = mockAvailability;
+    const LanguageModelConstructor = function () {} as unknown as { availability: typeof mockAvailability };
+    LanguageModelConstructor.availability = mockAvailability;
 
-    vi.stubGlobal('PromptAPI', PromptAPIConstructor);
+    vi.stubGlobal('LanguageModel', LanguageModelConstructor);
     if (typeof window !== 'undefined') {
-      (window as unknown as { PromptAPI?: unknown }).PromptAPI = PromptAPIConstructor;
+      (window as unknown as { LanguageModel?: unknown }).LanguageModel = LanguageModelConstructor;
+    }
+
+    const { result } = renderHook(() => useAI());
+
+    await waitFor(() => expect(result.current.status).toBe('ready'));
+    expect(result.current.apis.prompt.availability).toBe('available');
+    expect(result.current.isApiAvailable('prompt')).toBe(true);
+  });
+
+  it('should detect Prompt API via legacy window.ai.languageModel fallback', async () => {
+    const mockAvailability = vi.fn().mockResolvedValue('available');
+    const LanguageModelConstructor = function () {} as unknown as { availability: typeof mockAvailability };
+    LanguageModelConstructor.availability = mockAvailability;
+
+    // Do NOT expose window.LanguageModel; only expose the legacy path.
+    vi.stubGlobal('ai', { languageModel: LanguageModelConstructor });
+    if (typeof window !== 'undefined') {
+      (window as unknown as { ai?: unknown }).ai = { languageModel: LanguageModelConstructor };
     }
 
     const { result } = renderHook(() => useAI());

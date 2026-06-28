@@ -385,6 +385,8 @@ function MyComponent() {
 
 **Note**: This hook requires Chrome's Native AI APIs, which are currently experimental and may not be available in all browsers.
 
+> **Prompt API mapping**: The `prompt` API type maps to Chrome's `window.LanguageModel` global (the Prompt API / Gemini Nano). For backwards compatibility, the hook also falls back to the legacy `window.ai.languageModel`, `window.ai.LanguageModel`, and `window.PromptAPI` exposure paths. This keeps `useAI` consistent with `useAIPrompt`, which performs the same lookup.
+
 ***
 
 ### useAISummarize

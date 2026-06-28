@@ -17,10 +17,12 @@ describe('useAI Coverage Gaps', () => {
                 'Summarizer',
                 'Translator',
                 'LanguageDetector',
+                'LanguageModel',
                 'PromptAPI',
                 'Writer',
                 'Rewriter',
                 'Proofreader',
+                'ai',
             ]
             globals.forEach((g) => {
                 delete (window as unknown as Record<string, unknown>)[g]
@@ -51,6 +53,14 @@ describe('useAI Coverage Gaps', () => {
         vi.stubGlobal('navigator', {
             userActivation: { isActive: false },
         })
+
+        // Provide a real Summarizer so preload reaches the user-activation guard
+        const Summarizer = function() {}
+        Summarizer.create = vi.fn().mockResolvedValue({ destroy: vi.fn() })
+        if (typeof window !== 'undefined') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (window as any).Summarizer = Summarizer
+        }
 
         const { result } = renderHook(() => useAI({ apis: ['summarizer'] }))
         await waitFor(() => expect(result.current.status).toBe('ready'))

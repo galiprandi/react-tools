@@ -135,6 +135,60 @@ export interface UseAIResult {
 }
 
 /**
+ * Mapping from internal {@link AIApiType} to the primary global constructor
+ * name exposed by Chrome on `window`.
+ *
+ * Note: the Prompt API (Gemini Nano) is exposed as `window.LanguageModel`,
+ * NOT `window.PromptAPI`. Legacy/alternate exposure paths for the Prompt API
+ * are handled in {@link resolveGlobalApi}. See issue #104.
+ */
+const API_GLOBAL_NAME: Record<AIApiType, string> = {
+    summarizer: 'Summarizer',
+    translator: 'Translator',
+    languageDetector: 'LanguageDetector',
+    prompt: 'LanguageModel',
+    writer: 'Writer',
+    rewriter: 'Rewriter',
+    proofreader: 'Proofreader',
+}
+
+/**
+ * Resolves the global API reference for a given AI API type.
+ *
+ * For most APIs this is a direct lookup of `window[API_GLOBAL_NAME[api]]`.
+ *
+ * The Prompt API is special: Chrome 140+ exposes it as `window.LanguageModel`,
+ * but older Chrome versions exposed it via `window.ai.languageModel`,
+ * `window.ai.LanguageModel`, or the legacy `window.PromptAPI` global. We try
+ * each in order for backwards compatibility, mirroring the lookup performed by
+ * {@link useAIPrompt} so `useAI` and `useAIPrompt` agree on availability.
+ *
+ * @param api - The API type to resolve.
+ * @returns The resolved global API reference, or `undefined` if not available.
+ *
+ * @internal
+ */
+function resolveGlobalApi(api: AIApiType): unknown {
+    if (typeof window === 'undefined') return undefined
+
+    const primary = API_GLOBAL_NAME[api]
+    const direct = (window as unknown as Record<string, unknown>)[primary]
+    if (direct !== undefined) return direct
+
+    // Legacy/alternate exposure paths for the Prompt API (Gemini Nano).
+    if (api === 'prompt') {
+        const ai = (window as unknown as { ai?: Record<string, unknown> }).ai
+        return (
+            ai?.languageModel ??
+            ai?.LanguageModel ??
+            (window as unknown as Record<string, unknown>).PromptAPI
+        )
+    }
+
+    return undefined
+}
+
+/**
  * Hook for checking and managing the availability of browser's AI APIs.
  *
  * This hook provides a centralized way to detect which AI APIs are available,
@@ -209,7 +263,7 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                         apiName = 'LanguageDetector'
                         break
                     case 'prompt':
-                        apiName = 'PromptAPI'
+                        apiName = 'LanguageModel'
                         break
                     case 'writer':
                         apiName = 'Writer'
@@ -233,25 +287,23 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                         return
                 }
 
-                const globalApi = (
-                    window as unknown as Record<
-                        string,
-                        {
-                            availability?: (
-                                ...args: unknown[]
-                            ) => Promise<Availability>
-                            create?: (options?: unknown) => Promise<unknown>
-                            constructor?: {
-                                availability?: (
-                                    ...args: unknown[]
-                                ) => Promise<Availability>
-                                create?: (options?: unknown) => Promise<unknown>
-                            }
-                        }
-                    >
-                )[apiName]
+                const globalApi = resolveGlobalApi(api) as
+                    | {
+                          availability?: (
+                              ...args: unknown[]
+                          ) => Promise<Availability>
+                          create?: (options?: unknown) => Promise<unknown>
+                          constructor?: {
+                              availability?: (
+                                  ...args: unknown[]
+                              ) => Promise<Availability>
+                              create?: (options?: unknown) => Promise<unknown>
+                          }
+                      }
+                    | undefined
 
                 if (
+                    globalApi !== undefined &&
                     (typeof globalApi === 'function' ||
                         (typeof globalApi === 'object' &&
                             globalApi !== null)) &&
@@ -372,7 +424,7 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                     apiName = 'LanguageDetector'
                     break
                 case 'prompt':
-                    apiName = 'PromptAPI'
+                    apiName = 'LanguageModel'
                     break
                 case 'writer':
                     apiName = 'Writer'
@@ -387,17 +439,18 @@ export function useAI(options: UseAIOptions = {}): UseAIResult {
                     throw new Error(`Unrecognized AI API type: ${api}`)
             }
 
-            const globalApi = (
-                window as unknown as Record<
-                    string,
-                    {
-                        create?: (options?: unknown) => Promise<unknown>
-                        constructor?: {
-                            create?: (options?: unknown) => Promise<unknown>
-                        }
-                    }
-                >
-            )[apiName]
+            const globalApi = resolveGlobalApi(api) as
+                | {
+                      create?: (options?: unknown) => Promise<unknown>
+                      constructor?: {
+                          create?: (options?: unknown) => Promise<unknown>
+                      }
+                  }
+                | undefined
+
+            if (globalApi === undefined) {
+                throw new Error(`${apiName} is not available in this browser`)
+            }
 
             if (isRestrictedKey(apiName)) {
                 throw new Error(

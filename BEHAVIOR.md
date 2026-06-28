@@ -20,6 +20,7 @@
 - should check only specified APIs
 - should detect LanguageDetector availability
 - should detect Proofreader experimental API availability
+- should detect Prompt API via legacy window.ai.languageModel fallback
 - should detect Rewriter experimental API availability
 - should detect Summarizer availability
 - should detect Translator availability
