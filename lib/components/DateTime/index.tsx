@@ -1,4 +1,10 @@
-import { ComponentProps, useEffect, useState, forwardRef } from 'react'
+import {
+    ComponentProps,
+    useEffect,
+    useState,
+    forwardRef,
+    ForwardedRef,
+} from 'react'
 import { iso2LocalDateTime } from '../../utilities/dates'
 
 import { Input } from '../Input'
@@ -30,7 +36,10 @@ import { Input } from '../Input'
  * };
  * ```
  */
-export const DateTime = forwardRef<HTMLInputElement, DateTimeProps>((props, ref) => {
+const DateTimeInner = (
+    props: DateTimeProps,
+    ref: ForwardedRef<HTMLInputElement>,
+): JSX.Element => {
     const { isoValue, onChangeISOValue, isoMin, isoMax, min, max, ...restProps } =
         props
     const [isoDateTime, setIsoDateTime] =
@@ -66,7 +75,14 @@ export const DateTime = forwardRef<HTMLInputElement, DateTimeProps>((props, ref)
             }
         />
     )
-})
+}
+
+export const DateTime = forwardRef(DateTimeInner) as {
+    (
+        props: DateTimeProps & React.RefAttributes<HTMLInputElement>,
+    ): JSX.Element
+    displayName?: string
+}
 
 DateTime.displayName = 'DateTime'
 

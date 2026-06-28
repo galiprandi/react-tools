@@ -1,4 +1,11 @@
-import { ReactNode, useEffect, useId, useState, forwardRef } from 'react'
+import {
+    ReactNode,
+    useEffect,
+    useId,
+    useState,
+    forwardRef,
+    ForwardedRef,
+} from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { valueTransforms } from '../../utilities/strings'
 
@@ -33,7 +40,10 @@ import { valueTransforms } from '../../utilities/strings'
  * />;
  * ```
  */
-export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+const InputInner = (
+    props: InputProps,
+    ref: ForwardedRef<HTMLInputElement>,
+): JSX.Element => {
     const {
         label,
         datalist,
@@ -94,7 +104,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             )}
         </LabeledContainer>
     )
-})
+}
+
+export const Input = forwardRef(InputInner) as {
+    (
+        props: InputProps & React.RefAttributes<HTMLInputElement>,
+    ): JSX.Element
+    displayName?: string
+}
 
 Input.displayName = 'Input'
 
